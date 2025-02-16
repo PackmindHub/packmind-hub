@@ -7,7 +7,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'Packmind Hub',
   tagline: 'Community driven coding rules for Packmind',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/packmind_logo.ico',
 
   // Set the production url of your site here
   url: 'https://your-docusaurus-site.example.com',
