@@ -1,0 +1,13 @@
+.pm-severity-critical {
+    padding: 8px;
+    background-color: #f44336;
+    color: #ffffff;
+    border-radius: 4px;
+}
+
+.pm-severity-high {
+    margin-bottom: 32px;
+    padding: 8px;
+    background-color: #ff9800;
+    color: #ffffff;
+}

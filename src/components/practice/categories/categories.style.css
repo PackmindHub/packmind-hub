@@ -1,0 +1,13 @@
+.pm-category {
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    font-family: Borna Regular,serif;
+    font-size: 14px;
+    font-weight: 400;
+    min-width: 30px;
+    overflow: hidden;
+    padding: 4px 8px;
+    text-overflow: ellipsis;
+    margin-left: 16px;
+    margin-top: 20px;
+}
