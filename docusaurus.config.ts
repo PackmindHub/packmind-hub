@@ -10,7 +10,7 @@ const config: Config = {
   favicon: 'img/packmind_logo.ico',
 
   // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
+  url: 'https://packmindhub.netlify.app',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
@@ -78,9 +78,9 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Practices',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
+        {to: '/blog', label: 'News', position: 'left'},
         {
           href: 'https://github.com/facebook/docusaurus',
           label: 'GitHub',
@@ -94,6 +94,10 @@ const config: Config = {
         {
           title: 'Docs',
           items: [
+            {
+              label: 'Coding Practices',
+              to: '/docs/practices',
+            },
             {
               label: 'Tutorial',
               to: '/docs/intro',
@@ -121,7 +125,7 @@ const config: Config = {
           title: 'More',
           items: [
             {
-              label: 'Blog',
+              label: 'News',
               to: '/blog',
             },
             {

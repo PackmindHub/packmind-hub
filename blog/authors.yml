@@ -1,23 +1,15 @@
-yangshun:
-  name: Yangshun Tay
-  title: Front End Engineer @ Facebook
-  url: https://github.com/yangshun
-  image_url: https://github.com/yangshun.png
+cteyton:
+  name: Cédric Teyton
+  title: CTO & Co-founder @Packmind
+  url: https://linkedin.com/cedricteyton
+  image_url: https://media.licdn.com/dms/image/v2/C4E03AQFa_b_WoZP0pA/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1593953477213?e=1754524800&v=beta&t=AWqxz0lNVsezcMHK8JwR-8CkonCAzczQAwci--0Ik44
   page: true
   socials:
-    x: yangshunz
-    github: yangshun
+    linkedin: cedricteyton
 
-slorber:
-  name: Sébastien Lorber
-  title: Docusaurus maintainer
-  url: https://sebastienlorber.com
-  image_url: https://github.com/slorber.png
-  page:
-    # customize the url of the author page at /blog/authors/<permalink>
-    permalink: '/all-sebastien-lorber-articles'
+amagne:
+  name: Arthur Magne
+  title: CPO @Packmind
+  image_url: https://media.licdn.com/dms/image/v2/D4E03AQHSkcd7CvSrhQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1728638332770?e=1754524800&v=beta&t=h3JarX_GY49mafovcDTHTCvsAkzcb9ELms-QTlnTKdE
   socials:
-    x: sebastienlorber
-    linkedin: sebastienlorber
-    github: slorber
-    newsletter: https://thisweekinreact.com
+    linkedin: arthurmagne
