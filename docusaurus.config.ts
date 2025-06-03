@@ -98,10 +98,6 @@ const config: Config = {
               label: 'Coding Practices',
               to: '/docs/practices',
             },
-            {
-              label: 'Tutorial',
-              to: '/docs/intro',
-            },
           ],
         },
         {
