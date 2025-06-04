@@ -1,0 +1,78 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid duplicating attributes in JSX elements
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["react","typescript","Code Quality"]} />
+
+### What
+This practice is relevant when you find elements in TSX that mistakenly include duplicate attributes, such as using the same attribute more than once on a single element.
+
+### Why
+Duplicated attributes may lead to unexpected behaviors or override issues and make debugging harder, compromising maintainability and readability.
+
+### Fix
+Examine your component code to remove duplicate attributes, ensuring each element only defines a given attribute once. Use code reviews or linters to catch these mistakes early.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The button element defines attributes in a single instance without any duplication, promoting clear and maintainable code.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const CleanButton: React.FC = () => {
+  return (
+    <div>
+      <button 
+        className="primary-button" 
+        onClick={() => alert('Button clicked')}
+      >
+        Click Me
+      </button>
+    </div>
+  );
+};
+
+export default CleanButton;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The button element has duplicate className attributes, which can lead to unexpected styling and potential runtime issues.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const DuplicateAttributeButton: React.FC = () => {
+  return (
+    <div>
+      <button 
+        className="primary-button" 
+        className="btn-extra" 
+        onClick={() => alert('Button clicked')}
+      >
+        Click Me
+      </button>
+    </div>
+  );
+};
+
+export default DuplicateAttributeButton;
+```

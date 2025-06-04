@@ -1,0 +1,75 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Provide explicit accessible names for ambiguous hyperlinks
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+When hyperlinks use ambiguous or context-independent text (such as a single letter or symbol), there is a risk that assistive technology users may not understand the link's purpose. Code that relies solely on visible content like "B" or generic phrases without further clarification triggers the need for explicit accessible naming.
+
+### Why
+Explicit accessible names enhance usability for users with disabilities by clearly conveying the purpose of a hyperlink. This practice ensures that links are understandable in isolation, such as when read out by screen readers.
+
+### Fix
+Developers should add appropriate accessibility attributes, such as aria-label, to hyperlinks that use ambiguous or symbolic texts. Adjust the visible text or accompanying hidden text so that it expresses the link's function clearly.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The example uses an aria-label to clearly describe the function of the ambiguous text "B".
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const AccessibleLink = () => {
+  return (
+    <div>
+      <a 
+        href="/apply-bold" 
+        aria-label="Apply bold formatting" 
+        style={{ textDecoration: 'none', color: '#007acc' }}
+      >
+        B
+      </a>
+    </div>
+  );
+};
+
+export default AccessibleLink;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The example relies solely on a single ambiguous character without providing an accessible name.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const AmbiguousLink = () => {
+  return (
+    <div>
+      <a href="/apply-bold">
+        B
+      </a>
+    </div>
+  );
+};
+
+export default AmbiguousLink;
+```

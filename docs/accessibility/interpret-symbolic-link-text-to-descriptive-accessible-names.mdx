@@ -1,0 +1,78 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Interpret symbolic link text to descriptive accessible names
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+When hyperlinks use symbols (such as "&gt;" or other non-literal icons) as visible labels, there is a danger of misinterpretation. Code that shows symbols without clarification should trigger the use of descriptive accessible names, especially when the symbol represents actions like "Next" or "Submit".
+
+### Why
+Screen readers and assistive devices need clear, descriptive text to convey the link's function. Relying on intuitive interpretation of symbols may not suffice for all users, thus compromising accessibility.
+
+### Fix
+Developers should ensure that links containing symbols include an aria-label that describes the action or function behind the symbol. This improves clarity and usability for assistive technology users.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The example clearly provides an aria-label for the symbolic link, accurately describing its purpose.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const AccessiblePagination = () => {
+  return (
+    <nav aria-label="Pagination">
+      <a 
+        href="/page/next" 
+        aria-label="Next page"
+        className="pagination-link"
+      >
+        &gt;
+      </a>
+    </nav>
+  );
+};
+
+export default AccessiblePagination;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The example lacks an aria-label, leaving the symbolic text ambiguous for assistive technology users.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const NonAccessiblePagination = () => {
+  return (
+    <nav aria-label="Pagination">
+      <a 
+        href="/page/next"
+        className="pagination-link"
+      >
+        &gt;
+      </a>
+    </nav>
+  );
+};
+
+export default NonAccessiblePagination;
+```

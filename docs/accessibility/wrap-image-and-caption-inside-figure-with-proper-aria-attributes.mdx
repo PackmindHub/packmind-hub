@@ -1,0 +1,69 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Wrap image and caption inside figure with proper aria attributes
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","JSX"]} />
+
+### What
+This practice applies when displaying images that require captions. It is triggered when an image (or image-like element) is paired with a legend but is not enclosed within a semantic container. Violations include using generic containers like &lt;div&gt; or &lt;p&gt; that do not communicate the association to assistive technologies.
+
+### Why
+Grouping an image with its caption inside a &lt;figure&gt; element with the proper WAI-ARIA role helps assistive technologies understand their relationship. This improves the accessibility of the web content and ensures compliance with standards like WCAG.
+
+### Fix
+Wrap the image and its caption in a &lt;figure&gt; element, set the role attribute to either "figure" or "group", and use a &lt;figcaption&gt; element for the caption. This establishes a clear association between the image and its legend.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example correctly groups the image and its caption within a &lt;figure&gt; element with appropriate ARIA attributes.
+
+<!-- #example_positive_code -->
+```tsx
+import React from "react";
+
+export const AccessibleImage: React.FC = () => {
+  return (
+    <figure role="figure" aria-label="Photo: Sunset over the mountains">
+      <img src="sunset.png" alt="Sunset over the mountains" />
+      <figcaption>Photo: Sunset over the mountains</figcaption>
+    </figure>
+  );
+};
+
+export default AccessibleImage;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The image and its caption are not grouped in a semantic &lt;figure&gt; element with appropriate ARIA roles, making it less accessible.
+
+<!-- #example_negative_code -->
+```tsx
+import React from "react";
+
+export const InaccessibleImage: React.FC = () => {
+  return (
+    <div>
+      <img src="sunset.png" alt="Sunset over the mountains" />
+      <p>Photo: Sunset over the mountains</p>
+    </div>
+  );
+};
+
+export default InaccessibleImage;
+```

@@ -1,0 +1,78 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure form fields have accessible labels
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react"]} />
+
+### What
+This practice applies when rendering form elements. Developers must verify that each form field is linked to an accessible label through aria attributes, title attribute, or an associated &lt;label&gt; element.
+
+### Why
+Accessible labels are crucial for screen readers to correctly identify form fields, thereby improving usability and fulfilling WCAG standards such as 1.3.1, 4.1.2, and others.
+
+### Fix
+Review each form element and add a visible or programmatically associated label using methods such as the &lt;label&gt; element with htmlFor, aria-label, or aria-labelledby attributes to provide a clear and accessible name.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The form field is clearly associated with its label using the htmlFor and id attributes, ensuring proper accessibility.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const EmailInput = () => {
+  return (
+    <div>
+      <label htmlFor="userEmail">Email Address</label>
+      <input 
+        type="email" 
+        id="userEmail" 
+        name="userEmail" 
+        placeholder="Enter your email"
+        aria-required="true" 
+      />
+    </div>
+  );
+};
+
+export default EmailInput;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The input field lacks an accessible label via a &lt;label&gt; element or aria-label, which violates accessibility best practices and WCAG guidelines.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const EmailInput = () => {
+  return (
+    <div>
+      <input 
+        type="email" 
+        name="email" 
+        placeholder="Email Address"
+      />
+    </div>
+  );
+};
+
+export default EmailInput;
+```

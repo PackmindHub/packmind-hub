@@ -1,0 +1,84 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Group related form fields using fieldset or ARIA group roles
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+When building forms that contain fields of the same nature (such as contact details or address fields), check if the fields are isolated instead of being logically grouped. Violating code may simply list inputs without semantic grouping tags.
+
+### Why
+Grouping related form fields improves accessibility by providing context to assistive technologies and ensuring that relationships between form elements are communicated. This practice also aligns with WCAG guidelines regarding information and relationship, and enhances form usability.
+
+### Fix
+Wrap related form elements with a &lt;fieldset&gt; element and include a &lt;legend&gt; that describes the group. Alternatively, if a semantic &lt;fieldset&gt; is not appropriate, use a container element with an ARIA role of 'group' to manually provide the grouping semantics.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The code correctly groups related fields inside a &lt;fieldset&gt; with an appropriate legend, providing clear semantics for assistive technologies.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const RegistrationForm: React.FC = () => {
+  return (
+    <form>
+      <fieldset>
+        <legend>Personal Information</legend>
+        <div>
+          <label htmlFor="firstName">First Name:</label>
+          <input id="firstName" type="text" />
+        </div>
+        <div>
+          <label htmlFor="lastName">Last Name:</label>
+          <input id="lastName" type="text" />
+        </div>
+      </fieldset>
+    </form>
+  );
+};
+
+export default RegistrationForm;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The code does not group related fields semantically, which may reduce accessibility as assistive technology users are not provided explicit context.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const RegistrationForm: React.FC = () => {
+  return (
+    <form>
+      <div>
+        <label htmlFor="firstName">First Name:</label>
+        <input id="firstName" type="text" />
+      </div>
+      <div>
+        <label htmlFor="lastName">Last Name:</label>
+        <input id="lastName" type="text" />
+      </div>
+    </form>
+  );
+};
+
+export default RegistrationForm;
+```

@@ -1,0 +1,83 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure proper tag nesting in TSX markup
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+This practice triggers when writing nested elements in TSX and is violated by improper hierarchy, unclosed or misnested tags.
+
+### Why
+Correct tag nesting is crucial to generate valid HTML, which ensures that browsers render the page properly and that accessibility standards are met.
+
+### Fix
+Revisit your component structures to validate that every opening tag has a corresponding closing tag and that tags are properly nested within each other.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The TSX code has proper opening and closing tag pairs, ensuring semantic correctness and accessibility.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const StructuredPage: React.FC = () => {
+  return (
+    <section>
+      <header>
+        <h1>Welcome to Our Site</h1>
+      </header>
+      <main>
+        <article>
+          <p>This article is well-structured with proper tag nesting.</p>
+        </article>
+      </main>
+      <footer>
+        <small>© 2023 Company</small>
+      </footer>
+    </section>
+  );
+};
+
+export default StructuredPage;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The markup is misnested and has unclosed tags, which can cause rendering and accessibility issues.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const BadlyStructuredPage: React.FC = () => {
+  return (
+    <div>
+      <header>
+        <h1>Welcome to Our Site</h1>
+      <!-- Missing closing tag for header and improper nested paragraph -->
+      <p>Paragraph inside header without proper closure</div>
+      <footer>
+        <small>© 2023 Company</small>
+      </footer>
+    </div>
+  );
+};
+
+export default BadlyStructuredPage;
+```

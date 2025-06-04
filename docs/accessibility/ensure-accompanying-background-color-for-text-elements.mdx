@@ -1,0 +1,72 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure accompanying background-color for text elements
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","CSS"]} />
+
+### What
+This practice is triggered when defining a text color (color property) on any element that displays text but does not explicitly set a corresponding background color (background or background-color). Violations are easy to recognize when a CSS rule includes only a color without a background-color either on the element itself or inherited from its parent.
+
+### Why
+Maintaining a paired background-color with text color is critical to meet accessibility standards such as WCAG 1.4.3, ensuring sufficient contrast so that text remains readable for all users. It also avoids potential usability issues for users with visual impairments.
+
+### Fix
+Always include a background-color declaration along with any color declaration when styling text elements, or ensure that the element reliably inherits an appropriate background. Update the CSS rules to explicitly define both properties where necessary.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Both color and background-color are explicitly defined ensuring proper contrast and accessibility.
+
+<!-- #example_positive_code -->
+```css
+/* Define a text container with proper color contrast */
+.text-container {
+  color: #333333;
+  background-color: #f1f1f1;
+  font-size: 16px;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+/* Inherited background on child elements */
+.text-container p {
+  margin: 0;
+  line-height: 1.5;
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The background-color is missing, potentially resulting in insufficient contrast and accessibility issues.
+
+<!-- #example_negative_code -->
+```css
+/* Define a text container without an explicit background */
+.text-container {
+  color: #333333;
+  font-size: 16px;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+/* Child elements may inherit missing or unsuitable background, risking poor contrast */
+.text-container p {
+  margin: 0;
+  line-height: 1.5;
+}
+```

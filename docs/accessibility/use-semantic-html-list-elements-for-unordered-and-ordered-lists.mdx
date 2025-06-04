@@ -1,0 +1,71 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use semantic HTML list elements for unordered and ordered lists
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","html"]} />
+
+### What
+When displaying collections of items in a list format, check that the code uses native HTML list elements (&lt;ul&gt; or &lt;ol&gt; with &lt;li&gt;). Avoid replacing semantic elements with generic containers (like &lt;div&gt;) even when using ARIA roles.
+
+### Why
+Native list elements provide inherent accessibility, allowing assistive technologies to interpret list structures correctly. This ensures compliance with WCAG guidelines and improves user experience for people using screen readers.
+
+### Fix
+Replace non-semantic containers with &lt;ul&gt; or &lt;ol&gt; for unordered and ordered lists respectively. Use &lt;li&gt; for list items instead of generic elements, or add proper ARIA roles only as a fallback when native elements cannot be used.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example uses native &lt;ol&gt; and &lt;li&gt; elements, ensuring semantic correctness and enhanced accessibility.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const OrderedList: React.FC = () => {
+  return (
+    <ol>
+      <li>Introduction</li>
+      <li>Features</li>
+      <li>Conclusion</li>
+    </ol>
+  );
+};
+
+export default OrderedList;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example uses non-semantic &lt;div&gt; elements with ARIA roles, which is less optimal than using native &lt;ul&gt; and &lt;li&gt; elements.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const UnorderedListFallback: React.FC = () => {
+  return (
+    <div role="list">
+      <div role="listitem">Home</div>
+      <div role="listitem">About</div>
+      <div role="listitem">Contact</div>
+    </div>
+  );
+};
+
+export default UnorderedListFallback;
+```

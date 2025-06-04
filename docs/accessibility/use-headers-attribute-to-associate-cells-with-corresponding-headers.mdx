@@ -1,0 +1,115 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use headers attribute to associate cells with corresponding headers
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+When rendering table cells (&lt;td&gt; or &lt;th&gt;) that are associated with one or more header cells, check that each cell includes a "headers" attribute listing the unique ids of its corresponding header(s).
+
+### Why
+The headers attribute directly links data cells to their related headers, improving navigation and comprehension for assistive technologies. Omitting this attribute can disrupt the correct association between data and header cells, negatively affecting accessibility.
+
+### Fix
+Ensure that each data cell in a table includes a "headers" attribute that references the unique id(s) of the relevant header cell(s). This mapping supports assistive devices in identifying the context for each cell.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The example correctly uses the headers attribute to map each data cell to its associated header, ensuring proper accessibility support.
+
+<!-- #example_positive_code -->
+```tsx
+import React from "react";
+
+const AssociatedTable = () => {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th id="header-name" scope="col">
+            Name
+          </th>
+          <th id="header-age" scope="col">
+            Age
+          </th>
+          <th id="header-country" scope="col">
+            Country
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td headers="header-name">Charlie</td>
+          <td headers="header-age">28</td>
+          <td headers="header-country">UK</td>
+        </tr>
+        <tr>
+          <td headers="header-name">Dana</td>
+          <td headers="header-age">35</td>
+          <td headers="header-country">Australia</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+export default AssociatedTable;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The example fails to include the headers attribute on data cells, which prevents the proper association with header cells and impacts accessibility.
+
+<!-- #example_negative_code -->
+```tsx
+import React from "react";
+
+const UnassociatedTable = () => {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th id="header-name" scope="col">
+            Name
+          </th>
+          <th id="header-age" scope="col">
+            Age
+          </th>
+          <th id="header-country" scope="col">
+            Country
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Emma</td>
+          <td>42</td>
+          <td>Germany</td>
+        </tr>
+        <tr>
+          <td>Frank</td>
+          <td>50</td>
+          <td>France</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+export default UnassociatedTable;
+```

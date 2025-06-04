@@ -1,0 +1,75 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Set accessible text contrast ratios using CSS
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","CSS"]} />
+
+### What
+This practice activates when text elements in a web page do not meet the WCAG contrast ratio requirements. It is recognized when colors for text and background do not provide at least a 4.5:1 ratio for normal text or at least a 3:1 ratio for larger or bold text.
+
+### Why
+Ensuring sufficient contrast is critical for users with visual impairments to comfortably read the webpage content. Low contrast can result in unreadable text and creates accessibility issues, which can lead to non-compliance with legal standards.
+
+### Fix
+Adjust CSS color values for text and background to comply with WCAG guidelines. Review text elements and increase the color contrast ratio by selecting darker text colors or lighter background colors as needed.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The example uses color combinations that meet or exceed the WCAG contrast ratios for both normal and large text.
+
+<!-- #example_positive_code -->
+```css
+body {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+p {
+  color: #222222;
+  background-color: #F5F5F5;
+  padding: 10px;
+  font-size: 18px; /* Considered large text so a 3:1 ratio could suffice */
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The color choices in this example result in insufficient contrast, making the text difficult to read.
+
+<!-- #example_negative_code -->
+```css
+body {
+  color: #CCCCCC;
+  background-color: #FFFFFF;
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+p {
+  color: #BBBBBB;
+  background-color: #FFFFFF;
+  padding: 10px;
+  font-size: 16px;
+}
+```

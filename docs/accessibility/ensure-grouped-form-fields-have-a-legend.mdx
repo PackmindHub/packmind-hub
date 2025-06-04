@@ -1,0 +1,95 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure grouped form fields have a legend
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+This practice applies when a form contains a group of related fields (like checkboxes, radio buttons, or text inputs) that need to be semantically grouped. Violating code often wraps related inputs inside generic containers without using a fieldset and legend.
+
+### Why
+Using a fieldset with a legend is essential to meet WCAG guidelines (1.3.1 and 3.3.2) and to ensure that assistive technologies can interpret the grouping correctly, improving overall accessibility. It helps provide clear context for users and maintain semantic markup.
+
+### Fix
+Wrap the related inputs in a fieldset element and include a corresponding legend element that clearly describes the field group. Refactor existing implementations that use non-semantic wrappers (e.g., divs with paragraphs) to adhere to this guideline.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example wraps related checkboxes in a fieldset with a meaningful legend, ensuring that screen readers can correctly interpret the group.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const PreferencesForm: React.FC = () => {
+  return (
+    <form>
+      <fieldset style={{ border: '1px solid #ccc', padding: '1rem' }}>
+        <legend>Select your preferences</legend>
+        <div style={{ marginBottom: '0.5rem' }}>
+          <input type="checkbox" id="news" name="news" />
+          <label htmlFor="news">Receive Newsletter</label>
+        </div>
+        <div style={{ marginBottom: '0.5rem' }}>
+          <input type="checkbox" id="updates" name="updates" />
+          <label htmlFor="updates">Receive Updates</label>
+        </div>
+        <div>
+          <input type="checkbox" id="offers" name="offers" />
+          <label htmlFor="offers">Receive Special Offers</label>
+        </div>
+      </fieldset>
+    </form>
+  );
+};
+
+export default PreferencesForm;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This code improperly groups related checkboxes within a div and a paragraph instead of using a semantic fieldset and legend, which can lead to accessibility issues.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const PreferencesForm: React.FC = () => {
+  return (
+    <form>
+      <div style={{ border: '1px solid #ccc', padding: '1rem' }}>
+        <p>Select your preferences</p>
+        <div style={{ marginBottom: '0.5rem' }}>
+          <input type="checkbox" id="news" name="news" />
+          <label htmlFor="news">Receive Newsletter</label>
+        </div>
+        <div style={{ marginBottom: '0.5rem' }}>
+          <input type="checkbox" id="updates" name="updates" />
+          <label htmlFor="updates">Receive Updates</label>
+        </div>
+        <div>
+          <input type="checkbox" id="offers" name="offers" />
+          <label htmlFor="offers">Receive Special Offers</label>
+        </div>
+      </div>
+    </form>
+  );
+};
+
+export default PreferencesForm;
+```

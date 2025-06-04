@@ -1,0 +1,71 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Configure aria-live and aria-atomic for dynamic assistive updates
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+When implementing alert or status messages, inspect whether the ARIA live region properties are present. Code that omits aria-live or aria-atomic when needed (especially for alert messages) violates accessibility standards.
+
+### Why
+Proper configuration of aria-live (e.g., 'assertive' for urgent alerts) and aria-atomic (typically 'true' for complete message updates) ensures that assistive technologies reliably capture and announce changes to dynamic content.
+
+### Fix
+Update your components to include the correct aria-live and aria-atomic attributes based on the role of the message. For instance, for an alert message, set aria-live to 'assertive' and aria-atomic to 'true'.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The alert component correctly uses aria-live and aria-atomic attributes to inform assistive technologies of urgent message updates.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+interface AlertMessageProps {
+  message: string;
+}
+
+const AlertMessage: React.FC<AlertMessageProps> = ({ message }) => {
+  return (
+    <div role="alert" aria-live="assertive" aria-atomic="true">
+      {message}
+    </div>
+  );
+};
+
+export default AlertMessage;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The component is missing aria-live and aria-atomic attributes needed for timely and complete announcement of alert messages to assistive technologies.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const AlertMessageBad: React.FC<{ message: string }> = ({ message }) => {
+  return (
+    <div role="alert">
+      {message}
+    </div>
+  );
+};
+
+export default AlertMessageBad;
+```

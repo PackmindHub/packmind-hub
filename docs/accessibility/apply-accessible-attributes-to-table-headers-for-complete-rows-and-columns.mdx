@@ -1,0 +1,105 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Apply accessible attributes to table headers for complete rows and columns
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+When rendering table header cells (&lt;th&gt;) that apply to an entire row or column, check that each header includes a unique id and either a scope attribute with an appropriate value ("row" for row headers and "col" for column headers) or a WAI-ARIA role ("rowheader" or "columnheader").
+
+### Why
+These attributes enable assistive technologies to correctly interpret table structure and relationships, providing a better experience for users with disabilities. Missing or misconfigured attributes may result in unclear table semantics and reduced accessibility.
+
+### Fix
+Update header elements to include a unique id attribute and either a scope attribute with the correct value or a matching WAI-ARIA role. Ensure that for headers encompassing entire rows or columns, at least one of the accessible properties is correctly applied.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The example properly assigns unique id, scope, and role attributes to complete header cells, ensuring clear accessibility semantics.
+
+<!-- #example_positive_code -->
+```tsx
+import React from "react";
+
+const AccessibleTable = () => {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th id="col-header-1" scope="col">
+            Name
+          </th>
+          <th id="col-header-2" scope="col">
+            Age
+          </th>
+          <th id="col-header-3" role="columnheader">
+            Country
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td headers="col-header-1">Alice</td>
+          <td headers="col-header-2">30</td>
+          <td headers="col-header-3">USA</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+export default AccessibleTable;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The example lacks unique id, scope, or appropriate role attributes on header cells, making the table less accessible.
+
+<!-- #example_negative_code -->
+```tsx
+import React from "react";
+
+const InaccessibleTable = () => {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>
+            Name
+          </th>
+          <th>
+            Age
+          </th>
+          <th>
+            Country
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Bob</td>
+          <td>25</td>
+          <td>Canada</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+export default InaccessibleTable;
+```

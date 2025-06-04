@@ -1,0 +1,81 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure matching id and htmlFor for labels
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react"]} />
+
+### What
+This practice should be applied whenever a &lt;label&gt; element is used to describe a form field. Developers must check that the value of the label’s htmlFor attribute exactly matches the id of the corresponding input element.
+
+### Why
+Accurate matching between the htmlFor attribute and the input’s id establishes a clear association that assistive technologies rely on to convey context to users, improving overall accessibility.
+
+### Fix
+Audit all form fields to ensure each label’s htmlFor attribute matches a unique id on the corresponding input. Refactor any discrepancies so that both the label and input are properly linked.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The label and input have matching identifiers, ensuring that assistive technologies can correctly map the input to its descriptive label.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const PasswordInput = () => {
+  return (
+    <div>
+      <label htmlFor="userPassword">Password</label>
+      <input 
+        type="password" 
+        id="userPassword" 
+        name="userPassword" 
+        placeholder="Enter your password"
+        aria-required="true"
+      />
+    </div>
+  );
+};
+
+export default PasswordInput;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The mismatch between the label's htmlFor and the input's id prevents assistive technologies from correctly associating the label with the input, compromising accessibility.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const PasswordInput = () => {
+  return (
+    <div>
+      <label htmlFor="passwordField">Password</label>
+      <input 
+        type="password" 
+        id="userPassword" 
+        name="userPassword" 
+        placeholder="Enter your password"
+        aria-required="true"
+      />
+    </div>
+  );
+};
+
+export default PasswordInput;
+```

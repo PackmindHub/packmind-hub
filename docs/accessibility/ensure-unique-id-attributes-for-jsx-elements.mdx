@@ -1,0 +1,81 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure unique id attributes for JSX elements
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+This practice is activated when DOM elements in your TSX code use the id attribute. Violation occurs if two or more elements are given the same id, which may be inadvertent in repeated List or Form components.
+
+### Why
+Unique id attributes are critical for accessibility and DOM operations, ensuring that labels connect to the correct input elements and that CSS/JavaScript selectors work predictably.
+
+### Fix
+Review your TSX components to ensure that each element's id is unique, possibly by using dynamic generation techniques or helper utilities when rendering lists of components.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Each element uses a unique id, ensuring accessibility and error-free DOM operations.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const UniqueForm: React.FC = () => {
+  return (
+    <form>
+      <div>
+        <label htmlFor="email-input">Email</label>
+        <input id="email-input" type="email" placeholder="user@example.com" />
+      </div>
+      <div>
+        <label htmlFor="password-input">Password</label>
+        <input id="password-input" type="password" placeholder="Enter password" />
+      </div>
+    </form>
+  );
+};
+
+export default UniqueForm;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Both input fields share the same id, which can confuse assistive technologies and interfere with DOM selectors.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const FaultyForm: React.FC = () => {
+  return (
+    <form>
+      <div>
+        <label htmlFor="input-field">Email</label>
+        <input id="input-field" type="email" placeholder="user@example.com" />
+      </div>
+      <div>
+        <label htmlFor="input-field">Password</label>
+        <input id="input-field" type="password" placeholder="Enter password" />
+      </div>
+    </form>
+  );
+};
+
+export default FaultyForm;
+```

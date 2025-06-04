@@ -1,0 +1,102 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Include accessible summaries for complex data tables
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","html"]} />
+
+### What
+When creating complex data tables in React, check if the table requires an accessible summary. Code that omits a summary or does not associate one with the table using ARIA attributes violates accessibility guidelines.
+
+### Why
+Providing an accessible summary is crucial for screen readers to convey the context and structure of the table, ensuring that users with disabilities can understand the content. Without it, the table's data may become ambiguous and harder to interpret.
+
+### Fix
+Fix the issue by linking a descriptive summary element to the table via the aria-describedby attribute and ensuring that the summary is available to assistive technologies, for example by using a hidden div. This approach makes the table accessible and improves the user experience.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example associates the table with a summary via aria-describedby and includes a visually hidden summary, ensuring that the table is accessible.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const DataTable = () => {
+  return (
+    <div>
+      <div id="table-summary" className="visually-hidden">
+        This table displays quarterly sales data by region along with the revenue figures.
+      </div>
+      <table aria-describedby="table-summary">
+        <thead>
+          <tr>
+            <th>Region</th>
+            <th>Revenue</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>North</td>
+            <td>$250,000</td>
+          </tr>
+          <tr>
+            <td>South</td>
+            <td>$200,000</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default DataTable;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example fails to provide any accessible summary or descriptive text linked to the table, violating accessibility best practices.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const DataTable = () => {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>Region</th>
+          <th>Revenue</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>North</td>
+          <td>$250,000</td>
+        </tr>
+        <tr>
+          <td>South</td>
+          <td>$200,000</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+export default DataTable;
+```

@@ -1,0 +1,77 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Enforce minimum contrast ratio for UI elements
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","CSS"]} />
+
+### What
+This practice applies when styling UI components or graphical elements that convey information and are expected to be read by users; it is triggered when using CSS color properties that determine the foreground text or icon color and the background color.
+
+### Why
+Ensuring a minimum contrast ratio of 3:1 improves readability and accessibility, helping users with visual impairments; it complies with WCAG guidelines and avoids making important information hard to perceive.
+
+### Fix
+Adjust your CSS color values using color contrast checkers to select pairs that achieve at least a 3:1 ratio; update styles for different element states such as hover or active to maintain this contrast consistently.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example applies colors with sufficient contrast, ensuring text is easily legible against the background.
+
+<!-- #example_positive_code -->
+```css
+/* Good practice: Using colors that ensure a minimum contrast ratio of 3:1 */
+.button {
+  background-color: #005a9c;  /* dark blue provides sufficient contrast with white */
+  color: #ffffff;             /* white text */
+  border: 1px solid #004070;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #004070;  /* maintains adequate contrast on hover */
+  color: #ffffff;
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example fails to provide sufficient contrast between text and background, making the information difficult to read for users with visual impairments.
+
+<!-- #example_negative_code -->
+```css
+/* Bad practice: Using color pairs with low contrast ratio */
+.button {
+  background-color: #cccccc;  /* light gray background */
+  color: #eeeeee;             /* near-white text which results in low contrast */
+  border: 1px solid #bbbbbb;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #bbbbbb;  /* color change still does not improve contrast adequately */
+  color: #dddddd;
+}
+```

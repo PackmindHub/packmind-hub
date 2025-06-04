@@ -1,0 +1,107 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use semantic HTML elements for accessible document structure
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","html"]} />
+
+### What
+This practice applies when creating React components that render page layouts. Developers must ensure that each section of the document uses semantic HTML elements like &lt;header&gt;, &lt;nav&gt;, &lt;main&gt;, and &lt;footer&gt; and that there is exactly one visible &lt;main&gt; element to maintain accessibility.
+
+### Why
+Using semantic HTML ensures that assistive technologies can accurately interpret the structure of your page, improving navigability and compliance with accessibility standards such as WCAG and ARIA. Incorrect or non-semantic markup may confuse users relying on these technologies.
+
+### Fix
+Replace generic HTML elements or misused semantic tags with the correct semantic elements. Ensure that only a single &lt;main&gt; element is visible and additional main elements, if present, are properly hidden using attributes like hidden or appropriate styles.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The code uses semantic HTML elements correctly, with one visible &lt;main&gt; element ensuring proper document structure and accessibility.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const PageLayout: React.FC = () => {
+  return (
+    <>
+      <header>
+        <h1>Site Title</h1>
+      </header>
+      <nav>
+        <ul>
+          <li><a href="/home">Home</a></li>
+          <li><a href="/about">About</a></li>
+        </ul>
+      </nav>
+      <main>
+        <section>
+          <h2>Main Content</h2>
+          <p>This is where the primary content goes.</p>
+        </section>
+      </main>
+      <footer>
+        <p>© 2023 Your Company</p>
+      </footer>
+    </>
+  );
+};
+
+export default PageLayout;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The code fails by using non-semantic &lt;div&gt; elements instead of &lt;header&gt;, &lt;nav&gt;, and &lt;footer&gt; and includes two visible &lt;main&gt; elements, which confuses assistive technologies.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const PageLayout: React.FC = () => {
+  return (
+    <>
+      <div className="header">
+        <h1>Site Title</h1>
+      </div>
+      <div className="nav">
+        <ul>
+          <li><a href="/home">Home</a></li>
+          <li><a href="/about">About</a></li>
+        </ul>
+      </div>
+      <main>
+        <section>
+          <h2>Main Content Part 1</h2>
+          <p>This is the first main content section.</p>
+        </section>
+      </main>
+      <main>
+        <section>
+          <h2>Main Content Part 2</h2>
+          <p>This is the second main content section, which should be hidden.</p>
+        </section>
+      </main>
+      <div className="footer">
+        <p>© 2023 Your Company</p>
+      </div>
+    </>
+  );
+};
+
+export default PageLayout;
+```

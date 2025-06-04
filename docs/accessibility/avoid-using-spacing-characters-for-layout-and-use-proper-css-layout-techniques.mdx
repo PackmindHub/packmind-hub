@@ -1,0 +1,80 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid using spacing characters for layout and use proper css layout techniques
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["react","typescript","CSS"]} />
+
+### What
+This practice applies when markup uses excessive spaces, non-breaking spaces (&nbsp;) or other text-based hacks to simulate layout arrangements (like columns or tables). Violating code might include manual spacing in the TSX code intended to create visual structure.
+
+### Why
+Relying on whitespace for layout is brittle, non-responsive, and often fails accessibility guidelines. Using proper CSS layout models such as Flexbox or Grid ensures that the layout is robust, maintainable and accessible.
+
+### Fix
+Replace spacing hacks with appropriate container elements styled with CSS layout techniques. Use flex or grid containers to achieve the desired structure in a semantic and maintainable manner.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The component uses CSS Flexbox via external style sheets for layout instead of relying on spacing characters, ensuring a responsive and accessible design.
+
+<!-- #example_positive_code -->
+```tsx
+import React from "react";
+import "./Layout.css";
+
+const Layout = () => {
+  return (
+    <div className="container">
+      <div className="column">
+        <p>Column 1 content</p>
+      </div>
+      <div className="column">
+        <p>Column 2 content</p>
+      </div>
+    </div>
+  );
+};
+
+export default Layout;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The component uses non-breaking spaces to simulate layout positioning, which makes maintenance difficult and may not scale well responsively.
+
+<!-- #example_negative_code -->
+```tsx
+import React from "react";
+
+const Layout = () => {
+  return (
+    <div>
+      <p>
+        Column 1 content&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Column 2 content
+      </p>
+      <p>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Column 2 content continued
+      </p>
+    </div>
+  );
+};
+
+export default Layout;
+```

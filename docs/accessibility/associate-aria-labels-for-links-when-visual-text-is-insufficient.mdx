@@ -1,0 +1,80 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Associate aria labels for links when visual text is insufficient
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+This practice is triggered when links use non-text elements (like icons or images) or very short text, which might not fully convey the link's purpose.
+
+### Why
+Using aria-label attributes ensures that even when the visual content is minimal, assistive technologies can access a meaningful and descriptive label for the link.
+
+### Fix
+Add an aria-label attribute to the link element to explicitly define its purpose, ensuring compliance with WCAG guidelines and ARIA standards.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example enhances the link's accessibility by providing an aria-label that clearly describes its purpose.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const IconLink = () => {
+  return (
+    <div>
+      <span>Follow us on Twitter:</span>
+      <a
+        href="https://twitter.com/example"
+        aria-label="Follow us on Twitter"
+      >
+        <svg width="24" height="24" role="img" aria-hidden="true">
+          <use xlinkHref="#twitter-icon" />
+        </svg>
+      </a>
+    </div>
+  );
+};
+
+export default IconLink;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example lacks an aria-label on the link, which can leave users of assistive technologies unaware of the link's purpose.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const IconLink = () => {
+  return (
+    <div>
+      <span>Follow us on Twitter:</span>
+      <a href="https://twitter.com/example">
+        <svg width="24" height="24" role="img" aria-hidden="true">
+          <use xlinkHref="#twitter-icon" />
+        </svg>
+      </a>
+    </div>
+  );
+};
+
+export default IconLink;
+```

@@ -1,0 +1,84 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure correct use of language attributes for accessibility
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+This practice triggers when web pages contain content in multiple languages. Developers must verify that elements (or their parents) wrapping texts in a language different from the page’s default include the appropriate lang and/or xml:lang attributes.
+
+### Why
+Accurately specifying language attributes improves accessibility by allowing assistive technologies to correctly pronounce the content. It also helps search engines and translation tools understand the document structure.
+
+### Fix
+Add proper lang attributes to the element containing the language-changed text or one of its parent elements. Review each component to ensure that its language is identified explicitly, so that any text divergence from the default language is properly indicated.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The example correctly assigns language attributes to both the default container and the element with foreign language text.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const AccessiblePage: React.FC = () => {
+  return (
+    <div lang="fr">
+      <header>
+        <h1>Bienvenue</h1>
+      </header>
+      <p>
+        Ceci est un texte en français.{' '}
+        <span lang="en">Hello, world!</span>
+      </p>
+      <footer>
+        <address>Contactez-nous</address>
+      </footer>
+    </div>
+  );
+};
+
+export default AccessiblePage;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The example fails to indicate language changes, omitting the required lang attributes which can cause accessibility issues.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const InaccessiblePage: React.FC = () => {
+  return (
+    <div>
+      <header>
+        <h1>Bienvenue</h1>
+      </header>
+      <p>
+        Ceci est un texte en français. Hello, world!
+      </p>
+      <footer>
+        <address>Contactez-nous</address>
+      </footer>
+    </div>
+  );
+};
+
+export default InaccessiblePage;
+```

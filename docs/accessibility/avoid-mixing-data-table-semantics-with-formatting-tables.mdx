@@ -1,0 +1,88 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid mixing data table semantics with formatting tables
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","html"]} />
+
+### What
+This practice is activated when creating HTML tables solely for layout or formatting purposes, not for displaying data, and developers inadvertently include semantic elements or attributes reserved for data tables. Violating code typically uses elements like &lt;caption&gt;, &lt;th&gt;, &lt;thead&gt;, &lt;tfoot&gt;, &lt;colgroup&gt; or attributes such as summary, scope, headers, axis, and ARIA roles intended for data tables.
+
+### Why
+Mixing presentation with data semantics can confuse assistive technologies and violate WCAG standards, leading to accessibility issues. A clear separation helps maintain the intended structure and meaning for both visual layout and assistive technology users.
+
+### Fix
+Ensure that formatting tables only use simple elements like &lt;table&gt; and &lt;td&gt; without any additional semantic markup or attributes meant for data tables. Review components to remove inappropriate elements and attributes when the table is used purely for layout.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example follows the practice by limiting the markup to &lt;table&gt;, &lt;tbody&gt;, &lt;tr&gt;, and &lt;td&gt; without including any data table-specific attributes or elements.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const FormattingTable: React.FC = () => {
+  return (
+    <table>
+      <tbody>
+        <tr>
+          <td style={{ padding: "8px" }}>Cell 1</td>
+          <td style={{ padding: "8px" }}>Cell 2</td>
+        </tr>
+        <tr>
+          <td style={{ padding: "8px" }}>Cell 3</td>
+          <td style={{ padding: "8px" }}>Cell 4</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+export default FormattingTable;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example is non-compliant because it uses semantic elements and attributes intended for data tables in a table meant solely for formatting purposes.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const FormattingTable: React.FC = () => {
+  return (
+    <table summary="Layout table used for formatting">
+      <caption>Layout Table</caption>
+      <thead>
+        <tr>
+          <th scope="col">Header 1</th>
+          <th scope="col">Header 2</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td headers="header1">Cell 1</td>
+          <td headers="header2">Cell 2</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+export default FormattingTable;
+```

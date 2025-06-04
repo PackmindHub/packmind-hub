@@ -1,0 +1,79 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure accessible link names in anchor tags
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","html"]} />
+
+### What
+This practice triggers when creating React components that include anchor (&lt;a&gt;) elements. It recognizes code that renders links without readable text or missing accessible names, either by omitting the inner text or failing to provide an appropriate aria-label.
+
+### Why
+Accessible link names allow assistive technologies to accurately convey the link's purpose to users with disabilities, which is crucial for meeting web accessibility guidelines (e.g., WCAG 2.4.4). Missing an accessible name can lead to confusing navigation and a poor user experience.
+
+### Fix
+To fix violations, ensure every &lt;a&gt; element either includes visible, descriptive text between the opening and closing tags or, when a visual element like an icon is used, includes an aria-label attribute with a clear, descriptive name.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example includes either visible descriptive text or an aria-label to ensure the link is accessible.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const AccessibleLink = () => {
+  return (
+    <div>
+      {/* Using descriptive inner text for accessible link */}
+      <a href="https://example.com">Visit Example Website</a>
+
+      {/* OR using an aria-label when the link contains non-text content */}
+      <a href="https://example.com" aria-label="Visit Example Website">
+        <img src="logo.png" alt="" />
+      </a>
+    </div>
+  );
+};
+
+export default AccessibleLink;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example shows links without any descriptive text or aria-label, which makes them inaccessible for users relying on assistive technologies.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const InaccessibleLink = () => {
+  return (
+    <div>
+      {/* Link with missing accessible name */}
+      <a href="https://example.com"></a>
+
+      {/* Link relying solely on an image without alt text or aria-label */}
+      <a href="https://example.com">
+        <img src="logo.png" />
+      </a>
+    </div>
+  );
+};
+
+export default InaccessibleLink;
+```

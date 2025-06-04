@@ -1,0 +1,77 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure accessible names include visible link text
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+This practice applies when a hyperlink displays visible text and requires that the accessible name (via aria-label or similar attribute) mirrors the visible content. It is triggered by discrepancies between the displayed link text and the information provided to assistive devices.
+
+### Why
+Consistency between visible text and accessible names guarantees that all users receive the same navigational cues. Mismatches can lead to confusion and impair the user experience for individuals using screen readers.
+
+### Fix
+Review your link components to confirm that any aria-label or alternative accessible naming includes the same descriptive text found in the visible link. Remove unnecessary overrides if the visible text is sufficient for accessibility.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The accessible names directly match the visible text, ensuring consistency and clarity for all users.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+function ConsistentLinks() {
+  return (
+    <div>
+      <a href="/about" aria-label="About our company">
+        About our company
+      </a>
+      <a href="/services" aria-label="Our services">
+        Our services
+      </a>
+    </div>
+  );
+}
+
+export default ConsistentLinks;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The aria-labels differ from the visible text, potentially confusing screen reader users about the link's purpose.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+function InconsistentLinks() {
+  return (
+    <div>
+      <a href="/about" aria-label="Learn more">
+        About our company
+      </a>
+      <a href="/services" aria-label="Click">
+        Our services
+      </a>
+    </div>
+  );
+}
+
+export default InconsistentLinks;
+```

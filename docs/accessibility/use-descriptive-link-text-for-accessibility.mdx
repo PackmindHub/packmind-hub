@@ -1,0 +1,99 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use descriptive link text for accessibility
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+This practice is triggered when developing components with hyperlinks in React TSX code. It applies when links are rendered with generic text that does not indicate their destination or purpose.
+
+### Why
+Descriptive link texts improve web accessibility by providing clear context for assistive technologies and enhancing user navigation. It ensures that users who rely on screen readers understand where the link will lead.
+
+### Fix
+Replace ambiguous link texts (like 'Click here') with descriptive phrases that convey the link’s purpose. Where additional context is needed, use aria-label or similar attributes to improve accessibility.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The example uses clear, descriptive text and aria-labels where needed to ensure links are accessible.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const Navigation: React.FC = () => {
+  return (
+    <nav>
+      <ul>
+        <li>
+          <a href="/about">
+            Learn more about our company history
+          </a>
+        </li>
+        <li>
+          <a href="/contact" aria-label="Get in touch via our contact form">
+            Contact Support
+          </a>
+        </li>
+        <li>
+          <a href="/services">
+            Discover our range of services
+          </a>
+        </li>
+      </ul>
+    </nav>
+  );
+};
+
+export default Navigation;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The example uses vague and non-descriptive link texts that do not clearly communicate the link's purpose or destination.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const Navigation: React.FC = () => {
+  return (
+    <nav>
+      <ul>
+        <li>
+          <a href="/about">
+            Click here
+          </a>
+        </li>
+        <li>
+          <a href="/contact">
+            Click here
+          </a>
+        </li>
+        <li>
+          <a href="/services">
+            More info
+          </a>
+        </li>
+      </ul>
+    </nav>
+  );
+};
+
+export default Navigation;
+```

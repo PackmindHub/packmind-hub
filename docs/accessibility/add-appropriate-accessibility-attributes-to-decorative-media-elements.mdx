@@ -1,0 +1,91 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Add appropriate accessibility attributes to decorative media elements
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","TSX"]} />
+
+### What
+When rendering decorative images or media (e.g. &lt;img&gt;, &lt;area&gt;, &lt;object&gt;, &lt;svg&gt;, &lt;canvas&gt;, &lt;embed&gt;) without any significant informational purpose, check that they are properly hidden from assistive technologies. Violations include missing attributes or providing misleading alternative text for elements that should be skipped by screen readers.
+
+### Why
+This rule is critical for WCAG compliance and ensures that decorative content does not distract or confuse users relying on assistive technology. It enhances the user experience by preventing unnecessary announcements of non-informative content.
+
+### Fix
+For decorative images, provide an empty alt attribute (alt="") or explicitly hide them with aria-hidden="true" or role="presentation". Ensure that no additional textual alternatives or labeling is provided when the image is for decoration only.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example correctly uses empty alt attributes and aria-hidden/role attributes to hide decorative media from assistive technology.
+
+<!-- #example_positive_code -->
+```tsx
+import React from "react";
+
+const DecorativeMedia: React.FC = () => {
+  return (
+    <div>
+      {/* Decorative bitmap image */}
+      <img src="decorative.png" alt="" role="presentation" />
+
+      {/* Decorative clickable area without href */}
+      <area shape="rect" coords="0,0,100,100" alt="" aria-hidden="true" />
+
+      {/* Decorative SVG icon */}
+      <svg aria-hidden="true" width="24" height="24">
+        <title></title>
+        <desc></desc>
+        <use href="#icon-decorative" />
+      </svg>
+
+      {/* Decorative object element */}
+      <object data="decorative.svg" type="image/svg+xml" aria-hidden="true" />
+    </div>
+  );
+};
+
+export default DecorativeMedia;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example incorrectly provides descriptive alt text and titles, and fails to hide decorative elements from assistive technologies.
+
+<!-- #example_negative_code -->
+```tsx
+import React from "react";
+
+const DecorativeMediaBad: React.FC = () => {
+  return (
+    <div>
+      {/* Bitmap image with misleading alt text */}
+      <img src="decorative.png" alt="decorative image" />
+
+      {/* SVG element with a non-empty title, potentially exposing decorative content */}
+      <svg width="24" height="24">
+        <title>Icon Description</title>
+        <use href="#icon-decorative" />
+      </svg>
+
+      {/* Object element without aria-hidden */}
+      <object data="decorative.svg" type="image/svg+xml" />
+    </div>
+  );
+};
+
+export default DecorativeMediaBad;
+```

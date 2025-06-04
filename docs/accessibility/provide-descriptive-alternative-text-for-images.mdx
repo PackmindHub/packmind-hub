@@ -1,0 +1,74 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Provide descriptive alternative text for images
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+When using &lt;img&gt; elements in your React TSX code to display informative images, ensure that each image includes a meaningful alt attribute. This practice triggers whenever an image is used to convey important information.
+
+### Why
+Alternative text is essential for accessibility, allowing screen readers to describe the image content to visually impaired users, and it is required by WCAG guidelines. Without it, users may miss important information conveyed by the image.
+
+### Fix
+Add a descriptive alt attribute to each &lt;img&gt; element in your TSX components. Ensure the text concisely describes what the image portrays rather than merely stating that it’s an image.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The image element includes a clear and descriptive alt text, meeting accessibility standards.
+
+<!-- #example_positive_code -->
+```tsx
+import React from "react";
+
+const AccessibleImage: React.FC = () => {
+  return (
+    <div>
+      <img 
+        src="https://example.com/informative-image.png" 
+        alt="Diagram illustrating the data processing workflow" 
+      />
+      <p>This diagram explains the step-by-step process of data handling.</p>
+    </div>
+  );
+}
+
+export default AccessibleImage;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The image element is missing the alt attribute, making it non-compliant with accessibility requirements.
+
+<!-- #example_negative_code -->
+```tsx
+import React from "react";
+
+const InaccessibleImage: React.FC = () => {
+  return (
+    <div>
+      <img 
+        src="https://example.com/informative-image.png" 
+      />
+      <p>Image intended to show the data processing workflow.</p>
+    </div>
+  );
+}
+
+export default InaccessibleImage;
+```

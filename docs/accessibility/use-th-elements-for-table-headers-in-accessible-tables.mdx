@@ -1,0 +1,103 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use th elements for table headers in accessible tables
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+This practice applies when building data tables in React TSX. It recognizes violating code when table headers are mistakenly implemented with non-semantic elements like td or div without appropriate role attributes.
+
+### Why
+Using the th element for headers ensures that assistive technologies correctly identify header cells, which improves accessibility and fulfills WCAG guidelines. It also simplifies the code by relying on built-in browser semantics.
+
+### Fix
+Replace non-semantic cell elements with th for header cells, or add proper WAI-ARIA role attributes when using custom components, ensuring that each header is clearly defined.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example correctly uses th elements with an appropriate scope attribute to define table headers, ensuring accessibility.
+
+<!-- #example_positive_code -->
+```tsx
+import React from "react";
+
+const DataTable: React.FC = () => {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Age</th>
+          <th scope="col">City</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Alice</td>
+          <td>30</td>
+          <td>Paris</td>
+        </tr>
+        <tr>
+          <td>Bob</td>
+          <td>25</td>
+          <td>London</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+export default DataTable;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example incorrectly uses td elements for headers, which does not provide the semantic meaning required for accessible tables.
+
+<!-- #example_negative_code -->
+```tsx
+import React from "react";
+
+const DataTable: React.FC = () => {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <td>Name</td>
+          <td>Age</td>
+          <td>City</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Alice</td>
+          <td>30</td>
+          <td>Paris</td>
+        </tr>
+        <tr>
+          <td>Bob</td>
+          <td>25</td>
+          <td>London</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+export default DataTable;
+```

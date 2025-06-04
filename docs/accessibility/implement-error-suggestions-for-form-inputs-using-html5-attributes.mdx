@@ -1,0 +1,98 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Implement error suggestions for form inputs using HTML5 attributes
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+When building forms in React with TSX, ensure that each input field that requires specific data formats provides in-place error suggestions using HTML5 attributes like pattern and title. This practice should be activated when an input might receive incorrectly formatted data. Violations include using plain inputs without guidance on valid formats and examples for users.
+
+### Why
+Providing error suggestions improves form usability and accessibility, ensuring users can correct errors quickly without external references. This approach also supports compliance with accessibility standards such as WCAG by guiding users with contextual input feedback.
+
+### Fix
+Update input fields by specifying the appropriate type, adding pattern attributes with regular expressions to define permitted formats, and using the title attribute to offer clear error messages and examples. This makes the code self-documenting and directly helpful to users.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example leverages HTML5’s pattern and title attributes to provide clear, in-place error suggestions, improving usability and accessibility.
+
+<!-- #example_positive_code -->
+```tsx
+import React, { useState } from 'react';
+
+function EmailForm() {
+  const [email, setEmail] = useState("");
+  
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+  
+  return (
+    <form>
+      <label htmlFor="email">Email Address:</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        value={email}
+        onChange={handleChange}
+        pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+        title="Veuillez saisir une adresse e-mail valide, par exemple: user@example.com"
+        required
+      />
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+
+export default EmailForm;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example omits HTML5 input guidance like pattern and title, leaving errors ambiguous and reducing form usability.
+
+<!-- #example_negative_code -->
+```tsx
+import React, { useState } from 'react';
+
+function EmailForm() {
+  const [email, setEmail] = useState("");
+  
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+  
+  return (
+    <form>
+      <label htmlFor="email">Email:</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        value={email}
+        onChange={handleChange}
+      />
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+
+export default EmailForm;
+```

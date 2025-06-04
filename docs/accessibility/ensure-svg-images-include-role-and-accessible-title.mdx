@@ -1,0 +1,74 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure svg images include role and accessible title
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+When using SVG elements to render images that convey information, check that each SVG includes an appropriate ARIA role and accessible title element. This practice applies to any SVG that is used in place of an image.
+
+### Why
+Without a proper role or title, assistive technologies may not correctly interpret SVG content, leading to accessibility issues. This is especially important since SVGs often contain complex graphics that need clear description.
+
+### Fix
+Add a role attribute (commonly role='img') and include a &lt;title&gt; element with a unique identifier within the SVG. Reference the title using aria-labelledby to ensure screen readers announce the SVG description.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The SVG correctly includes role and a title element with an accessible description, ensuring it meets accessibility standards.
+
+<!-- #example_positive_code -->
+```tsx
+import React from "react";
+
+const AccessibleSvg: React.FC = () => {
+  return (
+    <div>
+      <svg role="img" width="150" height="150" aria-labelledby="svgTitle">
+        <title id="svgTitle">Company Logo: A red circle with a black outline</title>
+        <circle cx="75" cy="75" r="70" stroke="black" strokeWidth="4" fill="red" />
+      </svg>
+      <p>This SVG serves as the company logo and includes an accessible description.</p>
+    </div>
+  );
+}
+
+export default AccessibleSvg;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The SVG is missing both the role attribute and an accessible title, which prevents screen readers from conveying its purpose.
+
+<!-- #example_negative_code -->
+```tsx
+import React from "react";
+
+const InaccessibleSvg: React.FC = () => {
+  return (
+    <div>
+      <svg width="150" height="150">
+        <circle cx="75" cy="75" r="70" stroke="black" strokeWidth="4" fill="red" />
+      </svg>
+      <p>This SVG is used as the company logo but lacks accessible attributes.</p>
+    </div>
+  );
+}
+
+export default InaccessibleSvg;
+```

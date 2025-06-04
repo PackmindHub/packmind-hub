@@ -1,0 +1,85 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure visible focus styles for interactive elements
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","CSS","WCAG"]} />
+
+### What
+This practice applies to any interactive element (such as buttons, links, or inputs) that receives focus in a web page. It triggers when the default focus style is removed or degraded, making it hard for keyboard users to track focus changes.
+
+### Why
+Maintaining a visible focus state is crucial for web accessibility and compliance with WCAG 2.4.7, as it helps users who navigate via keyboard or assistive technologies to identify the active element. Without a clear focus indicator, users may lose track of their position on the page.
+
+### Fix
+Avoid removing the browser’s native focus outline with styles like 'outline: none' unless you provide an equivalent visual indication using custom CSS. Replace removed styles with a clearly defined focus state, using properties such as outline offset, box-shadow, or border adjustments.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example ensures interactive elements show a distinct focus state with custom styling, aligning with accessibility standards.
+
+<!-- #example_positive_code -->
+```css
+/* Good practice: Provide a custom visible focus style while preserving accessibility */
+button, a, input {
+  outline: 2px solid #005fcc;
+  outline-offset: 2px;
+  transition: outline-offset 0.2s ease, box-shadow 0.2s ease;
+  padding: 8px;
+  margin: 5px;
+  background-color: #f0f0f0;
+}
+
+button:hover, a:hover, input:hover {
+  background-color: #e0e0e0;
+  outline-offset: 4px;
+  box-shadow: 0 0 5px rgba(0, 95, 204, 0.5);
+}
+
+button:focus, a:focus, input:focus {
+  outline: 3px solid #ff9900;
+  outline-offset: 2px;
+  box-shadow: 0 0 8px rgba(255, 153, 0, 0.6);
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example completely removes the focus styles, impairing accessibility by failing to indicate which element is active.
+
+<!-- #example_negative_code -->
+```css
+/* Bad practice: Removing focus indication without providing an alternative */
+button, a, input {
+  outline: none;
+  padding: 8px;
+  margin: 5px;
+  background-color: #f0f0f0;
+  transition: box-shadow 0.3s ease;
+}
+
+button:hover, a:hover, input:hover {
+  background-color: #e0e0e0;
+  box-shadow: 0 0 0 rgba(0, 95, 204, 0);
+}
+
+button:focus, a:focus, input:focus {
+  /* Focus styles are completely removed */
+  outline: none;
+  box-shadow: none;
+}
+```

@@ -1,0 +1,73 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure accessible links with sufficient contrast and alternative visual cues
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","CSS","WCAG"]} />
+
+### What
+This practice applies when web pages contain links that do not have an obviously descriptive nature and are signaled only by color. Violations occur when links fail to meet the minimum contrast ratio of 3:1 or rely solely on color changes for hover and focus indications.
+
+### Why
+Providing sufficient contrast and additional visual cues such as borders, underlines, or outlines helps all users, including those with visual impairments, to recognize interactive elements reliably. It also ensures compliance with WCAG guidelines and enhances overall accessibility.
+
+### Fix
+Update your CSS to enforce a minimum contrast ratio and add extra visual indicators on hover and focus states beyond mere color changes. Use methods like underlines, box shadows, or borders to clearly differentiate link states.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses high-contrast colors and adds borders and shadows on hover and focus for clear visual cues.
+
+<!-- #example_positive_code -->
+```css
+/* Good practice: Ensuring accessible links with sufficient contrast and alternative visual cues */
+a {
+  color: #004080; /* Sufficient contrast against background */
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+a:hover, a:focus {
+  border-bottom: 1px solid #004080; /* Additional visual cue for hover/focus */
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 64, 128, 0.3);
+}
+
+/* Ensure contrast ratio is at least 3:1 */
+body {
+  background-color: #ffffff;
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example relies solely on color changes, which may not be sufficient to meet accessibility standards, especially for users with visual impairments.
+
+<!-- #example_negative_code -->
+```css
+/* Bad practice: Links change only in color, lacking sufficient alternative cues */
+a {
+  color: #888; /* Low contrast color might not meet 3:1 minimum in some contexts */
+  text-decoration: none;
+}
+
+a:hover, a:focus {
+  color: #555; /* Only color change, no extra visual indicator */
+}
+
+/* This approach fails to provide a robust visual difference for users with visual impairments */
+```

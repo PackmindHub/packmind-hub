@@ -1,0 +1,74 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use descriptive accessible naming for hyperlinks
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+When creating hyperlinks in your React components, check if the link's text and any associated context provide a clear description of the link's function and destination. This practice is triggered when links use minimal or ambiguous text, which does not explain their purpose.
+
+### Why
+Following WCAG and ARIA guidelines ensures that all users, including those using assistive technologies, receive sufficient context to navigate your application effectively. Ambiguous labels or missing context may confuse users or hinder their navigation experience.
+
+### Fix
+To fix violating code, ensure that the link includes a descriptive visible label or an aria-label attribute (or both) that clearly explains its purpose. Supplement the link text with additional context using visually hidden elements where needed.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The links include descriptive text and additional context, ensuring they are accessible to all users.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+function AccessibleLinks() {
+  return (
+    <div>
+      <a href="/user/profile" aria-label="Go to user profile page">
+        <span className="link-text">User Profile</span>
+        <span className="sr-only">(Access your profile and settings)</span>
+      </a>
+      <a href="/contact" aria-label="Contact our support team">
+        Contact Us
+      </a>
+    </div>
+  );
+}
+
+export default AccessibleLinks;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The links use vague text without clear context, making them confusing for users relying on assistive technologies.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+function InaccessibleLinks() {
+  return (
+    <div>
+      <a href="/user/profile">Profile</a>
+      <a href="/contact">Click here</a>
+    </div>
+  );
+}
+
+export default InaccessibleLinks;
+```

@@ -1,0 +1,110 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure logical content order for accessibility without stylesheets
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+When developing React components for web pages, verify that the DOM structure itself reflects a clear and meaningful content order without relying solely on CSS for visual layout. This practice is triggered when code reorders elements using CSS properties such as flex 'order' or grid areas in a way that compromises the semantic, accessible reading order if CSS is disabled.
+
+### Why
+Users who disable stylesheets or use assistive technologies need a natural, logical reading order to understand the content of the page. Incorrect DOM order may lead to confusing or misleading information flow, violating WCAG guidelines such as Meaningful Sequence and Focus Order.
+
+### Fix
+Refactor components to use semantic HTML elements (e.g., header, nav, main, footer) arranged in the correct logical order, and avoid relying exclusively on CSS-based ordering to define the reading sequence.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses semantic HTML with a proper DOM order ensuring that the content remains comprehensible even when stylesheets are disabled.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const AccessiblePage: React.FC = () => {
+  return (
+    <div>
+      <header>
+        <h1>Welcome to Our Website</h1>
+        <nav>
+          <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+      </header>
+      <main>
+        <section id="about">
+          <h2>About Us</h2>
+          <p>We are committed to delivering quality service.</p>
+        </section>
+        <section id="services">
+          <h2>Our Services</h2>
+          <p>We offer a wide range of solutions tailored to your needs.</p>
+        </section>
+        <section id="contact">
+          <h2>Contact Information</h2>
+          <p>Please reach us via email or phone.</p>
+        </section>
+      </main>
+      <footer>
+        <p>© 2023 Company Name. All rights reserved.</p>
+      </footer>
+    </div>
+  );
+};
+
+export default AccessiblePage;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example relies on CSS order properties to rearrange content, resulting in a DOM structure that does not reflect the intended reading order when stylesheets are disabled.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const InaccessiblePage: React.FC = () => {
+  return (
+    <div className="page">
+      <div className="content" style={{ order: 2 }}>
+        <section>
+          <h2>Latest News</h2>
+          <p>This section displays the most recent updates.</p>
+        </section>
+      </div>
+      <div className="header" style={{ order: 1 }}>
+        <h1>Breaking Announcement</h1>
+        <nav>
+          <ul>
+            <li><a href="#news">News</a></li>
+            <li><a href="#updates">Updates</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div className="footer" style={{ order: 3 }}>
+        <p>Contact us for more information.</p>
+      </div>
+    </div>
+  );
+};
+
+export default InaccessiblePage;
+```

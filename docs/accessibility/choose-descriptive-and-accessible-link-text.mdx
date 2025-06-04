@@ -1,0 +1,90 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Choose descriptive and accessible link text
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+Activate this practice when you find links with vague texts like 'click here' that do not describe the link's destination or purpose.
+
+### Why
+Descriptive link texts improve accessibility by providing enough context for screen readers and users with cognitive disabilities, ensuring that every link clearly communicates its function.
+
+### Fix
+Replace ambiguous link texts with clear, descriptive text that explains the destination or action, aligning with WCAG guidelines 2.4.4 and 2.5.3 for accessible naming.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses clear, descriptive link text that explains the purpose of the hyperlink.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const App = () => {
+  return (
+    <div>
+      <header>
+        <h1>Welcome to Our Accessibility Guide</h1>
+      </header>
+      <main>
+        <p>
+          For detailed information about our accessibility practices, please{' '}
+          <a href="https://example.com/accessibility-guidelines">
+            learn more about web accessibility practices for hyperlinks
+          </a>.
+        </p>
+      </main>
+      <footer>
+        <p>Contact us for more information.</p>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses vague text ('click here') that does not provide sufficient context for users relying on assistive technology.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const App = () => {
+  return (
+    <div>
+      <header>
+        <h1>Welcome</h1>
+      </header>
+      <main>
+        <p>
+          For more info, <a href="https://example.com">click here</a>.
+        </p>
+      </main>
+      <footer>
+        <p>Contact us.</p>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
+```

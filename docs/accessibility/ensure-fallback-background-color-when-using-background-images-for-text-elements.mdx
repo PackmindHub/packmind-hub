@@ -1,0 +1,74 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure fallback background-color when using background images for text elements
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","CSS"]} />
+
+### What
+This practice applies when using background images (via background or background-image properties) on elements that contain text. A violation occurs when a background image is used without a fallback background-color which may jeopardize text readability.
+
+### Why
+Background images might not load or could result in varying contrast depending on the image content; providing a fallback background-color ensures that text remains legible and maintains compliant contrast ratios in all cases. It reinforces a robust accessibility strategy as recommended by WCAG guidelines.
+
+### Fix
+Always pair a background-image with a background-color property on elements containing text as a fallback option. Modify the CSS to incorporate a complementary background-color that provides sufficient contrast even when the image is absent.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The fallback background-color is provided alongside the background image, ensuring text contrast regardless of image availability.
+
+<!-- #example_positive_code -->
+```css
+/* Element with background image and fallback background color */
+.banner {
+  color: #ffffff;
+  background-color: #003366; /* Fallback color in case image fails to load */
+  background-image: url('banner.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  padding: 20px;
+  text-align: center;
+}
+
+.banner h1 {
+  font-size: 2em;
+  margin: 0;
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The absence of a fallback background-color compromises text readability if the background image does not load or displays with low contrast.
+
+<!-- #example_negative_code -->
+```css
+/* Element with background image but missing fallback background color */
+.banner {
+  color: #ffffff;
+  background-image: url('banner.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  padding: 20px;
+  text-align: center;
+}
+
+.banner h1 {
+  font-size: 2em;
+  margin: 0;
+}
+```

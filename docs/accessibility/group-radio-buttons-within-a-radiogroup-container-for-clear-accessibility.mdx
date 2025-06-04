@@ -1,0 +1,100 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Group radio buttons within a radiogroup container for clear accessibility
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+When a form contains radio button inputs (or elements with a role of radio), verify that they are wrapped in a container that provides a clear grouping context, such as a &lt;fieldset&gt; with a legend or a div with the ARIA role 'radiogroup'. Violating code may simply render radio inputs inline without any grouping, making it harder for screen readers to announce them as a single logical group.
+
+### Why
+Grouping radio buttons using a radiogroup ensures that users are informed about the relationship between the options and that only one option can be selected at a time. This not only improves the user experience but also ensures compliance with WCAG and ARIA best practices for accessible forms.
+
+### Fix
+Wrap the radio buttons inside a &lt;fieldset&gt; with an associated &lt;legend&gt; or, if using a non-semantic container, add an ARIA role of 'radiogroup'. This clarifies the purpose of the group to assistive technology users and maintains the expected behavior.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example correctly groups radio button inputs inside a fieldset and a radiogroup, providing clear context and accessibility information to users.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const PaymentMethodForm: React.FC = () => {
+  return (
+    <form>
+      <fieldset>
+        <legend>Select Payment Method</legend>
+        <div role="radiogroup">
+          <label>
+            <input type="radio" name="payment" value="credit" />
+            Credit Card
+          </label>
+          <label>
+            <input type="radio" name="payment" value="paypal" />
+            PayPal
+          </label>
+          <label>
+            <input type="radio" name="payment" value="bank" />
+            Bank Transfer
+          </label>
+        </div>
+      </fieldset>
+    </form>
+  );
+};
+
+export default PaymentMethodForm;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The code does not use a semantic group (like a fieldset or an element with role='radiogroup') to group the radio buttons, compromising accessibility and clear association of related inputs.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const PaymentMethodForm: React.FC = () => {
+  return (
+    <form>
+      <div>
+        <label>
+          <input type="radio" name="payment" value="credit" />
+          Credit Card
+        </label>
+      </div>
+      <div>
+        <label>
+          <input type="radio" name="payment" value="paypal" />
+          PayPal
+        </label>
+      </div>
+      <div>
+        <label>
+          <input type="radio" name="payment" value="bank" />
+          Bank Transfer
+        </label>
+      </div>
+    </form>
+  );
+};
+
+export default PaymentMethodForm;
+```

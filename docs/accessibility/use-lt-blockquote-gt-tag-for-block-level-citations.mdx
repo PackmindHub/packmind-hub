@@ -1,0 +1,79 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use &lt;blockquote&gt; tag for block-level citations
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","html"]} />
+
+### What
+This practice is triggered when presenting longer or block-level quotations on a web page. Violations occur when such citations are rendered using generic containers like &lt;div&gt; or &lt;p&gt; without semantic indication.
+
+### Why
+The &lt;blockquote&gt; element explicitly indicates that the contained text is a quotation, aiding both user readability and assistive technology while also satisfying WCAG requirements regarding information relationships.
+
+### Fix
+Replace generic container elements with the &lt;blockquote&gt; tag in your React TSX components to semantically denote block-level citations. Optionally include a &lt;footer&gt; to credit the citation's source.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses the &lt;blockquote&gt; tag to semantically represent a block-level citation, enhancing accessibility and clarity.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+interface BlockCitationProps {
+  citation: string;
+  author?: string;
+}
+
+const BlockCitation: React.FC<BlockCitationProps> = ({ citation, author }) => {
+  return (
+    <blockquote>
+      <p>{citation}</p>
+      {author && <footer>— {author}</footer>}
+    </blockquote>
+  );
+};
+
+export default BlockCitation;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example fails to use the semantic &lt;blockquote&gt; element, opting instead for a generic &lt;div&gt; which does not convey the proper meaning to assistive technologies.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+interface BlockCitationProps {
+  citation: string;
+  author?: string;
+}
+
+const BlockCitation: React.FC<BlockCitationProps> = ({ citation, author }) => {
+  return (
+    <div className="citation-block">
+      <p>{citation}</p>
+      {author && <span>— {author}</span>}
+    </div>
+  );
+};
+
+export default BlockCitation;
+```

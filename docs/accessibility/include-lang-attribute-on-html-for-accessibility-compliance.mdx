@@ -1,0 +1,101 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Include lang attribute on html for accessibility compliance
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","WCAG"]} />
+
+### What
+This practice triggers when developing web pages in React to ensure that each page includes a default language declaration by setting the lang attribute on the html element (or using xml:lang where applicable). Violations occur when the lang attribute is omitted or mis-assigned, causing potential accessibility issues.
+
+### Why
+Including the lang attribute ensures that assistive technologies and search engines correctly interpret the page language, thereby improving accessibility and user experience. It also aligns with WCAG guidelines and internationalization best practices.
+
+### Fix
+To fix violations, modify the React TSX code to explicitly include the lang attribute on the html element when rendering the document, ensuring both the root html and any text containers reflect the correct language setting.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example correctly includes a lang attribute on the html element, ensuring the page is accessible and compliant with WCAG guidelines.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+// A custom Document component for proper HTML language declaration
+function Document() {
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <title>Accessible Web Page</title>
+      </head>
+      <body>
+        <App />
+      </body>
+    </html>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <h1>Welcome to our accessible website</h1>
+      <p>This page complies with accessibility standards by declaring the default language.</p>
+    </div>
+  );
+}
+
+ReactDOM.render(<Document />, document.getElementById('root'));
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example fails to define a lang attribute on the html element, which can lead to accessibility issues.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+// Document component missing the lang attribute
+function Document() {
+  return (
+    <html>
+      <head>
+        <meta charSet="utf-8" />
+        <title>Non-Compliant Web Page</title>
+      </head>
+      <body>
+        <App />
+      </body>
+    </html>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <h1>Welcome!</h1>
+      <p>This page does not specify a default language, impacting accessibility.</p>
+    </div>
+  );
+}
+
+ReactDOM.render(<Document />, document.getElementById('root'));
+```

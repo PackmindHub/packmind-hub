@@ -1,0 +1,78 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Add title attribute to iframe elements
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+When rendering iframe or frame elements in React TSX, check if a title attribute is provided. Missing or empty title attributes indicate that the embedded content may not be properly described for users of assistive technologies.
+
+### Why
+The title attribute is crucial for accessibility as it informs screen readers about the purpose of the iframe, aligning with WCAG guideline 4.1.2 and technique H64. Ensuring a descriptive title helps improve the user experience for people relying on assistive software.
+
+### Fix
+Explicitly add a meaningful title attribute to each iframe element in the TSX code. Revise code that omits this attribute to include a descriptive sentence, ensuring compliance with accessibility standards.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The iframe includes a descriptive title attribute that meets accessibility requirements.
+
+<!-- #example_positive_code -->
+```tsx
+import React from "react";
+
+const AccessibleIframe = () => {
+  return (
+    <div>
+      <iframe 
+        src="https://example.com" 
+        title="Example website showing product details" 
+        width="600" 
+        height="400"
+        style={{ border: "none" }}>
+      </iframe>
+    </div>
+  );
+};
+
+export default AccessibleIframe;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The iframe lacks a title attribute, compromising accessibility for users of screen readers.
+
+<!-- #example_negative_code -->
+```tsx
+import React from "react";
+
+const InaccessibleIframe = () => {
+  return (
+    <div>
+      <iframe 
+        src="https://example.com" 
+        width="600" 
+        height="400"
+        style={{ border: "none" }}>
+      </iframe>
+    </div>
+  );
+};
+
+export default InaccessibleIframe;
+```

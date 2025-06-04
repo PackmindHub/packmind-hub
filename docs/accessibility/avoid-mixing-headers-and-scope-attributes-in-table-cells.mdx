@@ -1,0 +1,89 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid mixing headers and scope attributes in table cells
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+This practice is triggered when a table cell is using both the 'headers' and 'scope' attributes. Code that applies both attributes on the same element can be identified as violating this guideline.
+
+### Why
+When both attributes are present, assistive technologies only consider the 'headers' attribute, and the 'scope' attribute is ignored, which may lead to confusing or incomplete header associations for users with disabilities. Ensuring a single, clear method of header referencing improves accessibility and consistency.
+
+### Fix
+Review your table cell implementations and remove the 'scope' attribute if the 'headers' attribute is used. Use only one reliable method to associate header cells, typically the 'headers' attribute when complex header associations are needed.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The table cells use only the 'headers' attribute for header association, providing a clear and compliant mapping for assistive technologies.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const AccessibleTable: React.FC = () => {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th id="header1">Name</th>
+          <th id="header2">Age</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td headers="header1">Alice</td>
+          <td headers="header2">30</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+export default AccessibleTable;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The addition of the 'scope' attribute alongside 'headers' creates conflicting header associations, leading to potential accessibility issues with assistive technologies.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const InaccessibleTable: React.FC = () => {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th id="header1">Name</th>
+          <th id="header2">Age</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td headers="header1" scope="row">Bob</td>
+          <td headers="header2" scope="row">25</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+export default InaccessibleTable;
+```

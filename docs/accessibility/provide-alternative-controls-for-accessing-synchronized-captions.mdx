@@ -1,0 +1,99 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Provide alternative controls for accessing synchronized captions
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+When a video component includes synchronized subtitles, especially those rendered via a &lt;track&gt; element, consider providing an alternative control (such as a button or link) to toggle or access captions. Violations occur when users are not offered an alternative if the native captions mechanism fails or is not supported.
+
+### Why
+Not all platforms or user agents handle caption tracks adequately. Providing an alternative trigger enhances accessibility by allowing users to explicitly enable or view the captions as needed, thereby supporting diverse user needs.
+
+### Fix
+Refactor your video components to include adjacent controls (e.g., a button) that allow users to toggle or access captions explicitly. Ensure that the control is clearly labeled and integrated into the UI for improved usability.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The component not only uses the correct &lt;track&gt; element for captions but also provides a clear UI control to toggle captions, improving accessibility.
+
+<!-- #example_positive_code -->
+```tsx
+import React, { useState } from 'react';
+
+const VideoPlayer: React.FC = () => {
+  const [showCaptions, setShowCaptions] = useState(true);
+
+  const toggleCaptions = () => {
+    setShowCaptions(prev => !prev);
+  };
+
+  return (
+    <div>
+      <video controls width="600">
+        <source src="video.mp4" type="video/mp4" />
+        {showCaptions && (
+          <track
+            kind="captions"
+            src="captions_en.vtt"
+            srcLang="en"
+            label="English Captions"
+            default
+          />
+        )}
+        Your browser does not support the video tag.
+      </video>
+      <button onClick={toggleCaptions}>
+        {showCaptions ? 'Hide Captions' : 'Show Captions'}
+      </button>
+    </div>
+  );
+};
+
+export default VideoPlayer;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The absence of an alternative control may hinder users who need explicit access to toggling captions on or off.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const VideoPlayer: React.FC = () => {
+  return (
+    <div>
+      <video controls width="600">
+        <source src="video.mp4" type="video/mp4" />
+        <track
+          kind="captions"
+          src="captions_en.vtt"
+          srcLang="en"
+          label="English Captions"
+          default
+        />
+        Your browser does not support the video tag.
+      </video>
+      {/* No alternative control provided for toggling captions */}
+    </div>
+  );
+};
+
+export default VideoPlayer;
+```

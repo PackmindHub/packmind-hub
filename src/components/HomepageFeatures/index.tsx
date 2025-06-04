@@ -39,7 +39,7 @@ const FeatureList: FeatureItem[] = [
         that work for everyone.
       </>
     ),
-    comingSoon: true,
+    link: '/docs/accessibility',
   },
   {
     title: 'DDD',

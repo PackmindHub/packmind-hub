@@ -1,0 +1,74 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use description list elements for definition lists
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","html"]} />
+
+### What
+When representing key-value pairs or definitions, check that the code uses the &lt;dl&gt; element along with &lt;dt&gt; for terms and &lt;dd&gt; for descriptions. Violating code may misuse list elements or generic containers.
+
+### Why
+Using &lt;dl&gt; with &lt;dt&gt; and &lt;dd&gt; provides clear semantics for definitions and related content, ensuring that assistive technologies can interpret the content structure accurately.
+
+### Fix
+Replace non-semantic lists or generic containers with a properly structured description list using &lt;dl&gt;, &lt;dt&gt;, and &lt;dd&gt; to convey relationships between terms and their definitions.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example correctly uses &lt;dl&gt;, &lt;dt&gt;, and &lt;dd&gt; to convey definitions semantically.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const DefinitionList: React.FC = () => {
+  return (
+    <dl>
+      <dt>HTML</dt>
+      <dd>A markup language for creating web pages.</dd>
+      <dt>CSS</dt>
+      <dd>A style sheet language used for describing the look of a document.</dd>
+      <dt>JavaScript</dt>
+      <dd>A programming language that adds interactivity to web pages.</dd>
+    </dl>
+  );
+};
+
+export default DefinitionList;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example misuses an unordered list (&lt;ul&gt;) instead of a description list (&lt;dl&gt;, &lt;dt&gt;, &lt;dd&gt;), losing semantic clarity.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const DefinitionListIncorrect: React.FC = () => {
+  return (
+    <ul>
+      <li><strong>HTML:</strong> A markup language for creating web pages.</li>
+      <li><strong>CSS:</strong> A style sheet language used for describing the look of a document.</li>
+      <li><strong>JavaScript:</strong> A programming language that adds interactivity to web pages.</li>
+    </ul>
+  );
+};
+
+export default DefinitionListIncorrect;
+```

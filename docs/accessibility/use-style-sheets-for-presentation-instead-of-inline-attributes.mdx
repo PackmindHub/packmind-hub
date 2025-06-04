@@ -1,0 +1,68 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use style sheets for presentation instead of inline attributes
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["react","typescript","CSS"]} />
+
+### What
+This practice is triggered when inline styling or presentation-specific attributes (like style, align, bgcolor, etc.) are directly embedded in the TSX code. Violating code may include inline style definitions that mix presentation with markup.
+
+### Why
+Using external or modular style sheets enforces separation of concerns, improves maintainability and allows easier compliance with accessibility guidelines such as WCAG. It also makes managing and updating design consistency across the site simpler.
+
+### Fix
+Remove inline style attributes from TSX elements and apply the required styles through an external CSS file or CSS-in-JS solution. Refactor the component by assigning class names and ensure the corresponding CSS rules are defined separately.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The component applies presentation using a CSS class instead of inline style attributes, adhering to separation of concerns.
+
+<!-- #example_positive_code -->
+```tsx
+import React from "react";
+import "./Button.css"; // External CSS file
+
+const Button = () => {
+  return (
+    <button className="primary-button">
+      Click me
+    </button>
+  );
+};
+
+export default Button;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The component uses inline style attributes for presentation, mixing style with markup and potentially violating accessibility guidelines.
+
+<!-- #example_negative_code -->
+```tsx
+import React from "react";
+
+const Button = () => {
+  return (
+    <button style={{ backgroundColor: "#4CAF50", color: "white", padding: "15px 32px", textAlign: "center", fontSize: "16px" }}>
+      Click me
+    </button>
+  );
+};
+
+export default Button;
+```

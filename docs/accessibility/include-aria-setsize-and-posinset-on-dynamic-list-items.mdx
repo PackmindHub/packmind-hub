@@ -1,0 +1,79 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Include ARIA setsize and posinset on dynamic list items
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","ARIA"]} />
+
+### What
+This practice is triggered when generating list items dynamically, especially when the complete list is not fully available in the DOM at render time. Violating code might omit ARIA attributes like aria-setsize and aria-posinset on each list item.
+
+### Why
+Providing aria-setsize and aria-posinset helps assistive technologies understand the overall size of the list and the position of each item. This ensures better accessibility and context for users with disabilities.
+
+### Fix
+Include aria-setsize to indicate the total number of items in the list and aria-posinset to denote each item's sequence. Ensure these attributes are updated if the list changes dynamically.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example includes aria-setsize and aria-posinset attributes on each list item, providing clear context for assistive technologies.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const DynamicList: React.FC<{ items: string[] }> = ({ items }) => {
+  return (
+    <ul>
+      {items.map((item, index) => (
+        <li 
+          key={index} 
+          aria-setsize={items.length}
+          aria-posinset={index + 1}
+        >
+          {item}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+export default DynamicList;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example omits aria-setsize and aria-posinset attributes, which may result in a less accessible dynamic list for users relying on assistive technologies.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const DynamicListMissingARIA: React.FC<{ items: string[] }> = ({ items }) => {
+  return (
+    <ul>
+      {items.map((item, index) => (
+        <li key={index}>
+          {item}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+export default DynamicListMissingARIA;
+```

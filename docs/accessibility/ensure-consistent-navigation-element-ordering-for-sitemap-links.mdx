@@ -1,0 +1,77 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure consistent navigation element ordering for sitemap links
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+This practice is triggered when implementing navigation components that include a link to the sitemap page. It ensures that the sitemap link is rendered in the same order and at the same location across different pages or view groups.
+
+### Why
+Consistency in navigation improves accessibility and usability, particularly for users relying on assistive technologies. Adhering to WCAG guidelines (2.4.5 and 3.2.3) avoids confusing navigation and enhances user trust.
+
+### Fix
+Review and refactor your navigation components to render the sitemap link at a fixed position in the component structure. Ensure that any variations in page layouts do not affect the relative order of navigation items.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The sitemap link is consistently placed in the same order within the navigation component, maintaining accessibility and a uniform user experience.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const MainNavigation: React.FC = () => {
+  return (
+    <nav aria-label="Main Navigation">
+      <ul>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/sitemap">Sitemap</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+    </nav>
+  );
+};
+
+export default MainNavigation;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The sitemap link is positioned inconsistently (placed first instead of at a standard location), potentially confusing users and contravening accessibility best practices.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const HomeNavigation: React.FC = () => {
+  return (
+    <nav aria-label="Main Navigation">
+      <ul>
+        <li><a href="/sitemap">Sitemap</a></li>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+    </nav>
+  );
+};
+
+export default HomeNavigation;
+```

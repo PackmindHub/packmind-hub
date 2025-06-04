@@ -1,0 +1,73 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Follow accessible naming guidelines for hyperlinks
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+When using hyperlinks with extra descriptive text in the accessible name (via aria-label), ensure the visible text appears at the beginning and matches exactly as shown. This rule applies when a link’s visible label is supplemented with additional context.
+
+### Why
+Proper ordering guarantees that assistive technologies correctly announce the primary action of the link, avoiding confusion for users with disabilities. It also complies with WCAG requirements which emphasize the exact match and appropriate ordering of text.
+
+### Fix
+Rearrange the accessible name so that the visible text appears at the start, followed by additional context if needed. In React TSX code, set the aria-label accordingly so that its initial part exactly mirrors the visible label.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example correctly places the visible text "Commander maintenant" at the beginning of the aria-label.
+
+<!-- #example_positive_code -->
+```tsx
+import React from "react";
+
+const AccessibleLink = () => {
+  return (
+    <a
+      href="https://example.com"
+      aria-label="Commander maintenant produit X"
+    >
+      Commander maintenant
+    </a>
+  );
+};
+
+export default AccessibleLink;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The aria-label does not start with the exact visible text, which violates WCAG accessibility naming guidelines.
+
+<!-- #example_negative_code -->
+```tsx
+import React from "react";
+
+const InaccessibleLink = () => {
+  return (
+    <a
+      href="https://example.com"
+      aria-label="Commander produit X maintenant"
+    >
+      Commander maintenant
+    </a>
+  );
+};
+
+export default InaccessibleLink;
+```

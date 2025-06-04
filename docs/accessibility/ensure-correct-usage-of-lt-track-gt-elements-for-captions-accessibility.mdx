@@ -1,0 +1,86 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure correct usage of &lt;track&gt; elements for captions accessibility
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+When implementing a video component with synchronized subtitles, verify that each &lt;track&gt; element includes the attribute kind set to 'captions'. Violations occur when the kind attribute is missing or has an incorrect value.
+
+### Why
+This rule is vital because it ensures that assistive technologies recognize and process the subtitles correctly, meeting accessibility standards such as WCAG 1.2.2. Clear semantic markup improves the user experience for people who rely on captions.
+
+### Fix
+Review your video components and add or correct the kind attribute in the &lt;track&gt; tags to use kind='captions'. This change aligns your code with accessibility guidelines and ensures proper behavior across different browsers.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The &lt;track&gt; element correctly uses kind='captions', ensuring the subtitles are accessible.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const VideoPlayer: React.FC = () => {
+  return (
+    <div>
+      <video controls width="600">
+        <source src="video.mp4" type="video/mp4" />
+        <track
+          kind="captions"
+          src="captions_en.vtt"
+          srcLang="en"
+          label="English Captions"
+          default
+        />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  );
+};
+
+export default VideoPlayer;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The &lt;track&gt; element is missing the required kind='captions' attribute, which violates accessibility guidelines.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const VideoPlayer: React.FC = () => {
+  return (
+    <div>
+      <video controls width="600">
+        <source src="video.mp4" type="video/mp4" />
+        <track
+          src="captions_en.vtt"
+          srcLang="en"
+          label="English Captions"
+          default
+        />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  );
+};
+
+export default VideoPlayer;
+```

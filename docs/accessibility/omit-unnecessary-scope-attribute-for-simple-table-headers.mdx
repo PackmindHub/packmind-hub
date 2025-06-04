@@ -1,0 +1,103 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Omit unnecessary scope attribute for simple table headers
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","html"]} />
+
+### What
+This practice applies when building data tables that only have header elements (&lt;th&gt;) in a single row or a single column. Code that includes a 'scope' attribute on these &lt;th&gt; elements is considered redundant since the table structure inherently conveys the header relationships.
+
+### Why
+Using extra attributes like 'scope' when not required can clutter the markup and confuse developers maintaining the code. Keeping the code simple improves readability while still complying with accessibility standards such as WCAG.
+
+### Fix
+Remove the 'scope' attribute from header elements in tables with a single header row or column. Use semantic &lt;th&gt; tags directly to indicate headers without additional attributes.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The code correctly uses &lt;th&gt; elements without the 'scope' attribute since the header is clearly defined in a single row.
+
+<!-- #example_positive_code -->
+```tsx
+import React from "react";
+
+const SimpleTable = () => {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Stock</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Widget</td>
+          <td>$25</td>
+          <td>Available</td>
+        </tr>
+        <tr>
+          <td>Gadget</td>
+          <td>$40</td>
+          <td>Out of stock</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+export default SimpleTable;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The code unnecessarily adds 'scope' attributes on &lt;th&gt; elements despite having a clearly structured single-row header, resulting in redundant markup.
+
+<!-- #example_negative_code -->
+```tsx
+import React from "react";
+
+const RedundantTable = () => {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Product</th>
+          <th scope="col">Price</th>
+          <th scope="col">Stock</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Widget</td>
+          <td>$25</td>
+          <td>Available</td>
+        </tr>
+        <tr>
+          <td>Gadget</td>
+          <td>$40</td>
+          <td>Out of stock</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+export default RedundantTable;
+```

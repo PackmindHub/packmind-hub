@@ -1,0 +1,97 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use accessible table headers in React TSX
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+This practice is triggered when creating data tables in React that include header cells without proper HTML attributes for accessibility, such as missing scope, id, or WAI-ARIA roles. It applies when tables do not clearly associate headers with data cells. Developers should review their table markup for improvements.
+
+### Why
+Properly structured table headers ensure that assistive technologies correctly interpret the table layout, helping users with disabilities comply with WCAG 1.3.1 guidelines. Accessible markup improves overall usability and semantic clarity for screen reader users.
+
+### Fix
+Add descriptive id and scope attributes to header cells and use headers attributes on the corresponding data cells when necessary. Optionally, include WAI-ARIA roles to enhance accessibility in complex table structures.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example correctly applies id, scope, and WAI-ARIA roles to table header cells, ensuring accessible associations between headers and data cells.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const AccessibleTable: React.FC = () => {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th id="name-header" scope="col" role="columnheader">Name</th>
+          <th id="age-header" scope="col" role="columnheader">Age</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td headers="name-header">Alice</td>
+          <td headers="age-header">30</td>
+        </tr>
+        <tr>
+          <td headers="name-header">Bob</td>
+          <td headers="age-header">25</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+export default AccessibleTable;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example lacks id, scope, and headers attributes, making it difficult for assistive technologies to properly relate header cells to data cells.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const InaccessibleTable: React.FC = () => {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Alice</td>
+          <td>30</td>
+        </tr>
+        <tr>
+          <td>Bob</td>
+          <td>25</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+export default InaccessibleTable;
+```

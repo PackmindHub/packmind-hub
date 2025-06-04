@@ -1,0 +1,107 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use caption element to associate table titles
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+Ensure that any data table which has a title embeds the title using a &lt;caption&gt; element directly within the &lt;table&gt;. This practice triggers when a table title is rendered separately (for example, in an external heading) and fails to programmatically associate the title with the table.
+
+### Why
+It matters because assistive technologies rely on the semantic connection between a table and its caption to convey table context accurately. Enforcing this rule improves accessibility compliance with WCAG 1.3.1 and ensures a better user experience for users with disabilities.
+
+### Fix
+Replace standalone headings or external title elements with an in-table &lt;caption&gt; element placed as the first child of the &lt;table&gt; element. This modification creates a programmatically determinable association between the table title and its data.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The code correctly places the table caption within the table, ensuring proper semantic association for assistive technologies.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const AccessibleDataTable: React.FC = () => {
+  return (
+    <table>
+      <caption>Employee Data Table</caption>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Position</th>
+          <th>Department</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Alice</td>
+          <td>Developer</td>
+          <td>Engineering</td>
+        </tr>
+        <tr>
+          <td>Bob</td>
+          <td>Manager</td>
+          <td>Sales</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+export default AccessibleDataTable;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The title is rendered as an external heading rather than as a &lt;caption&gt; inside the table, breaking the semantic association required for accessibility.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const InaccessibleDataTable: React.FC = () => {
+  return (
+    <div>
+      <h2>Employee Data Table</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Department</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Alice</td>
+            <td>Developer</td>
+            <td>Engineering</td>
+          </tr>
+          <tr>
+            <td>Bob</td>
+            <td>Manager</td>
+            <td>Sales</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default InaccessibleDataTable;
+```

@@ -1,0 +1,70 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure figcaption text matches figure aria-label
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","JSX"]} />
+
+### What
+This practice applies when using a &lt;figcaption&gt; to describe a visual element inside a &lt;figure&gt;. It is triggered when there is an aria-label attribute on the &lt;figure&gt; that is intended to match the figcaption’s content, but the texts do not match exactly. Violations include mistakenly having different descriptive texts between the aria-label and the actual caption.
+
+### Why
+Consistency between the aria-label and the figcaption ensures that assistive technologies convey the correct and full description of the image content. This alignment is crucial for users who depend on accurate text descriptions for understanding visual content.
+
+### Fix
+Use identical text content in both the aria-label attribute on the &lt;figure&gt; element and the &lt;figcaption&gt; element. This guarantees that any assistive tool interpreting the aria-label will convey the same information as the visual caption.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The aria-label perfectly matches the figcaption text, ensuring clear and consistent accessibility information.
+
+<!-- #example_positive_code -->
+```tsx
+import React from "react";
+
+export const ConsistentCaption: React.FC = () => {
+  const captionText = "Diagram: System Architecture Overview";
+  return (
+    <figure role="group" aria-label={captionText}>
+      <img src="architecture.png" alt="System Architecture Diagram" />
+      <figcaption>{captionText}</figcaption>
+    </figure>
+  );
+};
+
+export default ConsistentCaption;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The aria-label and figcaption text do not match, which can lead to confusion for users relying on assistive technologies.
+
+<!-- #example_negative_code -->
+```tsx
+import React from "react";
+
+export const InconsistentCaption: React.FC = () => {
+  return (
+    <figure role="group" aria-label="Overview of the system">
+      <img src="architecture.png" alt="System Architecture Diagram" />
+      <figcaption>Diagram: System Architecture Overview</figcaption>
+    </figure>
+  );
+};
+
+export default InconsistentCaption;
+```

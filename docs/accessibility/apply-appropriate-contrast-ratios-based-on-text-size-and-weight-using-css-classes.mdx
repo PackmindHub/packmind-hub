@@ -1,0 +1,87 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Apply appropriate contrast ratios based on text size and weight using CSS classes
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","CSS"]} />
+
+### What
+This practice is triggered when different text types (normal, large, or bold) are not styled individually to adhere to specific contrast requirements. Violations are seen when a single style is applied regardless of the text's size or weight, not accounting for variations in WCAG contrast needs.
+
+### Why
+Different text sizes and weights have varying contrast ratio requirements, such as 4.5:1 for standard text and 3:1 for larger or bold text. Custom styling via CSS classes ensures each text variant complies with the appropriate accessibility guidelines.
+
+### Fix
+Define distinct CSS classes for different text categories (e.g., .normal-text, .large-text) and assign colors that meet the corresponding contrast ratios. Update templates by using these classes to differentiate text elements based on their size and weight.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example uses CSS classes to assign appropriate contrast ratios based on text size and weight, ensuring accessibility compliance.
+
+<!-- #example_positive_code -->
+```css
+.normal-text {
+  color: #444444;
+  background-color: #FFFFFF;
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 10px;
+  padding: 5px;
+}
+
+.large-text {
+  color: #222222;
+  background-color: #F1F1F1;
+  font-size: 24px; /* Larger text allowed lower contrast ratio (3:1) */
+  line-height: 1.5;
+  margin: 12px;
+  padding: 8px;
+}
+
+.bold-text {
+  font-weight: bold;
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+In this example, similar styles are applied without adjusting color contrast for larger or bold text, leading to insufficient contrast levels.
+
+<!-- #example_negative_code -->
+```css
+.text {
+  color: #999999;
+  background-color: #FFFFFF;
+  font-size: 16px;
+  line-height: 1.4;
+  margin: 10px;
+  padding: 5px;
+}
+
+.text-large {
+  color: #AAAAAA;
+  background-color: #FFFFFF;
+  font-size: 24px;
+  line-height: 1.4;
+  margin: 12px;
+  padding: 8px;
+}
+
+.text-bold {
+  font-weight: bold;
+}
+```

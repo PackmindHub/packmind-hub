@@ -1,0 +1,97 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use valid autocomplete attribute values for form fields
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript","HTML5"]} />
+
+### What
+This practice is triggered when designing form components that collect user data. It requires developers to include an autocomplete attribute with a value that is listed in the HTML5.2 and WCAG2.1 specifications.
+
+### Why
+Using valid autocomplete values enhances accessibility and user experience by enabling browsers to provide accurate autofill. It ensures compliance with web standards and improves form usability.
+
+### Fix
+Review form input components to ensure the autocomplete attribute contains a valid field name or a valid combination of tokens. Adjust any incorrect or missing autocomplete values according to the specification.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example correctly uses valid autocomplete tokens such as 'shipping name' and 'shipping street-address' to comply with accessibility standards.
+
+<!-- #example_positive_code -->
+```tsx
+import React from 'react';
+
+const ShippingForm: React.FC = () => {
+  return (
+    <form>
+      <label htmlFor="shipping-name">Name:</label>
+      <input
+        id="shipping-name"
+        type="text"
+        name="shippingName"
+        autoComplete="shipping name"
+        placeholder="Enter your shipping name"
+      />
+      <label htmlFor="street-address">Address:</label>
+      <input
+        id="street-address"
+        type="text"
+        name="streetAddress"
+        autoComplete="shipping street-address"
+        placeholder="Enter your street address"
+      />
+    </form>
+  );
+};
+
+export default ShippingForm;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example fails to provide valid autocomplete values and uses improper tokens, breaking the accessibility guidelines.
+
+<!-- #example_negative_code -->
+```tsx
+import React from 'react';
+
+const BadShippingForm: React.FC = () => {
+  return (
+    <form>
+      <label htmlFor="name">Name:</label>
+      <input
+        id="name"
+        type="text"
+        name="name"
+        autoComplete="true" // invalid autocomplete value; should be a valid field name
+        placeholder="Enter your name"
+      />
+      <label htmlFor="address">Address:</label>
+      <input
+        id="address"
+        type="text"
+        name="address"
+        autoComplete="no" // non-compliant value that does not match specification tokens
+        placeholder="Enter your address"
+      />
+    </form>
+  );
+};
+
+export default BadShippingForm;
+```

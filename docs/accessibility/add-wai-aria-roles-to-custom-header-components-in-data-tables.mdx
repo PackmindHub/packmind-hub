@@ -1,0 +1,111 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Add WAI-ARIA roles to custom header components in data tables
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["accessibility","react","typescript"]} />
+
+### What
+This practice is triggered when creating custom header components or when not using the semantically correct th elements. Violations occur when header cells are rendered as non-semantic elements such as divs without the proper ARIA role.
+
+### Why
+Adding WAI-ARIA roles like "columnheader" or "rowheader" improves screen reader support by explicitly declaring the cell’s purpose, which is critical when semantic elements cannot be used.
+
+### Fix
+Either use semantically correct th elements or, if a custom component renders a non-semantic element, include the correct role attribute in the element declaration.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example uses a custom TableHeader component that appropriately adds the aria role for header cells, ensuring accessibility.
+
+<!-- #example_positive_code -->
+```tsx
+import React from "react";
+
+const TableHeader: React.FC<{ children: React.ReactNode; isRowHeader?: boolean }> = ({ children, isRowHeader = false }) => {
+  return (
+    <div role={isRowHeader ? "rowheader" : "columnheader"} style={{ fontWeight: "bold", padding: "8px" }}>
+      {children}
+    </div>
+  );
+};
+
+const DataTable: React.FC = () => {
+  return (
+    <div role="table">
+      <div role="row">
+        <TableHeader>Name</TableHeader>
+        <TableHeader>Age</TableHeader>
+        <TableHeader>City</TableHeader>
+      </div>
+      <div role="row">
+        <div role="cell">Alice</div>
+        <div role="cell">30</div>
+        <div role="cell">Paris</div>
+      </div>
+      <div role="row">
+        <div role="cell">Bob</div>
+        <div role="cell">25</div>
+        <div role="cell">London</div>
+      </div>
+    </div>
+  );
+};
+
+export default DataTable;
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example misses the explicit WAI-ARIA role on the header component, causing assistive technologies to misinterpret the header cells.
+
+<!-- #example_negative_code -->
+```tsx
+import React from "react";
+
+const TableHeader: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <div style={{ fontWeight: "bold", padding: "8px" }}>
+      {children}
+    </div>
+  );
+};
+
+const DataTable: React.FC = () => {
+  return (
+    <div role="table">
+      <div role="row">
+        <TableHeader>Name</TableHeader>
+        <TableHeader>Age</TableHeader>
+        <TableHeader>City</TableHeader>
+      </div>
+      <div role="row">
+        <div role="cell">Alice</div>
+        <div role="cell">30</div>
+        <div role="cell">Paris</div>
+      </div>
+      <div role="row">
+        <div role="cell">Bob</div>
+        <div role="cell">25</div>
+        <div role="cell">London</div>
+      </div>
+    </div>
+  );
+};
+
+export default DataTable;
+```
