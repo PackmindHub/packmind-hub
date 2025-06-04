@@ -1,0 +1,127 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Self-Assignment of Variables
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["Maintainability","Correctness"]} />
+
+## What is it?
+Self-assignment occurs when a variable is assigned to itself, which serves no practical purpose. This often indicates redundant code or a potential error where a different variable or value was intended for assignment.
+
+## Why apply it?
+Removing self-assignment improves code clarity and maintainability. It prevents confusion for future readers and avoids unnecessary operations that might hide logic mistakes.
+
+## How to Fix it?
+Review your code to ensure that every assignment serves a clear purpose. Either remove the redundant self-assignment or assign the intended value to the appropriate variable or object property to correctly update the state.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+class User {
+  name: string;
+
+  updateName(name: string): void {
+    console.log("Attempting to update user name");
+    // Correct: Assign the value to the object's property instead of self-assignment.
+    this.name = name;
+    console.log(`User name is now set to: ${this.name}`);
+    // Additional logic could follow here.
+    console.log("Update complete.");
+  }
+}
+
+const user = new User();
+user.updateName("Alice");
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+class User {
+  name: string;
+
+  updateName(name: string): void {
+    console.log("Attempting to update user name");
+    // Noncompliant: The parameter is redundantly assigned to itself.
+    name = name;
+    console.log(`After self-assignment, name is: ${name}`);
+    // Other operations continue even though no actual update occurred.
+    console.log("Update complete.");
+  }
+}
+
+const user = new User();
+user.updateName("Alice");
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+class Person {
+  id: number;
+
+  setId(id: number): void {
+    console.log("Starting update for id");
+    // Correct: The object's property is updated with the parameter value.
+    this.id = id;
+    console.log(`The object id is now ${this.id}`);
+    // Additional business logic can proceed here.
+    console.log("Update process complete.");
+  }
+}
+
+const person = new Person();
+person.setId(42);
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+class Person {
+  id: number;
+
+  setId(id: number): void {
+    console.log("Starting update for id");
+    // Noncompliant: The parameter is redundantly assigned to itself.
+    id = id;
+    console.log(`The provided id remains ${id} without updating the object property`);
+    // Additional logic that falsely assumes the id has been updated.
+    console.log("Update process complete.");
+  }
+}
+
+const person = new Person();
+person.setId(42);
+```

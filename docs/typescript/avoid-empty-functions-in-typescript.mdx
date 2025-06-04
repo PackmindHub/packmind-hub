@@ -1,0 +1,140 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Empty Functions in TypeScript
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["intentionality","Maintainability","clarity"]} />
+
+## What is it?
+This practice is triggered when functions are defined without any implementation. An empty function can indicate an oversight, incomplete feature, or deceptive code that promises functionality without providing it.
+
+## Why apply it?
+Empty functions can be confusing and misleading for developers. They may imply that a certain behavior is implemented when in reality nothing happens. To ensure clear, reliable, and maintainable code, functions should either have a meaningful implementation, throw an explicit error when not supported, or include a comment explaining why the function remains intentionally blank.
+
+## How to Fix it?
+Provide the intended functionality within the function body. If the function is not yet implemented or is intentionally left blank (for example, when overriding a method), include an explanatory comment or throw an informative error.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function calculateTotal(prices: number[]): number {
+  
+  
+  
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function calculateTotal(prices: number[]): number {
+  if (prices.length === 0) {
+    return 0;
+  }
+  const total = prices.reduce((sum, price) => sum + price, 0);
+  console.log("Total calculated:", total);
+  return total;
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+class BaseComponent {
+  render(): string {
+    return "<div>Base Content</div>";
+  }
+}
+
+class ChildComponent extends BaseComponent {
+  render(): string {
+    
+    
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+class BaseComponent {
+  render(): string {
+    return "<div>Base Content</div>";
+  }
+}
+
+class ChildComponent extends BaseComponent {
+  render(): string {
+    // Intentionally overriding to maintain parent's behavior.
+    // Additional customization might be added later.
+    return super.render();
+  }
+}
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function notImplementedFeature(): void {
+  throw new Error("notImplementedFeature cannot be executed because it is under development.");
+  // Additional debug or logging statements could be added here if needed.
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function notImplementedFeature(): void {
+  
+  
+  
+}
+```

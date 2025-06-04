@@ -1,0 +1,144 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Overly Complex Expressions
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Readability","complexity"]} />
+
+## What is it?
+This practice is triggered by the use of overly complex expressions that combine numerous logical operators (`&&`, `||`) or the ternary operator (`? :`) in a single statement. Such expressions can become difficult to read and maintain.
+
+## Why apply it?
+Complex expressions obscure the logic of your code, making it harder for you and others to understand, maintain, and debug. Breaking down these expressions into simpler, more manageable parts improves code clarity and reduces the possibility of errors.
+
+## How to Fix it?
+1. Break down the complex expression into smaller, intermediate variables.
+2. Replace nested ternary operators with clean if/else constructs.
+3. Refactor boolean logic to use separate, well-named conditions.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function canAccessFeature(isAdmin: boolean, isPremiumUser: boolean, isTrialUser: boolean, featureFlag: boolean): boolean {
+  // Noncompliant: overly complex boolean expression
+  return isAdmin || (isPremiumUser && featureFlag) || (isTrialUser && !featureFlag);
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function getDiscount(age: number, isStudent: boolean, hasCoupon: boolean): number {
+  let baseDiscount = 0;
+  
+  if (age < 18) {
+    baseDiscount = 10;
+  } else if (age >= 65) {
+    baseDiscount = 15;
+  }
+  
+  let extraDiscount = 0;
+  if (isStudent && hasCoupon) {
+    extraDiscount = 5;
+  } else if (isStudent) {
+    extraDiscount = 3;
+  } else if (hasCoupon) {
+    extraDiscount = 2;
+  }
+  
+  const totalDiscount = baseDiscount + extraDiscount;
+  return totalDiscount;
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function getStatusMessage(score: number): string {
+  // Noncompliant: nested ternary operators increase expression complexity
+  return score > 90 ? "Excellent" 
+       : score >= 70 ? "Good" 
+       : score >= 50 ? "Average" 
+       : "Poor";
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function getStatusMessage(score: number): string {
+  let message: string;
+  
+  if (score > 90) {
+    message = "Excellent";
+  } else if (score >= 70) {
+    message = "Good";
+  } else if (score >= 50) {
+    message = "Average";
+  } else {
+    message = "Poor";
+  }
+  
+  return message;
+}
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function canAccessFeature(isAdmin: boolean, isPremiumUser: boolean, isTrialUser: boolean, featureFlag: boolean): boolean {
+  const hasAdminAccess = isAdmin;
+  const hasPremiumAccess = isPremiumUser && featureFlag;
+  const hasTrialAccess = isTrialUser && !featureFlag;
+  
+  if (hasAdminAccess || hasPremiumAccess || hasTrialAccess) {
+    return true;
+  }
+  
+  return false;
+}
+```

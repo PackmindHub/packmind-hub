@@ -1,0 +1,134 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Duplicated String Literals
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["refactoring","Maintainability"]} />
+
+## What is it?
+This practice is triggered by duplicated string literals, which can make the refactoring process error-prone and difficult to maintain. Repeating the same literal string value in multiple places increases the risk of inconsistency if changes are later needed.
+
+## Why apply it?
+Duplicated string literals lead to technical debt because any necessary changes must be replicated in every occurrence. Refactoring by replacing these literals with a constant helps centralize updates, reducing the chance of errors and simplifying maintenance.
+
+## How to Fix it?
+Replace duplicated string literals with a single constant reference. This practice makes your code cleaner, improves readability, and ensures that any future change to the literal value needs to be made only once.
+
+## Exceptions
+To prevent generating some false-positives, literals having less than 10 characters are excluded as well as literals matching /^\w*$/. String literals inside import/export statements and JSX attributes are also ignored. The same goes for statement-like string literals, e.g. 'use strict';.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function prepare(action: string): void {
+  console.log("Preparing: " + action);
+}
+
+function execute(action: string): void {
+  console.log("Executing: " + action);
+}
+
+function release(action: string): void {
+  console.log("Releasing: " + action);
+}
+
+function run(): void {
+  prepare("action_to_launch");  // Noncompliant - literal duplicated
+  execute("action_to_launch");
+  release("action_to_launch");
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+const UNEXPECTED_FAILURE_MSG = "Unexpected failure occurred";
+
+class Logger {
+  log(message: string): void {
+    console.log("ERROR: " + message);
+  }
+}
+
+function simulateError(): void {
+  new Logger().log(UNEXPECTED_FAILURE_MSG);
+  new Logger().log(UNEXPECTED_FAILURE_MSG);
+  new Logger().log(UNEXPECTED_FAILURE_MSG);
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+class Logger {
+  log(message: string): void {
+    console.log("ERROR: " + message);
+  }
+}
+
+function simulateError(): void {
+  new Logger().log("Unexpected failure occurred");  // Noncompliant - literal duplicated
+  new Logger().log("Unexpected failure occurred");
+  new Logger().log("Unexpected failure occurred");
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+const ACTION_TO_LAUNCH = "action_to_launch";
+
+function prepare(action: string): void {
+  console.log("Preparing: " + action);
+}
+
+function execute(action: string): void {
+  console.log("Executing: " + action);
+}
+
+function release(action: string): void {
+  console.log("Releasing: " + action);
+}
+
+function run(): void {
+  prepare(ACTION_TO_LAUNCH); // Compliant
+  execute(ACTION_TO_LAUNCH);
+  release(ACTION_TO_LAUNCH);
+}
+```

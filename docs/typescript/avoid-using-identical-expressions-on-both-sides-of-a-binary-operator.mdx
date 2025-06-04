@@ -1,0 +1,152 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Using Identical Expressions on Both Sides of a Binary Operator
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Maintainability","redundancy"]} />
+
+## What is it?
+This practice highlights the risks of using the same expression on both sides of a binary operator. Whether in logical comparisons, mathematical operations, or bitwise shifts, duplicated expressions can lead to unintentional logic errors or redundant code.
+
+## Why apply it?
+Using identical expressions on both sides of an operator might indicate a copy/paste mistake or unnecessarily repeated logic. It results in predictable outcomes that could hide bugs or reduce code clarity. Refactoring such expressions not only clarifies intent but can also simplify your code.
+
+## How to Fix it?
+Ensure that each side of a binary operator is purposefully distinct. If the same expression is needed, assign it to a variable and use that variable, or revise your logic to prevent unintentional duplication. Exceptions exist, such as testing for NaN (e.g., f !== f) or the typical use-case for left-shifting 1 by 1 when constructing bit masks.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function checkValues(a: number, b: number) {
+  if ((a === b) && (a === b)) {  /* Noncompliant: identical expressions on both sides */
+    console.log("Both conditions are identical.");
+  }
+  console.log("Completed check.");
+}
+checkValues(5, 5);
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function createBitmask(value: number) {
+  const mask = value << value;  /* Noncompliant: identical expressions on both sides of << */
+  console.log("Bitmask is:", mask);
+  if (mask > 0) {
+    console.log("Valid mask.");
+  }
+  console.log("Bitmask creation complete.");
+}
+createBitmask(3);
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function checkValues(a: number, b: number) {
+  const areEqual = a === b;
+  if (areEqual) {  /* Compliant: using a variable to store the result */
+    console.log("Values are equal.");
+  } else {
+    console.log("Values differ.");
+  }
+  console.log("Completed check.");
+}
+checkValues(5, 5);
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function calculateDifference(num: number) {
+  const diff = num - num;  /* Noncompliant: subtracting the same expression yields a predictable 0 */
+  console.log("Difference is:", diff);
+  if (diff === 0) {
+    console.log("Subtraction resulted in 0 as expected.");
+  }
+  console.log("Calculation complete.");
+}
+calculateDifference(10);
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function createBitmask(value: number) {
+  const mask = value << (value + 1);  /* Compliant: different expressions for the shift operation */
+  console.log("Bitmask is:", mask);
+  if (mask > 0) {
+    console.log("Valid mask.");
+  }
+  console.log("Bitmask creation complete.");
+}
+createBitmask(3);
+```
+
+### Example 5:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function calculateDifference(num1: number, num2: number) {
+  const diff = num1 - num2;  /* Compliant: different expressions are used */
+  console.log("Difference is:", diff);
+  if (diff !== 0) {
+    console.log("Subtraction result is non-zero.");
+  } else {
+    console.log("Subtraction resulted in 0.");
+  }
+  console.log("Calculation complete.");
+}
+calculateDifference(10, 5);
+```

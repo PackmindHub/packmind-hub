@@ -9,3 +9,12 @@
   height: 200px;
   width: 200px;
 }
+
+/* Ensure consistent font rendering for feature blocks */
+.features h3 {
+  font-weight: var(--ifm-font-weight-semibold);
+}
+
+.features p {
+  font-weight: var(--ifm-font-weight-normal);
+}

@@ -1,0 +1,143 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Declare Default Values for Optional Boolean Parameters
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","readability","intentionality"]} />
+
+## What is it?
+This practice requires that optional boolean parameters in TypeScript functions always have a default value. Defining a default value clarifies the function’s behavior when the parameter is not provided, thereby increasing code readability and reducing subtle logic errors.
+
+## Why apply it?
+Using default values for optional boolean parameters makes function logic explicit. Without a default, the function’s behavior when the parameter is missing may be unclear, leading to potential bugs and a less maintainable code base. In cases where it is not possible to provide a default value, consider splitting the function into two, each with a clear responsibility.
+
+## How to Fix it?
+Ensure that optional boolean parameters are assigned a default value. If different behaviors are needed, refactor the function into two separate functions with explicit parameter requirements.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example shows a function that counts positive numbers from an array. The optional boolean parameter now has a default value so that the logic remains clear regardless of whether the parameter is provided.
+
+<!-- #example_positive_code -->
+```ts
+function countPositiveNumbers(arr: number[], countZero = false): number {
+  let count = 0;
+  for (const num of arr) {
+    // Include zero in the count only if countZero is true.
+    if (num > 0 || (countZero && num === 0)) {
+      count++;
+    }
+  }
+  return count;
+}
+
+// Sample usage:
+const numbers = [-3, 0, 2, 5, 0];
+console.log(countPositiveNumbers(numbers));       // Uses default: countZero = false.
+console.log(countPositiveNumbers(numbers, true));   // Explicitly count zeros.
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example shows the same logic but without providing a default value for the optional boolean parameter. This forces the caller to check for undefined values, making the logic more complex and error-prone.
+
+<!-- #example_negative_code -->
+```ts
+function countPositiveNumbers(arr: number[], countZero?: boolean): number {
+  let count = 0;
+  for (const num of arr) {
+    // Behavior unclear when countZero is undefined.
+    if (num > 0 || (countZero !== undefined && countZero && num === 0)) {
+      count++;
+    }
+  }
+  return count;
+}
+
+// Sample usage:
+const numbers = [-3, 0, 2, 5, 0];
+console.log(countPositiveNumbers(numbers));          // Unclear behavior: countZero is undefined.
+console.log(countPositiveNumbers(numbers, true));      // Explicit value provided.
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this positive example, the function toggleProperty has been refactored into two functions to clearly separate the logic. One function requires an explicit boolean value, while the other handles the calculated default behavior.
+
+<!-- #example_positive_code -->
+```ts
+function toggleProperty(property: string, value: boolean): void {
+  // Directly set the property with the explicit boolean value.
+  setProperty(property, value);
+}
+
+function togglePropertyToCalculatedValue(property: string): void {
+  // Calculate the boolean value before setting the property.
+  const calculatedValue = calculateProperty();
+  setProperty(property, calculatedValue);
+}
+
+// Dummy implementations for demonstration:
+function setProperty(prop: string, val: boolean): void {
+  console.log(`Property ${prop} set to ${val}`);
+}
+
+function calculateProperty(): boolean {
+  return Math.random() >= 0.5;
+}
+
+// Sample usage:
+toggleProperty("enabled", true);
+togglePropertyToCalculatedValue("visible");
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example demonstrates a single function that tries to handle both cases using an optional parameter without a default value, resulting in conditional logic inside the function to account for undefined values.
+
+<!-- #example_negative_code -->
+```ts
+function toggleProperty(property: string, value?: boolean): void {
+  if (value !== undefined) {
+    // When the value is provided, set the property accordingly.
+    setProperty(property, value);
+  } else {
+    // When the value is not provided, calculate the boolean value.
+    const calculatedValue = calculateProperty();
+    setProperty(property, calculatedValue);
+  }
+}
+
+// Dummy implementations for demonstration:
+function setProperty(prop: string, val: boolean): void {
+  console.log(`Property ${prop} set to ${val}`);
+}
+
+function calculateProperty(): boolean {
+  return Math.random() >= 0.5;
+}
+
+// Sample usage:
+toggleProperty("active", true);
+toggleProperty("active");  // Behavior inferred from internal conditional logic.
+```

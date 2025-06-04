@@ -1,0 +1,105 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Using Literals as Functions
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["Reliability","Correctness"]} />
+
+## What is it?
+This practice is concerned with accidentally calling literal values as if they were functions. Literals like booleans, numbers, or strings are not functions and invoking them as such will throw a runtime TypeError. This issue can occur either directly or when a literal is mistakenly used as a template literal tag.
+
+## Why apply it?
+Calling a literal as if it were a function is almost always an error that results from an oversight. It leads to unexpected runtime errors and makes the code harder to understand and maintain. By avoiding this mistake, you improve both the quality and reliability of your code.
+
+## How to Fix it?
+Ensure that you are only calling valid function expressions or references. If you need to use a function, assign it to a variable or define it explicitly rather than mistakenly using a literal. Similarly, when using template literal tags, make sure that the tag is a proper function and not a literal value.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function greet(): void {
+  console.log("Hello, World!");
+}
+
+const greetFunction = greet;  // Assign the function to a variable
+greetFunction();              // Compliant: calling a proper function
+
+// Additional logic for context
+const value = 10;
+console.log("The value is:", value);
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+const literal = false;
+try {
+  // Attempting to use a boolean literal as a tag function
+  const message = literal`This should fail`; // Noncompliant
+  console.log(message);
+} catch (err) {
+  console.error("Error caught:", err);
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function tag(strings: TemplateStringsArray, ...values: any[]): string {
+  let result = "";
+  for (let i = 0; i < strings.length; i++) {
+    result += strings[i];
+    if (i < values.length) {
+      result += values[i];
+    }
+  }
+  return result;
+}
+
+const greeting = tag`Hello, ${"World"}! Today is ${"Monday"}.`; // Compliant
+console.log(greeting);
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+const booleanLiteral = true;
+try {
+  const result = booleanLiteral(); // Noncompliant: literal used as function
+  console.log("Result:", result);
+} catch (error) {
+  console.error("Caught an error:", error);
+}
+```

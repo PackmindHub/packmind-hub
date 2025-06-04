@@ -1,0 +1,110 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Unsanitized DOM Updates Leading to XSS Vulnerabilities
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["Security","vulnerability"]} />
+
+## What is it?
+This practice is triggered when dangerous DOM properties, such as innerHTML, are used to update the webpage using unsanitized user-provided input. When the input is not properly handled, it can lead to cross-site scripting (XSS) attacks by allowing an attacker to inject and execute arbitrary code in a user's browser.
+
+## Why apply it?
+Using unsanitized input with DOM manipulation functions can enable attackers to modify the web page’s content, hijack user sessions, or steal sensitive data. Safe alternatives, such as innerText or textContent, ensure that user input is treated as plain text, preventing any embedded markup or malicious code from being executed.
+
+## How to Fix it?
+Replace dangerous DOM properties like innerHTML with safe alternatives like innerText or textContent. If dynamic HTML rendering is required, ensure that user input is properly sanitized using robust libraries (ex: DOMPurify) or encode it correctly before injecting it into the DOM.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+const rootEl: HTMLElement | null = document.getElementById('root');
+if (rootEl) {
+  const queryParams = new URLSearchParams(document.location.search);
+  const input: string | null = queryParams.get("input");
+  if (input !== null) {
+    // Compliant: Using innerText ensures that the input is treated as plain text
+    rootEl.innerText = input;
+  } else {
+    rootEl.innerText = "Default message";
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+const rootEl: HTMLElement | null = document.getElementById('root');
+if (rootEl) {
+  const queryParams = new URLSearchParams(document.location.search);
+  const input: string | null = queryParams.get("input");
+  // Noncompliant: Using innerHTML with unsanitized user input can lead to XSS attacks.
+  rootEl.innerHTML = input || "Default message";
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function updateContent(): void {
+  const contentContainer = document.querySelector<HTMLDivElement>('#content');
+  if (contentContainer) {
+    const params = new URLSearchParams(window.location.search);
+    const userContent: string = params.get("data") || "Hello, World!";
+    // Compliant: Using textContent ensures that the data is inserted as plain text,
+    // preventing any possible XSS vulnerabilities.
+    contentContainer.textContent = userContent;
+  } else {
+    console.error("Content container not found.");
+  }
+}
+updateContent();
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function updateContent(): void {
+  const contentContainer = document.querySelector<HTMLDivElement>('#content');
+  if (contentContainer) {
+    const params = new URLSearchParams(window.location.search);
+    const userContent: string = params.get("data") || "Hello, World!";
+    // Noncompliant: Direct assignment to innerHTML may render injected HTML and scripts.
+    contentContainer.innerHTML = userContent;
+  } else {
+    console.error("Content container not found.");
+  }
+}
+updateContent();
+```

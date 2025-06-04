@@ -1,0 +1,115 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Using Duplicate Arguments in Assertions
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Testing","Maintainability"]} />
+
+## What is it?
+This rule highlights the potential issue of using the same argument twice in an assertion. In libraries like Chai.js, asserting a variable against itself might not cause a runtime error, but it typically indicates an oversight or logic mistake in test design.
+
+## Why apply it?
+Using duplicate arguments in assertions means you're comparing a value with itself, which doesn't provide meaningful test coverage. It can mask errors in your test logic — for example, accidentally using the actual value instead of comparing it to an expected result. This practice helps ensure that your tests are truly validating the intended behavior.
+
+## How to Fix it?
+Ensure that the two arguments provided to your assertions are distinct and represent the actual outcome and the expected result. Replace any instance where an argument is compared with itself with a proper comparison between the actual value and a separately defined expected value.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import { assert } from 'chai';
+
+describe("Faulty Object structure test", function() {
+  it("should fail to validate the object structure by testing the same reference", function() {
+    const expected = { id: 1, name: "Test" };
+    const actual = { id: 1, name: "Test" };
+    console.log("Testing actual object against itself:");
+    // Noncompliant: asserting that the object equals itself does not perform a meaningful test of its structure
+    assert.deepEqual(actual, actual);
+  });
+});
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import { assert } from 'chai';
+
+describe("String conversion test", function() {
+  it("should return the correct string representation", function() {
+    const expected: string = '1';
+    const actual: string = (1).toString();
+    console.log("Expected:", expected);
+    console.log("Actual:  ", actual);
+    assert.equal(actual, expected);  // Compliant: comparing actual with expected
+  });
+});
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import { assert } from 'chai';
+
+describe("Faulty String conversion test", function() {
+  it("should check string conversion but fails to validate expected outcome", function() {
+    const expected: string = '1';
+    const actual: string = (1).toString();
+    console.log("Testing Actual value against itself.");
+    // Noncompliant: comparing the same argument twice does not validate the conversion against the expected outcome
+    assert.equal(actual, actual);
+  });
+});
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import { assert } from 'chai';
+
+describe("Object structure test", function() {
+  it("should validate that the object structure is as expected", function() {
+    const expected = { id: 1, name: "Test" };
+    const actual = { id: 1, name: "Test" };
+    console.log("Expected object:", expected);
+    console.log("Actual object:  ", actual);
+    assert.deepEqual(actual, expected);  // Compliant: correct deep equality check between actual and expected objects
+  });
+});
+```

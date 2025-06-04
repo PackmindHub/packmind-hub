@@ -1,0 +1,180 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Import - Ensure Getters and Setters Access the Correct Fields
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["Encapsulation","Maintainability","Correctness"]} />
+
+## What is it?
+This practice is triggered by copy-paste errors or simple oversight in getters and setters where the accessor methods fail to use or update the intended underlying field. In classes with multiple fields or when using different naming conventions (such as underscore prefixes or private fields via the hash syntax), it is common to mistakenly reference a wrong field.
+
+## Why apply it?
+Ensuring that getters and setters access the correct corresponding field is essential to maintaining encapsulation and predictability of your code behavior. Incorrect field access can lead to subtle bugs, inconsistencies, and unexpected side effects, making the code harder to debug and maintain.
+
+## How to Fix it?
+Review your accessor methods carefully. Verify that:
+- A getter returns the value of the intended field.
+- A setter updates exactly the field that corresponds to its name.
+For fields with underscore or hash prefixes, ensure the naming conversion is applied consistently.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+let x = 5;
+let y = 10;
+const obj: { [key: string]: any } = {};
+Object.defineProperty(obj, 'x', {
+  get() {  // Noncompliant: returns y instead of x
+    return y;
+  },
+  set(val: number) {  // Noncompliant: performs an unrelated operation on x
+    x = val + 1;
+  },
+  configurable: true,
+  enumerable: true
+});
+
+console.log("Initial obj.x:", obj.x);  // Incorrect value from y
+obj.x = 20;
+console.log("Updated obj.x:", obj.x);  // Still incorrect, does not reflect the intended x value
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+let x = 5;
+let y = 10;
+const obj: { [key: string]: any } = {};
+Object.defineProperty(obj, 'x', {
+  get() {  // Compliant: returns x
+    return x;
+  },
+  set(val: number) {  // Compliant: updates x
+    x = val;
+  },
+  configurable: true,
+  enumerable: true
+});
+
+console.log("Initial obj.x:", obj.x);
+obj.x = 20;
+console.log("Updated obj.x:", obj.x);
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+class Rectangle {
+  _width: number = 10;
+  #height: number = 20;
+  
+  get width(): number {  // Noncompliant: returns #height instead of _width
+    return this.#height;
+  }
+  
+  set width(val: number) {  // Noncompliant: updates #height instead of _width
+    this.#height = val;
+  }
+  
+  // Additional methods to illustrate the class structure.
+  area(): number {
+    return this._width * this.#height;
+  }
+}
+
+const rect = new Rectangle();
+rect.width = 15;
+console.log("Rectangle width:", rect.width);  // Incorrect output, shows value from #height
+console.log("Rectangle area:", rect.area());
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+class Rectangle {
+  _width: number = 10;
+  #height: number = 20;
+  
+  get width(): number {  // Compliant: returns the correct field _width
+    return this._width;
+  }
+  
+  set width(val: number) {  // Compliant: updates the correct field _width
+    this._width = val;
+  }
+  
+  // Additional methods to illustrate the class structure.
+  area(): number {
+    return this._width * this.#height;
+  }
+}
+
+const rect = new Rectangle();
+rect.width = 15;
+console.log("Rectangle width:", rect.width);  // Outputs: Rectangle width: 15
+console.log("Rectangle area:", rect.area());
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+class Person {
+  private _age: number = 30;
+  
+  set age(age: number) {  // Compliant: updates the private field _age
+    this._age = age;
+  }
+  
+  get age(): number {  // Compliant: returns the private field _age
+    return this._age;
+  }
+}
+
+const person = new Person();
+person.age = 35;
+console.log("Person age:", person.age); // Outputs: Person age: 35
+```

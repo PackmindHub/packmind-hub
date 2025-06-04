@@ -1,0 +1,169 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Using `var` for Variable Declaration in TypeScript
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["Reliability","Readability"]} />
+
+## What is it?
+This practice is triggered when variables are declared using the `var` keyword instead of `let` or `const`. The use of `var` leads to function-scoped variables, hoisting issues, and potential bugs due to the lack of block scope, making the code less predictable and harder to maintain.
+
+## Why apply it?
+Using `let` and `const` ensures that variables are block-scoped, reducing the risk of unexpected behaviors due to hoisting and the temporal dead zone. This enhances code readability and maintainability, and helps prevent subtle bugs in your TypeScript projects.
+
+## How to Fix it?
+Replace all `var` declarations with either `let` or `const`. Use `const` by default, and only use `let` when the variable's value needs to be reassigned. This practice aligns with modern JavaScript standards (ECMAScript 6) that are fully supported by TypeScript.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+var greeting: string = "Hello, TypeScript!";
+var counter: number = 0;
+
+function displayGreeting(): void {
+  var message: string = greeting;
+  for (var i: number = 0; i < 5; i++) {
+    counter++;
+    console.log(message + " Count: " + counter);
+  }
+}
+
+displayGreeting();
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function calculateTotal(numbers: number[]): number {
+  var initialValue: number = 0;
+  var total: number = initialValue;
+
+  for (var i: number = 0; i < numbers.length; i++) {
+    var current: number = numbers[i];
+    total += current;
+  }
+
+  return total;
+}
+
+console.log("Total Sum:", calculateTotal([10, 20, 30, 40, 50]));
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function calculateTotal(numbers: number[]): number {
+  const initialValue: number = 0;
+  let total: number = initialValue;
+
+  for (let i: number = 0; i < numbers.length; i++) {
+    const current: number = numbers[i];
+    total += current;
+  }
+
+  return total;
+}
+
+console.log("Total Sum:", calculateTotal([10, 20, 30, 40, 50]));
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+var fruits: string[] = ["apple", "banana", "cherry", "date"];
+var result: string = "";
+var index: number = 0;
+
+while (index < fruits.length) {
+  var fruit: string = fruits[index];
+  result += fruit.toUpperCase() + " ";
+  index++;
+}
+
+console.log("Fruits in uppercase:", result.trim());
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+const fruits: string[] = ["apple", "banana", "cherry", "date"];
+let result: string = "";
+let index: number = 0;
+
+while (index < fruits.length) {
+  let fruit: string = fruits[index];
+  result += fruit.toUpperCase() + " ";
+  index++;
+}
+
+console.log("Fruits in uppercase:", result.trim());
+```
+
+### Example 5:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+const greeting: string = "Hello, TypeScript!";
+let counter: number = 0;
+
+function displayGreeting(): void {
+  const message: string = greeting;
+  for (let i: number = 0; i < 5; i++) {
+    counter++;
+    console.log(`${message} Count: ${counter}`);
+  }
+}
+
+displayGreeting();
+```

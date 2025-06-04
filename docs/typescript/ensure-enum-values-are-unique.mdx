@@ -1,0 +1,159 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure Enum Values are Unique
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","bug prevention"]} />
+
+## What is it?
+This practice is triggered by assigning duplicate values to enum members in TypeScript. Duplicated enum values can be misleading and may lead to bugs that are difficult to identify and fix.
+
+## Why apply it?
+Ensuring each enum value is unique guarantees that every member represents a distinct and unambiguous state. This is especially important when enums are used for conditional checks, switches, or mappings, where duplicate values can cause unexpected behavior.
+
+## How to Fix it?
+Assign a unique value to each enum member or omit explicit assignments so that TypeScript can automatically assign incremental numbers.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example assigns duplicate values to different enum members, which can lead to confusion when the enum is used in conditional logic.
+
+<!-- #example_negative_code -->
+```ts
+enum Status {
+  Pending = 0,
+  Approved = 0,  // Duplicate value
+  Rejected = 1,
+  Cancelled = 1  // Duplicate value
+}
+
+function getStatusMessage(status: Status): string {
+  switch(status) {
+    case Status.Pending:
+      return "Your request is pending.";
+    case Status.Approved:
+      return "Your request has been approved.";
+    case Status.Rejected:
+      return "Your request has been rejected.";
+    case Status.Cancelled:
+      return "Your request was cancelled.";
+    default:
+      return "Unknown status.";
+  }
+}
+
+console.log(getStatusMessage(Status.Approved));
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this positive example, each enum member is assigned a unique value. A function uses the enum to return a status message without any ambiguity.
+
+<!-- #example_positive_code -->
+```ts
+enum Status {
+  Pending = 0,
+  Approved = 1,
+  Rejected = 2,
+  Cancelled = 3
+}
+
+function getStatusMessage(status: Status): string {
+  switch(status) {
+    case Status.Pending:
+      return "Your request is pending.";
+    case Status.Approved:
+      return "Your request has been approved.";
+    case Status.Rejected:
+      return "Your request has been rejected.";
+    case Status.Cancelled:
+      return "Your request was cancelled.";
+    default:
+      return "Unknown status.";
+  }
+}
+
+console.log(getStatusMessage(Status.Approved));
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example defines the enum for weekdays with duplicated values. This can lead to logical errors when distinguishing between days in functions that rely on unique enum assignments.
+
+<!-- #example_negative_code -->
+```ts
+enum Weekday {
+  Monday = 1,
+  Tuesday = 1,      // Duplicate value
+  Wednesday = 2,
+  Thursday = 2,     // Duplicate value
+  Friday = 3,
+  Saturday = 4,
+  Sunday = 4        // Duplicate value
+}
+
+function isWeekend(day: Weekday): boolean {
+  return day === Weekday.Saturday || day === Weekday.Sunday;
+}
+
+for (let i = Weekday.Monday; i <= Weekday.Sunday; i++) {
+  if (isWeekend(i as Weekday)) {
+    console.log(`Day ${i} is a weekend.`);
+  } else {
+    console.log(`Day ${i} is a weekday.`);
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this positive example, an enum representing weekdays is defined with unique values. A helper function uses the enum to determine if a day falls on a weekend.
+
+<!-- #example_positive_code -->
+```ts
+enum Weekday {
+  Monday = 1,
+  Tuesday = 2,
+  Wednesday = 3,
+  Thursday = 4,
+  Friday = 5,
+  Saturday = 6,
+  Sunday = 7
+}
+
+function isWeekend(day: Weekday): boolean {
+  return day === Weekday.Saturday || day === Weekday.Sunday;
+}
+
+for (let i = Weekday.Monday; i <= Weekday.Sunday; i++) {
+  if (isWeekend(i as Weekday)) {
+    console.log(`Day ${i} is a weekend.`);
+  } else {
+    console.log(`Day ${i} is a weekday.`);
+  }
+}
+```

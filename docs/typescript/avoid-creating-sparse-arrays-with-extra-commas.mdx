@@ -1,0 +1,128 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Creating Sparse Arrays with Extra Commas
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","reliability"]} />
+
+## What is it?
+This practice addresses the unintentional creation of sparse arrays when extra commas are used in array literals. Sparse arrays have "holes" where no value is defined, which can lead to unexpected behaviors since these holes are treated differently from explicit undefined values.
+
+## Why apply it?
+Extra commas in an array literal might indicate an oversight or a missing value, causing your array to have gaps. These gaps can lead to unpredictable behavior in iterations and other array operations. To resolve the ambiguity, either remove the extra comma or explicitly set the value to undefined.
+
+## How to Fix it?
+If the extra comma is a mistake, remove it so that the array elements are contiguous. Otherwise, if a hole is intended, explicitly use undefined to document the intent.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses an extra comma, creating a sparse array with a hole that may cause confusion and unintended consequences.
+
+<!-- #example_negative_code -->
+```ts
+const numbers: number[] = [1, , 3, 6, 9];  // Noncompliant: extra comma creates a hole
+console.log("Numbers array:", numbers);
+numbers.forEach((num, index) => {
+  console.log(`Index ${index}: ${num}`);
+});
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example builds a sparse array using an array literal with extra commas, resulting in unintended holes.
+
+<!-- #example_negative_code -->
+```ts
+const scores: number[] = [100, , 90, , 80, 70];  // Noncompliant: extra commas create holes
+console.log("Scores:", scores);
+scores.map((score, i) => console.log(`Score at ${i}: ${score}`));
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example demonstrates constructing an array without extra commas by dynamically pushing values. If an empty value is needed, it is explicitly set to undefined.
+
+<!-- #example_positive_code -->
+```ts
+const scores: number[] = [];
+scores.push(100);
+scores.push(90);
+scores.push(undefined);  // Compliant: explicit undefined value clarifies intent
+scores.push(80);
+scores.push(70);
+console.log("Scores:", scores);
+scores.map((score, i) => console.log(`Score at ${i}: ${score}`));
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example mistakenly includes an extra comma, thus producing a sparse array with an unintended empty slot.
+
+<!-- #example_negative_code -->
+```ts
+const fruits: string[] = ["apple", "banana", , "date", "elderberry"];  // Noncompliant: extra comma introduces hole at index 2
+console.log("Fruits list:");
+fruits.forEach((fruit, idx) => {
+  console.log(`Fruit at index ${idx}: ${fruit}`);
+});
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example avoids sparse arrays by ensuring that all elements in the array are defined and by not including extra commas.
+
+<!-- #example_positive_code -->
+```ts
+const fruits: string[] = ["apple", "banana", "cherry", "date", "elderberry"];  // Compliant: no sparse elements
+console.log("Fruits list:");
+fruits.forEach((fruit, idx) => {
+  console.log(`Fruit at index ${idx}: ${fruit}`);
+});
+```
+
+### Example 5:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example assigns an explicit undefined value to clarify that there is an intentional empty slot in the array.
+
+<!-- #example_positive_code -->
+```ts
+const numbers: number[] = [1, undefined, 3, 6, 9];  // Compliant: explicit undefined
+console.log("Numbers array:", numbers);
+numbers.forEach((num, index) => {
+  console.log(`Index ${index}: ${num}`);
+});
+```

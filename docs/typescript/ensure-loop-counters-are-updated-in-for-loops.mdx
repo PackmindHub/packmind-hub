@@ -1,0 +1,122 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure Loop Counters are Updated in For Loops
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["Bug Prevention","Correctness"]} />
+
+## What is it?
+This practice is triggered when a "for" loop's counter is incremented outside its increment clause. Such patterns can lead to unexpected behavior and reduced code clarity. To maintain clear and predictable looping behavior, all counter modifications should ideally occur within the loop's increment clause.
+
+## Why apply it?
+Placing counter modifications in the increment clause centralizes all loop-control updates, making the code easier to understand and maintain. It prevents subtle bugs that may arise from modifying the counter in multiple locations and improves overall code quality and readability.
+
+## How to Fix it?
+Update your "for" loops so that all changes to the loop counter are done in the increment clause. If additional counter updates are required, consider refactoring your loop logic to keep all increments explicit and centralized.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+let i = 0, j = 0;
+for (i = 0; i < 10; i++, j++) {
+  console.log("Iteration:", i, "Counter j:", j);
+  // Additional processing can be added here.
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+let i = 0, j = 10;
+for (i = 0, j = 10; i < 5; j--) {  // Noncompliant: i is not incremented in the loop header.
+  console.log(`i: ${i}, j: ${j}`);
+  i++;  // Updating the counter here disrupts the loop control logic.
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+let index = 0, sum = 0;
+for (index = 0; index < 5; index++) {
+  sum += index;
+  console.log(`Index: ${index}, Sum: ${sum}`);
+}
+console.log("Final Sum:", sum);
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+let index = 0, sum = 0;
+for (index = 0; index < 5;) {  // Noncompliant: missing increment in the initialization statement.
+  sum += index;
+  console.log(`Index: ${index}, Sum: ${sum}`);
+  index++;  // Incrementing within the loop body creates ambiguity.
+}
+console.log("Final Sum:", sum);
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+let i = 0, j = 10;
+for (i = 0, j = 10; i < 5; i++, j--) {
+  console.log(`i: ${i}, j: ${j}`);
+  // Both counters are clearly modified in the header.
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+let i = 0, j = 0;
+for (i = 0; i < 10; j++) {  // Noncompliant: i is not updated in the loop header.
+  console.log("Iteration:", i, "Counter j:", j);
+  i++;  // Modifying the counter here makes the loop logic confusing.
+}
+```

@@ -1,0 +1,142 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Using Non-existent Reversed Operators `=+`, `=-`, and `=!` in TypeScript
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["Maintainability","Correctness"]} />
+
+## What is it?
+This practice is triggered by the accidental use of operator pairs (`=+`, `=-`, or `=!`) that resemble their compound counterparts (`+=`, `-=`, or `!=`) but behave very differently. These pairs compile and run but do not perform the intended operation, which can lead to subtle bugs and confusing code.
+
+## Why apply it?
+Using these reversed operator sequences can be misleading:
+• They may appear to modify a variable with compounded arithmetic or comparison operations, but instead, they result in an assignment of an expression processed by a unary operator.
+• This misusage undermines code clarity and increases the risk of logic errors.
+• Correcting these issues early helps to ensure your code’s behavior matches your intent and improves maintainability.
+
+## How to Fix it?
+If your intention is to perform a compound operation, use the proper operator such as `+=` or `-=`. If you intend to assign a unary negated or positive value, ensure that the operator and spacing clearly reflect that intention (for instance, having a space between the assignment operator and the unary operator).
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+let temperature: number = 25;
+let drop: number = 5;
+temperature -= drop; // Compliant: subtracts drop from temperature correctly
+console.log("New temperature:", temperature);
+if (temperature < 20) {
+  console.log("Temperature is getting low.");
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+let balance: number = -100;
+let deposit: number = 50;
+balance =+ deposit; // Noncompliant: assigns +deposit instead of adding deposit to balance
+console.log("Balance after deposit:", balance);
+if (balance < 0) {
+  console.log("Warning: account is overdrawn.");
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+let balance: number = -100;
+let deposit: number = 50;
+balance += deposit; // Compliant: correctly adds deposit to balance
+console.log("Updated balance:", balance);
+if (balance < 0) {
+  console.log("Account is overdrawn.");
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+let userInput: string = "admin";
+let expectedInput: string = "user";
+if (userInput !== expectedInput) { // Compliant: uses proper inequality operator for comparison
+  console.log("User input does not match the expected input.");
+} else {
+  console.log("User input matches.");
+}
+console.log("Comparison complete.");
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+let temperature: number = 25;
+let drop: number = 5;
+temperature =- drop; // Noncompliant: assigns -drop instead of subtracting drop from temperature
+console.log("Temperature after drop:", temperature);
+if (temperature < 20) {
+  console.log("Alert: temperature is critically low.");
+}
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+let userInput: string = "admin";
+let expectedInput: string = "user";
+let isDifferent: boolean;
+isDifferent =! (userInput === expectedInput); // Noncompliant: confusing usage, assigns the negation of the comparison result
+if (isDifferent) {
+  console.log("User input is different from expected.");
+} else {
+  console.log("User input matches.");
+}
+console.log("Check completed.");
+```

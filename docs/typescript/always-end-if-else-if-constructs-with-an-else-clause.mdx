@@ -1,0 +1,115 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Always End "if ... else if" Constructs with an "else" Clause
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["Reliability","defensive programming"]} />
+
+## What is it?
+This practice enforces that every "if" statement followed by one or more "else if" statements must conclude with a final "else" clause. The final "else" either handles unexpected cases or includes a comment explaining why no action is taken.
+
+## Why apply it?
+Not providing a final "else" clause can lead to unhandled cases, making the code fragile and hard to maintain. Including a final "else" clause follows a defensive programming approach, similar to requiring a "default" case in switch statements, which improves the overall robustness and readability of your code.
+
+## How to Fix it?
+Review all conditional chains that use "if ... else if" statements and ensure that a concluding "else" clause is added. The "else" clause should take appropriate actions (like throwing an error) or contain a comment explaining why no further action is required.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function processValue(x: number): void {
+  if (x === 0) {
+    console.log("x is zero");
+  } else if (x === 1) {
+    console.log("x is one");
+  } else {
+    // Defensive programming: unexpected value case handled explicitly.
+    throw new Error("Unexpected value for x: " + x);
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function processValue(x: number): void {
+  if (x === 0) {
+    console.log("x is zero");
+  } else if (x === 1) {
+    console.log("x is one");
+  }
+  // Noncompliant: missing final 'else' to handle unexpected values.
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+interface Order {
+  status: string;
+}
+
+function handleOrder(order: Order): void {
+  if (order.status === "pending") {
+    console.log("Order is pending. Preparing for processing.");
+  } else if (order.status === "completed") {
+    console.log("Order completed successfully.");
+  } else if (order.status === "cancelled") {
+    console.log("Order has been cancelled.");
+  } else {
+    // Defensive programming: log a warning if the order status is unrecognized.
+    console.warn("Unhandled order status:", order.status);
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+interface Order {
+  status: string;
+}
+
+function handleOrder(order: Order): void {
+  if (order.status === "pending") {
+    console.log("Order is pending. Preparing for processing.");
+  } else if (order.status === "completed") {
+    console.log("Order completed successfully.");
+  } else if (order.status === "cancelled") {
+    console.log("Order has been cancelled.");
+  }
+  // Noncompliant: missing final 'else' to handle unrecognized statuses.
+}
+```

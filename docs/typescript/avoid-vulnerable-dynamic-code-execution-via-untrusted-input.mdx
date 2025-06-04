@@ -1,0 +1,193 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Vulnerable Dynamic Code Execution via Untrusted Input
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["Security","injection"]} />
+
+## What is it?
+This practice addresses the risk of dynamically executing code based on untrusted input. Using functions like eval to execute code generated from external data can enable attackers to inject and run arbitrary code within your application.
+
+## Why apply it?
+Dynamic code execution with unvalidated input may lead to arbitrary code execution, unauthorized access to sensitive data, and even full system compromise. By validating inputs and using safe bindings or allow lists, you ensure that only known, safe operations are performed, mitigating injection risks.
+
+## How to Fix it?
+Avoid executing code dynamically using untrusted data. Instead, use a whitelist (allow list) or a secure mapping to bind valid input values to specific functions. Validate inputs thoroughly before using them in any form of dynamic evaluation.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import { Request, Response } from 'express';
+
+const commandMapping: { [key: string]: () => void } = {
+  start: run_start,
+  stop: run_stop,
+  restart: run_restart,
+};
+
+function run_start(): void {
+  console.log("Service started.");
+}
+
+function run_stop(): void {
+  console.log("Service stopped.");
+}
+
+function run_restart(): void {
+  console.log("Service restarted.");
+}
+
+function executeCommandSafely(command: string): void {
+  if (command in commandMapping) {
+    commandMapping[command]();
+  } else {
+    throw new Error("Invalid command.");
+  }
+}
+
+function runScript(req: Request, res: Response): void {
+  try {
+    const command = req.body.command as string;
+    executeCommandSafely(command);
+    res.send("Command executed safely.");
+  } catch (error) {
+    res.status(400).send("Error: " + (error as Error).message);
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import { Request, Response } from 'express';
+
+function run_start(): void {
+  console.log("Service started.");
+}
+
+function run_stop(): void {
+  console.log("Service stopped.");
+}
+
+function run_restart(): void {
+  console.log("Service restarted.");
+}
+
+function executeCommand(command: string): void {
+  // Unsafe: Directly executing a function call constructed from untrusted input.
+  eval(`run_${command}()`); // Noncompliant
+}
+
+function runScript(req: Request, res: Response): void {
+  const command = req.body.command as string;
+  try {
+    executeCommand(command);
+    res.send("Command executed.");
+  } catch (e) {
+    res.status(500).send("Execution failed.");
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import { Request, Response } from 'express';
+
+const allowedOperations: string[] = ['add', 'remove', 'update'];
+
+function product_add(): void {
+  console.log("Product added.");
+}
+
+function product_remove(): void {
+  console.log("Product removed.");
+}
+
+function product_update(): void {
+  console.log("Product updated.");
+}
+
+function handleRequest(req: Request, res: Response): void {
+  const operation = req.query.operation as string;
+
+  if (allowedOperations.includes(operation)) {
+    switch (operation) {
+      case 'add':
+        product_add();
+        break;
+      case 'remove':
+        product_remove();
+        break;
+      case 'update':
+        product_update();
+        break;
+      default:
+        // This case should not occur due to the check above.
+        break;
+    }
+    res.send("Operation executed safely.");
+  } else {
+    res.status(400).send("Invalid operation.");
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import { Request, Response } from 'express';
+
+function product_add(): void {
+  console.log("Product added.");
+}
+
+function product_remove(): void {
+  console.log("Product removed.");
+}
+
+function product_update(): void {
+  console.log("Product updated.");
+}
+
+function handleRequest(req: Request, res: Response): void {
+  const operation = req.query.operation as string;
+
+  // Unsafe: Directly evaluating code constructed from untrusted input.
+  eval(`product_${operation}()`); // Noncompliant
+
+  res.send("Operation executed.");
+}
+```

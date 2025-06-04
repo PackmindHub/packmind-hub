@@ -1,0 +1,210 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use Strict Equality Operators in TypeScript Instead of Non-Strict Equality
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","maintainability"]} />
+
+## What is it?
+This practice warns against using non-strict equality operators ("==" and "!=") in TypeScript. Instead, you should use strict equality ("===") and strict inequality ("!==") to ensure that comparisons check both type and value.
+
+## Why apply it?
+Using non-strict operators leads to implicit type coercion, which can cause unexpected behaviors. Strict equality operators enforce that both the type and value match, leading to more predictable and maintainable code.
+
+## How to Fix it?
+Replace any occurrences of "==" or "!=" with "===" or "!==" respectively, ensuring that comparisons are precise and reducing the risk of bugs due to unintended type coercion.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses non-strict equality "==" which can lead to unexpected type coercion, causing 0 and false to be considered equal.
+
+<!-- #example_negative_code -->
+```ts
+function compareValues(a: any, b: any): string {
+  if (a == b) {  // Noncompliant: Using non-strict equality causes type coercion
+    console.log("The values are taken as equal due to coercion.");
+    return "Equal";
+  } else {
+    console.log("The values are not equal.");
+    return "Not Equal";
+  }
+}
+
+const outcome: string = compareValues(0, false);
+console.log("Comparison outcome:", outcome); // Unexpected output: "Equal"
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+In this negative example, non-strict equality is used in the filter function which might lead to unexpected results if the types of the category values differ, even though they appear similar.
+
+<!-- #example_negative_code -->
+```ts
+interface Product {
+  id: number;
+  category: string;
+}
+
+const products: Product[] = [
+  { id: 1, category: "Electronics" },
+  { id: 2, category: "Clothing" },
+  { id: 3, category: "Electronics" },
+  { id: 4, category: "Grocery" },
+  { id: 5, category: "Clothing" }
+];
+
+function filterByCategory(category: any): Product[] {
+  return products.filter(product => product.category == category);  // Noncompliant: using non-strict equality
+}
+
+const electronics = filterByCategory("Electronics");
+console.log("Filtered products:");
+electronics.forEach(product => console.log("Product id:", product.id));
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example demonstrates how to correctly filter an array of product objects using strict equality, ensuring that the category comparison is handled without unwanted type coercion.
+
+<!-- #example_positive_code -->
+```ts
+interface Product {
+  id: number;
+  category: string;
+}
+
+const products: Product[] = [
+  { id: 1, category: "Electronics" },
+  { id: 2, category: "Clothing" },
+  { id: 3, category: "Electronics" },
+  { id: 4, category: "Grocery" },
+  { id: 5, category: "Clothing" }
+];
+
+function filterByCategory(category: string): Product[] {
+  return products.filter(product => product.category === category);  // Compliant: strict equality is used
+}
+
+const electronics = filterByCategory("Electronics");
+electronics.forEach(product => console.log("Product id:", product.id));
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses non-strict inequality "!=" for user ID comparisons, which might result in unexpected matches when different types are involved (such as passing a string that represents a number).
+
+<!-- #example_negative_code -->
+```ts
+interface User {
+  id: number;
+  name: string;
+}
+
+const users: User[] = [
+  { id: 1, name: "Alice" },
+  { id: 2, name: "Bob" },
+  { id: 3, name: "Charlie" }
+];
+
+function findUserById(id: any): User | null {
+  for (let i = 0; i < users.length; i++) {
+    if (users[i].id != id) {  // Noncompliant: Using non-strict inequality
+      console.log(`User at index ${i} does not match id ${id}.`);
+    } else {
+      console.log(`User found: ${users[i].name}`);
+      return users[i];
+    }
+  }
+  console.log("No matching user found.");
+  return null;
+}
+
+findUserById("2"); // "2" is coerced to 2, causing an unexpected match
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses strict equality within a function to compare values properly, avoiding any unexpected type coercion.
+
+<!-- #example_positive_code -->
+```ts
+function compareValues(a: any, b: any): string {
+  if (a === b) {  // Compliant: Using strict equality
+    console.log("The values and types are exactly equal.");
+    return "Equal";
+  } else {
+    console.log("Either the value or the type doesn't match.");
+    return "Not Equal";
+  }
+}
+
+const outcome: string = compareValues(0, false);
+console.log("Comparison outcome:", outcome); // Expected output: "Not Equal"
+```
+
+### Example 5:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this example, a function correctly uses strict inequality to handle matching user IDs in an array, ensuring that only a true type and value match is accepted.
+
+<!-- #example_positive_code -->
+```ts
+interface User {
+  id: number;
+  name: string;
+}
+
+const users: User[] = [
+  { id: 1, name: "Alice" },
+  { id: 2, name: "Bob" },
+  { id: 3, name: "Charlie" }
+];
+
+function findUserById(id: number): User | null {
+  for (let i = 0; i < users.length; i++) {
+    if (users[i].id !== id) {  // Compliant: Using strict inequality
+      console.log(`User at index ${i} does not match the id ${id}.`);
+    } else {
+      console.log(`User found: ${users[i].name}`);
+      return users[i];
+    }
+  }
+  console.log("No matching user found.");
+  return null;
+}
+
+findUserById(2);
+```

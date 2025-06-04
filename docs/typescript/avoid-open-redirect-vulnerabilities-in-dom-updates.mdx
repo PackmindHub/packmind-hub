@@ -1,0 +1,121 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Open Redirect Vulnerabilities in DOM Updates
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["Security","DOM manipulation","vulnerability"]} />
+
+## What is it?
+This practice addresses the risk of open redirections introduced through unsafe DOM updates by using unvalidated, user-controllable URL data to perform redirects. Such vulnerabilities can be exploited by attackers to divert users to malicious sites.
+
+## Why apply it?
+Without proper validation, user-supplied URL parameters can be manipulated by attackers to redirect unsuspecting users to fraudulent or harmful websites. This can lead to phishing, malware distribution, or even JavaScript injection, compromising the integrity of your trusted domain.
+
+## How to Fix it?
+Always validate or sanitize user-controlled URL inputs before using them in redirection logic. Use an allowlist or strict validation (for example, checking that the redirect URL begins with a trusted domain and includes a terminating path separator) to ensure that redirections only occur to authorized destinations. Where applicable, consider using internal routing or adding a confirmation step to mitigate risks associated with direct external redirects.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+// Extract the 'url' query parameter
+const queryParams = new URLSearchParams(window.location.search);
+const redirectUrl: string | null = queryParams.get("url");
+
+if (redirectUrl && redirectUrl.startsWith("https://www.example.com/")) {
+    console.info("Redirecting to trusted URL:", redirectUrl);
+    document.location.href = redirectUrl; // Compliant: safe redirection
+} else {
+    console.warn("Blocked an untrusted redirection attempt.");
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+// Extract the 'url' query parameter directly from the URL
+const queryParams = new URLSearchParams(window.location.search);
+const redirectUrl: string | null = queryParams.get("url");
+
+if (redirectUrl !== null) {
+    console.info("Redirecting to:", redirectUrl);
+    document.location.href = redirectUrl; // Noncompliant: open redirect vulnerability
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+// Define allowed domains for redirection
+const allowedDomains: string[] = ["trusted.example.com", "www.example.com"];
+const queryParams = new URLSearchParams(window.location.search);
+const redirectUrl: string | null = queryParams.get("next");
+
+if (redirectUrl) {
+    try {
+        const urlObject = new URL(redirectUrl);
+        if (allowedDomains.includes(urlObject.hostname)) {
+            console.info("Redirecting to trusted hostname:", urlObject.hostname);
+            window.location.assign(redirectUrl); // Compliant: validated using allowedDomains
+        } else {
+            console.warn("Blocked redirection to untrusted hostname:", urlObject.hostname);
+        }
+    } catch (error) {
+        console.error("Invalid URL provided:", error);
+    }
+} else {
+    console.log("No redirection URL provided.");
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+// Extract 'next' parameter without proper validation
+const queryParams = new URLSearchParams(window.location.search);
+const redirectUrl: string | null = queryParams.get("next");
+
+if (redirectUrl) {
+    try {
+        // Attempt to parse the URL but do not validate against an allowlist
+        const urlObject = new URL(redirectUrl);
+        console.info("Redirecting to hostname:", urlObject.hostname);
+        window.location.assign(redirectUrl); // Noncompliant: no hostname validation
+    } catch (error) {
+        console.error("Invalid URL provided:", error);
+    }
+} else {
+    console.log("No redirection URL provided.");
+}
+```

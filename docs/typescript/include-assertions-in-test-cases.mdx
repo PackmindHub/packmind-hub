@@ -1,0 +1,122 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Include Assertions in Test Cases
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["Testing","Reliability"]} />
+
+## What is it?
+This practice ensures that your unit tests actually evaluate the behavior of the code by including assertions. An assertion checks that the actual output of the function matches the expected output. Without assertions, tests do not fail even when the underlying code is faulty.
+
+## Why apply it?
+A test without assertions gives a false sense of security, as it will always pass regardless of the implementation. Including assertions ensures that potential bugs are caught early, and the test clearly communicates the expected behavior of the code. This is especially important when using assertion libraries like Chai, Sinon, Vitest, or Supertest.
+
+## How to Fix it?
+Ensure that every test case contains at least one assertion to verify the correctness of the code behavior. If you are importing an assertion library, make sure you use it to check the outcome of the tested function.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import { expect } from "chai";
+
+function getGreeting(name: string): string {
+  return `Hello, ${name}!`;
+}
+
+describe("getGreeting Function", function() {
+  it("should return a greeting message with the given name", function() {
+    const greeting = getGreeting("Alice");
+    // Noncompliant: No assertions are made to validate the greeting.
+    console.log("Generated greeting:", greeting);
+  });
+});
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import { test, expect } from "vitest";
+
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+test("add function returns the correct sum", () => {
+  const result = add(2, 3);
+  expect(result).toBe(5);
+  // Further assertion to check if result is a number
+  expect(typeof result).toBe("number");
+});
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import { test } from "vitest";
+
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+test("add function returns the correct sum", () => {
+  const result = add(2, 3);
+  // Noncompliant: The test does not use any assertion to validate the result.
+  console.log("The result of addition is:", result);
+});
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import { expect } from "chai";
+
+function getGreeting(name: string): string {
+  return `Hello, ${name}!`;
+}
+
+describe("getGreeting Function", function() {
+  it("should return a greeting message with the given name", function() {
+    const greeting = getGreeting("Alice");
+    expect(greeting).to.be.a("string");
+    expect(greeting).to.equal("Hello, Alice!");
+    // Additional assertion to check length is greater than 0
+    expect(greeting.length).to.be.greaterThan(0);
+  });
+});
+```

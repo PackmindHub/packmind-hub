@@ -1,0 +1,89 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Nesting Template Literals
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","readability"]} />
+
+## What is it?
+This practice is triggered by the use of nested template literals in TypeScript. Nesting template literals makes the code harder to read and maintain because it complicates the tracking of backticks and placeholders.
+
+## Why apply it?
+Extracting nested template literals into separate variables or expressions increases clarity and simplifies the code structure. This approach helps prevent mistakes in escaping characters or misplacing backticks, making your code easier to read and debug.
+
+## How to Fix it?
+Avoid embedding a template literal inside another. Instead, break out the nested expression into its own variable, function, or constant, and then include that variable in the primary template literal.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example nests a template literal within another, reducing readability and increasing complexity.
+
+<!-- #example_negative_code -->
+```ts
+const color: string = "red";
+const count: number = 3;
+const message: string = `I have ${color ? `${count} ${color}` : `${count}`} apples.`;
+console.log("Message:", message);
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example extracts the inner template literal into a separate variable, making the overall structure clearer and easier to maintain.
+
+<!-- #example_positive_code -->
+```ts
+const color: string = "red";
+const count: number = 3;
+const appleDescription: string = color ? `${count} ${color}` : `${count}`;
+const message: string = `I have ${appleDescription} apples.`;
+console.log("Message:", message);
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example directly nests the notification message template literal, which complicates understanding and maintenance.
+
+<!-- #example_negative_code -->
+```ts
+const user: string = "Alice";
+const pendingNotifications: number = 5;
+const summary: string = `User ${user} has ${pendingNotifications > 0 ? `${pendingNotifications} new notifications` : "no notifications"}.`;
+console.log("Summary:", summary);
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example improves clarity by separating the nested notification message into its own variable.
+
+<!-- #example_positive_code -->
+```ts
+const user: string = "Alice";
+const pendingNotifications: number = 5;
+const notificationMessage: string = pendingNotifications > 0 ? `${pendingNotifications} new notifications` : "no notifications";
+const summary: string = `User ${user} has ${notificationMessage}.`;
+console.log("Summary:", summary);
+```

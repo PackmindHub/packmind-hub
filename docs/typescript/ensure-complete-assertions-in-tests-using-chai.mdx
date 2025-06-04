@@ -1,0 +1,138 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure Complete Assertions in Tests Using Chai
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["Testing","Reliability"]} />
+
+## What is it?
+Incomplete assertions in tests occur when an assertion statement misses necessary components or method calls, resulting in tests that do not fully verify the intended behavior. Using assertions improperly can lead to false positives or negatives, undermining the reliability of your test suite.
+
+## Why apply it?
+To prevent unreliable tests. By ensuring each assertion is complete with all necessary comparisons or validations (such as invoking methods like .to.equal() or .to.throw() with the appropriate parameters), you help guarantee that tests accurately capture the expected outcomes. This increases overall code robustness and facilitates early bug detection.
+
+## How to Fix it?
+Always invoke assertion methods completely. For example:
+- When using assert.fail, call it as assert.fail() rather than referring to the function.
+- When using expect or should assertions in Chai, chain them with comparison methods (e.g., .to.equal(), .to.be.true(), or .to.throw() with an appropriate error type) to eliminate ambiguity in what is being asserted.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import { expect } from 'chai';
+
+describe("Incomplete Assertions Example 2", () => {
+  const faultyFunction = () => { throw new Error("Unexpected error."); };
+  
+  it("should verify that faultyFunction throws an error but is incomplete", () => {
+    // Incomplete: missing invocation of the assertion method with an error type
+    expect(faultyFunction).to.throw;  // Noncompliant
+  });
+  
+  it("should check a condition without a complete assertion", () => {
+    // Incomplete: evaluating condition without chaining an assertion method
+    expect(3 < 5);  // Noncompliant
+    // Even if chained with a chainable getter, it does not perform a real check
+  });
+});
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import { assert, expect } from 'chai';
+
+describe("Complete Assertions Example 1", () => {
+  const value = 42;
+  
+  it("should trigger a failure using complete assert.fail()", () => {
+    // Correctly calling assert.fail to indicate a failure condition
+    assert.fail("This test deliberately fails to illustrate a test failure");
+  });
+  
+  it("should verify equality using expect", () => {
+    // Correctly chaining the expect assertion with the .to.equal() method
+    expect(1).to.equal(1);
+    // Additional check to ensure value conversion produces the expected result
+    expect(value.toString()).to.equal("42");
+  });
+});
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import { assert, expect } from 'chai';
+
+describe("Incomplete Assertions Example 1", () => {
+  const value = 42;
+  
+  it("should trigger failure with incomplete assert.fail", () => {
+    // Incomplete: reference to assert.fail without an actual function call.
+    assert.fail;  // Noncompliant
+  });
+  
+  it("should verify equality with incomplete expect assertions", () => {
+    // Incomplete: expect is not chained with a method like .to.equal()
+    expect(1 == 1);  // Noncompliant
+    // Incomplete: missing the call of throw with the expected error type
+    expect(value.toString).to.throw;  // Noncompliant
+  });
+});
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import { expect } from 'chai';
+
+describe("Complete Assertions Example 2", () => {
+  const faultyFunction = () => { throw new TypeError("Invalid type!"); };
+  
+  it("should assert that faultyFunction throws a TypeError", () => {
+    // Complete: properly asserting that the function throws the expected error
+    expect(faultyFunction).to.throw(TypeError, "Invalid type!");
+  });
+  
+  it("should assert a boolean condition completely", () => {
+    // Complete: chaining .to.be.true to assert the condition correctly
+    expect(3 < 5).to.be.true;
+  });
+});
+```

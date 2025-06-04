@@ -1,0 +1,147 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure the `default` Clause is Placed at the End or Beginning of a Switch Statement
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["coding-practices","Readability"]} />
+
+## What is it?
+This practice is triggered when a `switch` statement in TypeScript contains a `default` clause that is not the first or last clause. For improved readability and maintainability, the `default` clause should be positioned at the very beginning or the very end of the switch block. This facilitates a quick identification of the default behavior, thereby reducing cognitive load when reading the code.
+
+## Why apply it?
+Placing the `default` clause in the middle of other cases can obscure the intended fallback behavior, making the code harder to follow and maintain. Aligning the `default` clause at either the first or last position ensures that unexpected or unhandled cases are clearly and visibly accounted for.
+
+## How to Fix it?
+Reorder the cases of your switch statement so that the `default` clause is either the first or the last clause. This simple reordering improves both the readability and the overall structure of your code.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function handleStatus(status: number): void {
+  switch (status) {
+    case 0:
+      console.log("Status is zero");
+      break;
+    default:  // Noncompliant: default clause should be the first or last one.
+      console.log("Unknown status");
+      break;
+    case 1:
+      console.log("Status is one");
+      break;
+    case 2:
+      console.log("Status is two");
+      break;
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function handleStatus(status: number): void {
+  switch (status) {
+    case 0:
+      console.log("Status is zero");
+      break;
+    case 1:
+      console.log("Status is one");
+      break;
+    case 2:
+      console.log("Status is two");
+      break;
+    default:
+      console.log("Unknown status");
+      break;
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function processDay(day: string): void {
+  switch (day) {
+    case "Monday":
+      console.log("Start of the work week");
+      break;
+    default:  // Noncompliant: default clause should be the first or last one.
+      console.log("Not a standard weekday");
+      break;
+    case "Tuesday":
+      console.log("Second day of the work week");
+      break;
+    case "Wednesday":
+      console.log("Midweek day");
+      break;
+    case "Thursday":
+      console.log("Almost there");
+      break;
+    case "Friday":
+      console.log("Last day of the work week");
+      break;
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function processDay(day: string): void {
+  switch (day) {
+    default:
+      console.log("Not a standard weekday");
+      break;
+    case "Monday":
+      console.log("Start of the work week");
+      break;
+    case "Tuesday":
+      console.log("Second day of the work week");
+      break;
+    case "Wednesday":
+      console.log("Midweek day");
+      break;
+    case "Thursday":
+      console.log("Almost there");
+      break;
+    case "Friday":
+      console.log("Last day of the work week");
+      break;
+  }
+}
+```

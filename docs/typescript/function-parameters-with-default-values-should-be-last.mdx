@@ -1,0 +1,151 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Function Parameters with Default Values Should Be Last
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","clarity"]} />
+
+## What is it?
+This practice ensures that all function parameters with default values are declared after the function parameters without default values. Doing so guarantees that callers can benefit from the default values without having to pass explicit placeholders such as undefined.
+
+## Why apply it?
+When default parameters are not last, callers must re-specify default values or pass undefined to skip over the defaulted parameters. This mistake can lead to confusing APIs and potential errors. Ensuring that default parameters appear last improves code readability and usability. (Note: Redux reducers may use a default parameter for the initial state as an exception.)
+
+## How to Fix it?
+Reorder function parameters so that the ones with a default value are declared at the end of the parameter list.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+In this negative example, the multiplication function defines the default parameter before the mandatory parameter, meaning that callers cannot take advantage of the default without explicitly passing undefined.
+
+<!-- #example_negative_code -->
+```ts
+function multiply(a: number = 1, b: number): number {
+  console.log("Multiplying:", a, "and", b);
+  return a * b;
+}
+
+let result = multiply(1, 42); // Must explicitly specify both parameters
+console.log("Result:", result);
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example reverses the order of parameters in a class method, placing the default parameter before the mandatory one. As a result, it forces the caller to always provide both arguments explicitly.
+
+<!-- #example_negative_code -->
+```ts
+class Calculator {
+  calculate(limit: number = 10, factor: number): number {
+    let result = 1;
+    for (let i = 1; i <= limit; i++) {
+      result *= factor;
+      console.log(`Step ${i}: multiplied by ${factor}, result = ${result}`);
+    }
+    return result;
+  }
+}
+
+const calc = new Calculator();
+console.log("Calculation result:", calc.calculate(10, 2)); // Both parameters must be specified
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this positive example, a class method is implemented where the required parameter comes first and the default parameter follows, ensuring that the default is properly utilized when omitted by the caller.
+
+<!-- #example_positive_code -->
+```ts
+class Calculator {
+  calculate(factor: number, limit: number = 10): number {
+    let result = 1;
+    for (let i = 1; i <= limit; i++) {
+      result *= factor;
+      console.log(`Step ${i}: multiplied by ${factor}, result = ${result}`);
+    }
+    return result;
+  }
+}
+
+const calc = new Calculator();
+console.log("Calculation result:", calc.calculate(2)); // Uses default limit of 10
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Here the greeting function incorrectly places the default parameter before the mandatory parameter. As a result, the caller must pass both arguments explicitly even if they intend to use the default.
+
+<!-- #example_negative_code -->
+```ts
+function greet(greeting: string = "Hello", name: string): void {
+  console.log(greeting + ", " + name + "!");
+}
+
+greet("Hello", "Alice"); // Must specify both parameters
+// Correct usage to benefit from the default would require greet(undefined, "Alice")
+console.log("Greeting function executed, but default not effectively used.");
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example defines a greeting function with the correct order: the mandatory name parameter comes first and the default greeting follows. This arrangement lets the caller omit the second argument to rely on the default.
+
+<!-- #example_positive_code -->
+```ts
+function greet(name: string, greeting: string = "Hello"): void {
+  console.log(greeting + ", " + name + "!");
+}
+
+greet("Alice");         // Uses default greeting "Hello"
+greet("Bob", "Hi");     // Overrides default with "Hi"
+console.log("Greeting function executed successfully.");
+```
+
+### Example 5:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example demonstrates a multiplication function where the mandatory parameter is declared before the parameter with a default value, allowing callers to omit the optional parameter if desired.
+
+<!-- #example_positive_code -->
+```ts
+function multiply(b: number, a: number = 1): number {
+  console.log("Multiplying:", b, "and", a);
+  return a * b;
+}
+
+let result = multiply(42); // Uses the default value for a
+console.log("Result:", result);
+```

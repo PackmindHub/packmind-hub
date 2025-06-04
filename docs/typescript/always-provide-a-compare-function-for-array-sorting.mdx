@@ -1,0 +1,123 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Always Provide a Compare Function for Array Sorting
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["Reliability","Correctness"]} />
+
+## What is it?
+This practice is triggered by using the array sort functions — namely, Array.prototype.sort() and Array.prototype.toSorted() — without supplying a custom compare function. Without a compare function, the default lexicographic (dictionary) order is applied, which can yield unexpected and inconsistent results, especially when sorting numbers or strings with Unicode characters.
+
+## Why apply it?
+Relying on the default sort behavior may lead to bugs that are hard to detect. For example, numeric arrays might be sorted as strings (e.g., "10" coming before "2"), and strings might not be ordered correctly even if they appear visually similar. By providing an explicit compare function, you ensure a reliable, predictable, and locale-aware sort order.
+
+## How to Fix it?
+Always pass a compare function to your sort or toSorted calls. For numerical sorting, use a function like (a, b) => a - b. For string sorting that respects locale and Unicode, use a.localeCompare(b).
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+const words: string[] = ['éclair', 'eclair', 'Éclair', 'apple'];
+words.sort(); // Noncompliant: default sorting is not locale-aware
+console.log("Sorted words (incorrect):", words);
+console.log("Default lexicographic order does not handle Unicode properly.");
+console.log("Missing localeCompare for reliable string ordering.");
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+const data: number[] = [50, 5, 15, 1, 20];
+const sortedData = data.toSorted((a, b) => a - b); // Correct use of toSorted with a compare function
+console.log("Original data (unchanged):", data);
+console.log("New sorted data:", sortedData);
+console.log("Compare function (a, b) => a - b applied to toSorted()");
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+const data: number[] = [50, 5, 15, 1, 20];
+const wrongSortedData = data.toSorted(); // Noncompliant: uses default lexicographic order
+console.log("Original data (unchanged):", data);
+console.log("Incorrectly sorted data:", wrongSortedData);
+console.log("Lexicographic sorting leads to unexpected number order.");
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+const numbers: number[] = [10, 2, 30, 1, 5];
+const sortedNumbers = numbers.sort((a, b) => a - b); // Correct numeric sort
+console.log("Sorted numbers:", sortedNumbers);
+console.log("Original array after sort (in-place):", numbers);
+console.log("Numeric comparison used: (a, b) => a - b");
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+const numbers: number[] = [10, 2, 30, 1, 5];
+numbers.sort(); // Noncompliant: uses lexicographic sort
+console.log("Sorted numbers (incorrect):", numbers);
+console.log("Lexicographic order can lead to unexpected results.");
+console.log("Missing compare function: (a, b) => a - b");
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+const words: string[] = ['éclair', 'eclair', 'Éclair', 'apple'];
+const sortedWords = words.sort((a, b) => a.localeCompare(b)); // Correct locale-aware sort
+console.log("Locale-sorted words:", sortedWords);
+console.log("Using localeCompare ensures proper ordering of Unicode strings.");
+console.log("Positive: Custom compare function applied.");
+```

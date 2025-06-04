@@ -1,0 +1,111 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure Consistent Initialization of Enum Members in TypeScript
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","intentionality - clear"]} />
+
+## What is it?
+This practice is triggered by an inconsistent initialization of enum members in TypeScript. When only a subset of an enum’s members is explicitly assigned a value while the others rely on default auto-incremented values, gaps and unintended behaviors may arise.
+
+## Why apply it?
+Partial initialization of enums can lead to misleading representations of the enum values. When some members are explicitly assigned while others are not, modifying or reordering enum members might alter their underlying values, potentially causing bugs. Ensuring that either all members are explicitly assigned or none maintains clarity and predictability.
+
+## How to Fix it?
+Assign a value to every enum member or leave all members unassigned; alternatively, you may assign a value only to the first member (letting TypeScript auto-increment the rest) to maintain consistency.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example shows an enum with mixed initialization. Only one member is explicitly assigned a value, leaving others unassigned, thereby creating confusion and potential gaps in the sequence.
+
+<!-- #example_negative_code -->
+```ts
+enum Month {
+  January,       // 0
+  February,      // 1
+  March,         // 2
+  April = 4,     // Explicitly set to 4
+  May            // Will be assigned 5, not 3 as might be expected
+}
+
+console.log(Month.March);   // Output: 2, but a gap exists between March and April.
+console.log(Month.May);     // Output: 5
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example demonstrates an enum where none of the members are explicitly assigned values, thus relying on auto-increment, which guarantees consistency.
+
+<!-- #example_positive_code -->
+```ts
+enum Month {
+  January,    // 0
+  February,   // 1
+  March,      // 2
+  April,      // 3
+  May         // 4
+}
+
+console.log(Month.January);  // Output: 0
+console.log(Month.May);      // Output: 4
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example mixes implicitly assigned values with an explicit assignment. Only one member (Delete) is given a binary literal, which leads to an inconsistent and error-prone enum definition.
+
+<!-- #example_negative_code -->
+```ts
+enum Permission {
+  None,           // 0 (implicitly assigned)
+  Read,           // 1
+  Write,          // 2
+  Delete = 0b0100, // Explicitly set to 4
+  Execute         // Will be assigned 5, not a clearly defined binary flag
+}
+
+console.log(Permission.Write);   // Output: 2
+console.log(Permission.Execute); // Output: 5, which may be misleading
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example presents an enum in which each member is explicitly initialized. This approach eliminates any ambiguity regarding the underlying values and prevents unexpected gaps.
+
+<!-- #example_positive_code -->
+```ts
+enum Permission {
+  None    = 0b0000,
+  Read    = 0b0001,
+  Write   = 0b0010,
+  Delete  = 0b0100,
+  Execute = 0b1000
+}
+
+console.log(Permission.Read);    // Output: 1 (binary 0001)
+console.log(Permission.Execute); // Output: 8 (binary 1000)
+```

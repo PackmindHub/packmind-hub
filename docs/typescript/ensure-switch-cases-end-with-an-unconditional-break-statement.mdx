@@ -1,0 +1,190 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure Switch Cases End With an Unconditional "break" Statement
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["intentionality - clear","Maintainability"]} />
+
+## What is it?
+This practice ensures that every switch case in your TypeScript code terminates with an unconditional statement such as "break". Failure to do so may result in unintended fall-through, where the execution unintentionally continues into the next case block.
+
+## Why apply it?
+Accidental fall-through in switch cases can lead to bugs that are hard to understand and maintain. By explicitly ending each case with a break (or an alternative unconditional control flow statement like return, throw, or continue when appropriate), you create clear, predictable, and maintainable code behavior.
+
+## How to Fix it?
+Audit your switch-case statements and verify that each case properly concludes with an unconditional termination statement (commonly "break"). If fall-through behavior is intended, make sure it is clearly documented by adding a comment like // fall through. For cases where control flow should exit the switch (via return, throw, etc.), ensure that the logic is explicit and unambiguous.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+switch (errorCode) {
+  case 404:
+    logClientError();
+    alertUser("Client error occurred.");  // Noncompliant: Missing break causes fall-through.
+  case 405:
+    logClientErrorDetails();
+    break;
+  case 500:
+    logServerError();
+    alertUser("Server error occurred.");
+    break;
+  default:
+    logUnknownError();
+    alertUser("An unknown error occurred.");
+    break;
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+let orderStatus = 'completed';
+
+switch (orderStatus) {
+  case 'pending':
+    initiateOrderProcessing();
+    notifyCustomer("Your order is pending.");
+    break;
+  case 'processing':
+    updateOrderStatus();
+    notifyCustomer("Your order is processing.");
+    break;
+  case 'completed':
+    finalizeOrder();
+    notifyCustomer("Your order is completed.");
+    break;
+  default:
+    logError("Unknown order status encountered.");
+    notifyCustomer("Order status error.");
+    break;
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+switch (userRole) {
+  case 'admin':
+    grantAdminPrivileges();
+    logAccess('admin');
+    break;
+  case 'editor':
+    grantEditorPrivileges();
+    updateContent();  // Noncompliant: Missing break, causing fall-through.
+  default:
+    grantGuestPrivileges();
+    logAccess('guest');
+    break;
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+switch (errorCode) {
+  case 404:
+  case 405:
+    logClientError();
+    alertUser("Client error occurred.");
+    break;
+  case 500:
+    logServerError();
+    alertUser("Server error occurred.");
+    break;
+  default:
+    logUnknownError();
+    alertUser("An unknown error occurred.");
+    break;
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+let orderStatus = 'processing';
+
+switch (orderStatus) {
+  case 'pending':
+    initiateOrderProcessing();
+    notifyCustomer("Your order is pending.");
+    break;
+  case 'processing':
+    updateOrderStatus();
+    notifyCustomer("Your order is processing.");  // Noncompliant: Missing break causes fall-through.
+  case 'completed':
+    finalizeOrder();
+    notifyCustomer("Your order is completed.");
+    break;
+  default:
+    logError("Unknown order status encountered.");
+    notifyCustomer("Order status error.");
+    break;
+}
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+switch (userRole) {
+  case 'admin':
+    grantAdminPrivileges();
+    logAccess('admin');
+    break;
+  case 'editor':
+    grantEditorPrivileges();
+    updateContent();
+    break;
+  default:
+    grantGuestPrivileges();
+    logAccess('guest');
+    break;
+}
+```

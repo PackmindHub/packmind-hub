@@ -1,0 +1,162 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Using Jump Statements in `finally` Blocks
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["intentionality - clear","Maintainability"]} />
+
+## What is it?
+This practice is triggered when jump statements (such as `return` or `throw`) are used inside a `finally` block. The `finally` block is intended for cleanup activities and executing necessary operations unconditionally. Using jump statements there can override earlier outcomes from the `try` or `catch` blocks, leading to unexpected behaviors.
+
+## Why apply it?
+Jump statements in a `finally` block can alter the normal control flow. For instance, a `return` inside `finally` will override any value returned from the `try` or `catch` blocks, and a `throw` might suppress the original error. This makes the code harder to understand, debug, and maintain.
+
+## How to Fix it?
+Move any jump statements (such as `return`, `throw`, `break`, or `continue`) outside of the `finally` block. Reserve the `finally` block solely for cleanup operations and other tasks that must execute regardless of exceptions or normal execution flow.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+async function fetchData(): Promise<number> {
+  let result: number = 0;
+  let connection: { getData: () => number; close: () => void } | null = null;
+  try {
+    connection = await connect();
+    result = connection.getData();
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  } finally {
+    if (connection) {
+      connection.close(); // Cleanup operation
+    }
+  }
+  return result; // Properly returning after cleanup
+}
+
+async function connect(): Promise<{ getData: () => number; close: () => void }> {
+  // Simulated connect function that returns a dummy connection
+  return {
+    getData: () => 42,
+    close: () => console.log("Connection closed")
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function processFile(filePath: string): string {
+  let content: string = "";
+  let file: { read: () => string; close: () => void } | null = null;
+  try {
+    file = openFile(filePath);
+    content = file.read();
+  } catch (err) {
+    console.error("Error reading file:", err);
+  } finally {
+    if (file) {
+      file.close(); // Cleanup operation
+    }
+    throw new Error("Error during final processing"); // Noncompliant: Jump statement 'throw' inside finally block
+  }
+}
+
+function openFile(filePath: string): { read: () => string; close: () => void } {
+  // Simulated file open that returns a dummy file object
+  return {
+    read: () => "File content",
+    close: () => console.log("File closed")
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function processFile(filePath: string): string {
+  let content: string = "";
+  let file: { read: () => string; close: () => void } | null = null;
+  try {
+    file = openFile(filePath);
+    content = file.read();
+  } catch (err) {
+    console.error("Error reading file:", err);
+  } finally {
+    if (file) {
+      file.close(); // Cleanup operation
+    }
+  }
+  if (!content) {
+    throw new Error("File processing failed"); // Error thrown after cleanup
+  }
+  return content;
+}
+
+function openFile(filePath: string): { read: () => string; close: () => void } {
+  // Simulated file open that returns a dummy file object
+  return {
+    read: () => "File content",
+    close: () => console.log("File closed")
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+async function fetchData(): Promise<number> {
+  let result: number = 0;
+  let connection: { getData: () => number; close: () => void } | null = null;
+  try {
+    connection = await connect();
+    result = connection.getData();
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  } finally {
+    if (connection) {
+      connection.close(); // Cleanup operation
+    }
+    return result; // Noncompliant: Jump statement 'return' inside the finally block
+  }
+}
+
+async function connect(): Promise<{ getData: () => number; close: () => void }> {
+  // Simulated connect function that returns a dummy connection
+  return {
+    getData: () => 42,
+    close: () => console.log("Connection closed")
+  }
+}
+```

@@ -1,0 +1,164 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use Robust Cipher Algorithms in Encryption
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["Security","cryptography"]} />
+
+## What is it?
+This practice highlights the importance of using robust cipher algorithms for encryption. Weak encryption algorithms, such as DES or RC4, can allow attackers to recover the cleartext of the encrypted message or tamper with its integrity without prior knowledge of the secret key.
+
+## Why apply it?
+Using weak or deprecated cryptographic algorithms jeopardizes the confidentiality and integrity of sensitive data. By relying on inadequate encryption methods, the security of transmitted or stored data may be compromised. It’s essential to employ strong, robust algorithms (e.g., AES-256-GCM) that are widely accepted by the cryptographic community to ensure resistance against cryptanalysis.
+
+## How to Fix it?
+Replace weak cipher algorithms (such as DES, RC4) with secure ones (such as AES-256-GCM or AES-256-CBC). Ensure that key sizes, IV lengths, and overall encryption configurations meet current security standards and best practices.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import crypto from 'crypto';
+
+const key = crypto.randomBytes(8); // DES key is only 64 bits (56 bits effective)
+const iv = crypto.randomBytes(8);  // DES uses an 8-byte IV
+const cipher = crypto.createCipheriv("DES", key, iv); // Using weak algorithm DES
+let encrypted = cipher.update("Sensitive data for encryption", "utf8", "hex");
+encrypted += cipher.final("hex");
+
+console.log("Encrypted text:", encrypted);
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import crypto from 'crypto';
+
+// Note: RC4 is considered insecure and its use is deprecated in modern systems.
+const key = crypto.randomBytes(16); // Using a 16-byte key with RC4 (not secure)
+const cipher = crypto.createCipheriv("RC4", key, null); // RC4 does not utilize an IV
+let encrypted = cipher.update("Another set of sensitive data", "utf8", "hex");
+encrypted += cipher.final("hex");
+
+console.log("Encrypted text:", encrypted);
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import crypto from 'crypto';
+
+try {
+    const key = crypto.randomBytes(32); // AES-256 requires a 256-bit key
+    const iv = crypto.randomBytes(12);  // Recommended IV size for GCM mode
+    const cipher = crypto.createCipheriv("AES-256-GCM", key, iv);
+    let encryptedData = cipher.update("Critical information", "utf8", "hex");
+    encryptedData += cipher.final("hex");
+    const authTag = cipher.getAuthTag();
+
+    console.log("Encrypted data:", encryptedData);
+    console.log("Authentication tag:", authTag.toString("hex"));
+} catch (error) {
+    console.error("Encryption failed:", error);
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import crypto from 'crypto';
+
+try {
+    const key = crypto.randomBytes(8); // DES key size is too small by modern standards
+    const iv = crypto.randomBytes(8);  // DES IV size is only 8 bytes
+    const cipher = crypto.createCipheriv("DES", key, iv); // Insecure algorithm usage
+    let encryptedData = cipher.update("Critical information", "utf8", "hex");
+    encryptedData += cipher.final("hex");
+
+    console.log("Encrypted data:", encryptedData);
+} catch (error) {
+    console.error("Encryption error:", error);
+}
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import crypto from 'crypto';
+
+const key = crypto.randomBytes(32); // AES-256 requires a 256-bit key
+const iv = crypto.randomBytes(16);  // AES block size is 16 bytes for CBC mode
+const cipher = crypto.createCipheriv("AES-256-CBC", key, iv);
+let encrypted = cipher.update("Another set of sensitive data", "utf8", "hex");
+encrypted += cipher.final("hex");
+
+console.log("Encrypted text:", encrypted);
+console.log("IV used:", iv.toString("hex"));
+```
+
+### Example 5:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import crypto from 'crypto';
+
+const key = crypto.randomBytes(32); // AES-256 requires a 256-bit key
+const iv = crypto.randomBytes(12);  // GCM mode IV should be 12 bytes
+const cipher = crypto.createCipheriv("AES-256-GCM", key, iv);
+let encrypted = cipher.update("Sensitive data for encryption", "utf8", "hex");
+encrypted += cipher.final("hex");
+const authTag = cipher.getAuthTag();
+
+console.log("Encrypted text:", encrypted);
+console.log("Authentication tag:", authTag.toString("hex"));
+```

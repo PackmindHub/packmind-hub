@@ -1,0 +1,120 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Redundant Optional Property Declarations in TypeScript
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["maintainability","reliability"]} />
+
+## What is it?
+This practice focuses on avoiding the redundancy of declaring optional properties using both the optional property syntax ('?') and an explicit union with `undefined` in TypeScript. Combining these two approaches is unnecessary and can cause confusion about the intended usage of the property.
+
+## Why apply it?
+When you mark a property as optional using the '?' syntax, it already implies that the property might be omitted or be `undefined`. Adding `| undefined` to the type declaration is redundant and can mislead developers, potentially complicating type inference and code readability.
+
+## How to Fix it?
+Choose one convention for declaring optional properties. If you intend for a property to be optional, simply use the '?' syntax without `| undefined`. Only combine them if you specifically require the behavior provided by the TypeScript compiler option `exactOptionalPropertyTypes`—but for most cases, the simpler syntax is preferable.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The following example correctly uses the optional property syntax without an extra union with `undefined`. The property `address` is declared as optional, making the code clear and concise.
+
+<!-- #example_positive_code -->
+```ts
+interface Person {
+  name: string;
+  address?: string;  // Compliant: using '?' without '| undefined'
+}
+
+function createPerson(name: string, address?: string): Person {
+  return { name, address };
+}
+
+const person1: Person = createPerson("Alice");
+const person2: Person = createPerson("Bob", "123 Main St");
+
+console.log("Person 1:", person1);
+console.log("Person 2:", person2);
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example shows a redundancy issue where the optional property `address` is declared with both '?' and the union type `| undefined`. This practice is unnecessary and should be avoided unless you have a specific reason tied to compiler settings.
+
+<!-- #example_negative_code -->
+```ts
+interface Person {
+  name: string;
+  address?: string | undefined;  // Noncompliant: redundant use of '?' and '| undefined'
+}
+
+function createPerson(name: string, address?: string | undefined): Person {
+  return { name, address };
+}
+
+const person1: Person = createPerson("Alice", undefined);
+const person2: Person = createPerson("Bob", "123 Main St");
+
+console.log("Person 1:", person1);
+console.log("Person 2:", person2);
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this example, the optional properties in the configuration interface are declared solely with the '?' syntax. This makes the function signature clean and allows the TypeScript compiler to correctly interpret missing properties as `undefined`.
+
+<!-- #example_positive_code -->
+```ts
+interface Config {
+  timeout?: number;
+  endpoint?: string;
+}
+
+function setup(config: Config): void {
+  const timeout = config.timeout ?? 3000;
+  const endpoint = config.endpoint ?? "http://localhost";
+  console.log(`Setting up with a timeout of ${timeout}ms and endpoint ${endpoint}`);
+}
+
+setup({ timeout: 5000 });  // Compliant: using optional properties correctly
+setup({});                 // Compliant: properties omitted as needed
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Here, the configuration interface mistakenly declares its optional properties using both the '?' syntax and an explicit union with `undefined`, which creates redundant type definitions.
+
+<!-- #example_negative_code -->
+```ts
+interface Config {
+  timeout?: number | undefined;   // Noncompliant: redundant declaration with '?' and '| undefined'
+  endpoint?: string | undefined;  // Noncompliant: redundant declaration with '?' and '| undefined'
+}
+
+function setup(config: Config): void {
+  const timeout = (typeof config.timeout === "number") ? config.timeout : 3000;
+  const endpoint = config.endpoint || "http://localhost";
+  console.log(`Setting up with a timeout of ${timeout}ms and endpoint ${endpoint}`);
+}
+
+setup({ timeout: 5000, endpoint: undefined });  // Noncompliant usage due to redundant type declarations
+```

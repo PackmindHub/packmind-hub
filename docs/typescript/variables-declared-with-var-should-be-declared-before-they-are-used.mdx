@@ -1,0 +1,167 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Variables Declared with "var" Should be Declared Before They Are Used
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["Best Practices","Reliability"]} />
+
+## What is it?
+This practice emphasizes that when using the "var" keyword in TypeScript, all variables should be declared before any usage. Because of hoisting, "var" declarations are moved to the top of their scope at runtime, which can lead to unexpected behaviors if a variable is used before its declaration.
+
+## Why apply it?
+Using a variable before its declaration can result in undefined values or confusing variable shadowing. Declaring variables properly prevents such issues and leads to more understandable, maintainable code.
+
+## How to Fix it?
+Always declare your "var" variables at the beginning of their scope (such as a function or block), before any instance where they might be used. This practice ensures clarity in the code and avoids unintended side effects from hoisting.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+var a = 10, b = 20;
+function calculate() {
+  console.log("Starting calculation with a =", a, "and b =", b);
+  console.log("Attempting to use sum before declaration:", sum);  // Using sum before its declaration
+  if (a + b > 25) {
+    var sum = a + b;  // Declaration is made inside the block but hoisted to the top, causing unexpected undefined usage
+    sum = sum * 2;
+    console.log("Doubled sum in if block:", sum);
+  }
+  console.log("Final sum after if block:", sum);
+  return sum;
+}
+calculate();
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+var counter = 0;
+function countItems(items: number[]) {
+  for (let i = 0; i < items.length; i++) {
+    console.log("Before update, counter:", counter); // Using counter before its re-declaration
+    if (true) {
+      var counter = items[i]; // Late declaration causes hoisting issues and shadows outer counter
+      console.log("Reset counter to current item:", counter);
+    }
+    counter += 1;
+    console.log(`After increment in loop iteration ${i}:`, counter);
+  }
+  return counter;
+}
+console.log("Final counter value:", countItems([2, 3, 4, 5]));
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+var a = 10, b = 20;
+function calculate() {
+  var sum = a + b;  // Declare sum upfront
+  console.log("Initial sum:", sum);
+  if (sum > 25) {
+    sum = sum * 2;
+    console.log("Doubled sum inside if:", sum);
+  }
+  console.log("Final sum:", sum);
+  return sum;
+}
+calculate();
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+var x = 1;
+function displayValue() {
+  console.log("Initial x:", x); // Reference to x, but later shadowed by a redeclaration
+  if (true) {
+    var x = 42;  // Declaration happens later in the function scope: hoisted and shadows the global x
+    console.log("Inside if, x declared later:", x);
+  }
+  console.log("After if, x:", x);
+}
+displayValue();
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+var x = 1;
+function displayValue() {
+  console.log("Initial x:", x);  // x is declared and initialized above
+  if (true) {
+    // We can safely modify x because it is already declared in the function scope.
+    x = 42;
+    console.log("Updated x inside if:", x);
+  }
+  console.log("Final x:", x);
+}
+displayValue();
+```
+
+### Example 5:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+var counter = 0;
+function countItems(items: number[]) {
+  console.log("Starting counter:", counter); // Counter declared at function's start
+  for (let i = 0; i < items.length; i++) {
+    counter += items[i];
+    console.log(`After adding item ${i}:`, counter);
+  }
+  return counter;
+}
+console.log("Final counter value:", countItems([2, 3, 4, 5]));
+```

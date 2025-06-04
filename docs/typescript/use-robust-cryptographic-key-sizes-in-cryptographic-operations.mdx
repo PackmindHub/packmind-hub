@@ -1,0 +1,183 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use Robust Cryptographic Key Sizes in Cryptographic Operations
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["Security","cryptography"]} />
+
+## What is it?
+This practice ensures that cryptographic keys are generated with a sufficient key length to prevent brute-force and other cryptographic attacks. Using weak or too-short keys exposes sensitive data to potential compromise.
+
+## Why apply it?
+Strong key sizes are essential for guaranteeing the security of cryptographic operations. When keys are too short, it becomes computationally feasible for attackers to break encryption and recover sensitive information. Following best practices for key lengths in algorithms such as RSA, DSA, and Elliptic Curve Cryptography (ECC) reduces the risk of unauthorized data exposure.
+
+## How to Fix it?
+Always generate cryptographic keys with lengths that meet or exceed current security recommendations:
+- For RSA and DSA, use at least 2048 bits.
+- For elliptic curve keys, choose a named curve that provides a minimum of 224 bits of security (e.g., secp224k1).
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import * as crypto from 'crypto';
+
+function generateInsecureRSAKey(): void {
+  const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
+    modulusLength: 1024,  // Noncompliant: insecure key size
+    publicKeyEncoding: { type: 'spki', format: 'pem' },
+    privateKeyEncoding: { type: 'pkcs8', format: 'pem' }
+  });
+  console.log("Insecure RSA Public Key:", publicKey);
+  console.log("Insecure RSA Private Key:", privateKey);
+}
+
+generateInsecureRSAKey();
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import * as crypto from 'crypto';
+
+function generateSecureRSAKey(): void {
+  const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
+    modulusLength: 2048,  // Compliant: secure key size
+    publicKeyEncoding: { type: 'spki', format: 'pem' },
+    privateKeyEncoding: { type: 'pkcs8', format: 'pem' }
+  });
+  console.log("Secure RSA Public Key:", publicKey);
+  console.log("Secure RSA Private Key:", privateKey);
+}
+
+generateSecureRSAKey();
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import * as crypto from 'crypto';
+
+function generateInsecureDSAKey(): void {
+  const { privateKey, publicKey } = crypto.generateKeyPairSync('dsa', {
+    modulusLength: 1024,  // Noncompliant: insecure key size
+    publicKeyEncoding: { type: 'spki', format: 'pem' },
+    privateKeyEncoding: { type: 'pkcs8', format: 'pem' }
+  });
+  console.log("Insecure DSA Public Key:", publicKey);
+  console.log("Insecure DSA Private Key:", privateKey);
+}
+
+generateInsecureDSAKey();
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import * as crypto from 'crypto';
+
+function generateSecureECKey(): void {
+  crypto.generateKeyPair('ec', {
+    namedCurve: 'secp224k1',  // Compliant: meets minimum EC security requirements
+    publicKeyEncoding: { type: 'spki', format: 'pem' },
+    privateKeyEncoding: { type: 'pkcs8', format: 'pem' }
+  }, (err, publicKey, privateKey) => {
+    if (err) {
+      console.error('Error generating secure EC keys:', err);
+      return;
+    }
+    console.log("Secure EC Public Key:", publicKey);
+    console.log("Secure EC Private Key:", privateKey);
+  });
+}
+
+generateSecureECKey();
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import * as crypto from 'crypto';
+
+function generateInsecureECKey(): void {
+  crypto.generateKeyPair('ec', {
+    namedCurve: 'secp112r2', // Noncompliant: insecure curve with insufficient key size
+    publicKeyEncoding: { type: 'spki', format: 'pem' },
+    privateKeyEncoding: { type: 'pkcs8', format: 'pem' }
+  }, (err, publicKey, privateKey) => {
+    if (err) {
+      console.error('Error generating insecure EC keys:', err);
+      return;
+    }
+    console.log("Insecure EC Public Key:", publicKey);
+    console.log("Insecure EC Private Key:", privateKey);
+  });
+}
+
+generateInsecureECKey();
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import * as crypto from 'crypto';
+
+function generateSecureDSAKey(): void {
+  const { privateKey, publicKey } = crypto.generateKeyPairSync('dsa', {
+    modulusLength: 2048,  // Compliant: secure key size
+    publicKeyEncoding: { type: 'spki', format: 'pem' },
+    privateKeyEncoding: { type: 'pkcs8', format: 'pem' }
+  });
+  console.log("Secure DSA Public Key:", publicKey);
+  console.log("Secure DSA Private Key:", privateKey);
+}
+
+generateSecureDSAKey();
+```

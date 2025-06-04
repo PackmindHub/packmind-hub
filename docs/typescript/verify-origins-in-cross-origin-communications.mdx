@@ -1,0 +1,178 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Verify Origins in Cross-Origin Communications
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["Security","Reliability"]} />
+
+## What is it?
+This practice is triggered by improper verification of origins when using cross-origin communications, such as the postMessage API, where the target origin is not explicitly specified or the sender’s origin is not validated.
+
+## Why apply it?
+Without proper origin validation, attackers can create malicious requests that may lead to sensitive data exposure or unauthorized actions. Ensuring that messages are sent only to known, trusted origins and that incoming messages are verified helps maintain secure communications.
+
+## How to Fix it?
+When sending messages, always specify a fixed target origin instead of using "*". When receiving messages, verify the event.origin property against the expected trusted domain before processing the data. This twofold approach ensures that only messages from expected sources are accepted and processed.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+const allowedOrigin = "https://trusted.example.net";
+
+// Receiver: Check and validate the origin before processing the incoming message
+window.addEventListener("message", (event: MessageEvent) => {
+  if (event.origin !== allowedOrigin) {
+    console.error(`Blocked message from untrusted origin: ${event.origin}`);
+    return;
+  }
+  
+  // Process the secure message
+  console.log("Securely received data:", event.data);
+});
+
+// Sender: Respond with a message to the verified origin
+const responseIframe = document.getElementById("responseIframe") as HTMLIFrameElement;
+responseIframe.contentWindow?.postMessage("Response OK", allowedOrigin);
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+const insecureOrigin = "*";
+
+// Receiver: Does not perform any origin check
+window.addEventListener("message", (event: MessageEvent) => {
+  console.log("Message received without origin verification:", event.data); // Noncompliant
+});
+
+// Sender: Insecurely send message using a wildcard as target origin
+const targetIframe = document.getElementById("insecureIframe") as HTMLIFrameElement;
+targetIframe.contentWindow?.postMessage("Data request", insecureOrigin); // Noncompliant
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+const iframe = document.getElementById("secureIframe") as HTMLIFrameElement;
+const trustedOrigin = "https://secure.example.com";
+
+// Sender: Send message to a known, secure origin
+iframe.contentWindow?.postMessage("Hello from parent", trustedOrigin);
+
+// Receiver: Verify that the sender is trusted before processing the message
+window.addEventListener("message", (event: MessageEvent) => {
+  if (event.origin !== trustedOrigin) {
+    console.warn("Untrusted origin: " + event.origin);
+    return;
+  }
+  console.log("Received secure message:", event.data);
+});
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+const iframe = document.getElementById("unsafeIframe") as HTMLIFrameElement;
+
+// Sender: Insecurely send message using a wildcard target origin
+iframe.contentWindow?.postMessage("Hello from parent", "*"); // Noncompliant
+
+// Receiver: Does not check the origin property at all
+window.addEventListener("message", (event: MessageEvent) => {
+  console.log("Received message without verification:", event.data); // Noncompliant
+});
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+const secureTargetOrigin = "https://api.secure.com";
+
+// Function that securely sends a message to a child iframe
+function sendSecureMessage(): void {
+  const childFrame = document.getElementById("childFrame") as HTMLIFrameElement;
+  if (!childFrame || !childFrame.contentWindow) {
+    console.error("Child frame not found");
+    return;
+  }
+  childFrame.contentWindow.postMessage({ type: "AUTH_REQUEST", payload: "Details here" }, secureTargetOrigin);
+}
+
+// Secure listener: validate the origin before processing the message
+window.addEventListener("message", (event: MessageEvent) => {
+  if (event.origin !== secureTargetOrigin) {
+    console.error("Received message from untrusted origin:", event.origin);
+    return;
+  }
+  console.log("Processed secure message:", event.data);
+});
+
+sendSecureMessage();
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+const insecureTargetOrigin = "*";
+
+// Function that insecurely sends a message using wildcard origin
+function sendInsecureMessage(): void {
+  const childFrame = document.getElementById("childFrame") as HTMLIFrameElement;
+  if (!childFrame || !childFrame.contentWindow) {
+    console.error("Child frame not available");
+    return;
+  }
+  childFrame.contentWindow.postMessage({ type: "AUTH_REQUEST", payload: "Sensitive data" }, insecureTargetOrigin); // Noncompliant
+}
+
+// Listener without origin verification: processes any incoming message
+window.addEventListener("message", (event: MessageEvent) => {
+  console.log("Processing message without origin check:", event.data); // Noncompliant
+});
+
+sendInsecureMessage();
+```

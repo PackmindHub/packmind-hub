@@ -1,0 +1,201 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure JWTs are Signed with Strong Cipher Algorithms
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["Security","Best Practices"]} />
+
+## What is it?
+This practice ensures that JSON Web Tokens (JWTs) are signed and verified using strong cipher algorithms. Unsigned tokens or those signed with an insecure algorithm can be easily forged, allowing attackers to impersonate users and access sensitive data.
+
+## Why apply it?
+When JWTs are not signed with a robust cipher algorithm or if the signature is not verified, malicious actors can forge tokens that compromise user identity and application security. Always sign and verify your tokens using a strong algorithm to maintain data integrity and prevent unauthorized data access.
+
+## How to Fix it?
+- Always sign JWTs with a secure algorithm (e.g., HS256 or RS256).
+- Ensure the verification process explicitly specifies allowed secure algorithms.
+- Securely store and manage your secret or private keys.
+- Regularly rotate your keys to further enhance security.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import jwt from 'jsonwebtoken';
+
+const payload = { userId: 101, role: 'admin' };
+const secretKey = process.env.JWT_SECRET || 'your-strong-secret-key';
+
+// Signing the token using a secure algorithm (HS256)
+const token = jwt.sign(payload, secretKey, { algorithm: 'HS256', expiresIn: '1h' });
+console.log("Securely signed JWT:", token);
+
+// Verifying the token by explicitly allowing only the HS256 algorithm
+jwt.verify(token, secretKey, { algorithms: ['HS256'] }, (err, decoded) => {
+    if (err) {
+        console.error("Token verification failed:", err);
+    } else {
+        console.log("Token verified successfully:", decoded);
+    }
+});
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import jwt from 'jsonwebtoken';
+import fs from 'fs';
+
+const payload = { userId: 202, role: 'user' };
+const privateKey = fs.readFileSync('private.key');
+const publicKey = fs.readFileSync('public.key');
+
+// Insecurely signing the token by specifying 'none', which omits a proper signature (Noncompliant)
+const token = jwt.sign(payload, privateKey, { algorithm: 'none', expiresIn: '2h' });
+console.log("JWT improperly signed (no RS256):", token);
+
+// Incorrectly verifying the token by allowing 'none' algorithm (Noncompliant)
+jwt.verify(token, publicKey, { algorithms: ['none'] }, (err, decoded) => {
+    if (err) {
+        console.error("Token verification insecurely failed:", err);
+    } else {
+        console.log("Token verified insecurely:", decoded);
+    }
+});
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import jwt from 'jsonwebtoken';
+
+const payload = { userId: 303, role: 'editor' };
+const secretKey = process.env.JWT_SECRET;
+if (!secretKey) {
+    throw new Error("JWT secret must be configured in environment variables");
+}
+
+// Securely sign the token using HS256 with a secure secret from environment variables
+const token = jwt.sign(payload, secretKey, { algorithm: 'HS256', expiresIn: '45m' });
+console.log("Environment-secured JWT:", token);
+
+// Verify the token strictly with HS256
+jwt.verify(token, secretKey, { algorithms: ['HS256'] }, (err, decoded) => {
+    if (err) {
+        console.error("JWT verification failed:", err);
+    } else {
+        console.log("JWT verified successfully:", decoded);
+    }
+});
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import jwt from 'jsonwebtoken';
+
+const payload = { userId: 101, role: 'admin' };
+const secretKey = process.env.JWT_SECRET || 'your-strong-secret-key';
+
+// Incorrectly signing the token with the 'none' algorithm (Noncompliant)
+const token = jwt.sign(payload, secretKey, { algorithm: 'none', expiresIn: '1h' });
+console.log("JWT signed with no algorithm:", token);
+
+// Incorrectly verifying the token by accepting the 'none' algorithm (Noncompliant)
+jwt.verify(token, secretKey, { algorithms: ['none'] }, (err, decoded) => {
+    if (err) {
+        console.error("Token verification failed:", err);
+    } else {
+        console.log("Token verified (insecure):", decoded);
+    }
+});
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import jwt from 'jsonwebtoken';
+import fs from 'fs';
+
+const payload = { userId: 202, role: 'user' };
+const privateKey = fs.readFileSync('private.key'); // RSA Private Key
+const publicKey = fs.readFileSync('public.key');   // RSA Public Key
+
+// Signing the token using a secure RSA algorithm (RS256)
+const token = jwt.sign(payload, privateKey, { algorithm: 'RS256', expiresIn: '2h' });
+console.log("RS256 signed JWT:", token);
+
+// Verifying the token using the public key and enforcing RS256
+jwt.verify(token, publicKey, { algorithms: ['RS256'] }, (err, decoded) => {
+    if (err) {
+        console.error("RS256 token verification failed:", err);
+    } else {
+        console.log("RS256 token verified successfully:", decoded);
+    }
+});
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import jwt from 'jsonwebtoken';
+
+const payload = { userId: 303, role: 'editor' };
+const weakSecret = 'hardcoded-weak-secret';
+
+// Insecurely sign the token using the 'none' algorithm with a hardcoded weak secret (Noncompliant)
+const token = jwt.sign(payload, weakSecret, { algorithm: 'none', expiresIn: '45m' });
+console.log("JWT signed with insecure configuration:", token);
+
+// Insecurely verify the token by allowing the 'none' algorithm (Noncompliant)
+jwt.verify(token, weakSecret, { algorithms: ['none'] }, (err, decoded) => {
+    if (err) {
+        console.error("Verification failed insecurely:", err);
+    } else {
+        console.log("JWT verified insecurely:", decoded);
+    }
+});
+```

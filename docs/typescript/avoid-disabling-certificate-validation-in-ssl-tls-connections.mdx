@@ -1,0 +1,216 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Disabling Certificate Validation in SSL/TLS Connections
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["Security","Correctness"]} />
+
+## What is it?
+This practice focuses on ensuring that server certificates are properly validated during SSL/TLS connections in Node.js and TypeScript applications. Disabling certificate validation (for example, by setting rejectUnauthorized to false) makes your system vulnerable to man-in-the-middle attacks and data manipulation.
+
+## Why apply it?
+Certificate validation confirms the identity of the server before transmitting sensitive data. When validation is disabled, an attacker can intercept or modify data by masquerading as the legitimate server. Following this practice secures your communication channel and protects data integrity.
+
+## How to Fix it?
+Avoid disabling certificate validation by not setting rejectUnauthorized to false. Use the default behavior—or explicitly set rejectUnauthorized to true—to ensure that TLS connections verify the server’s certificate. If you must work with self-signed certificates, add the certificate to your trusted store instead of bypassing validation.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import * as tls from 'tls';
+
+const options = {
+  host: 'www.example.com',
+  port: 443,
+  secureProtocol: 'TLSv1_2_method'
+  // Compliant: Certificate validation is enabled by default.
+};
+
+const socket = tls.connect(options, () => {
+  console.log('Connected securely with certificate validation enabled');
+  process.stdin.pipe(socket);
+});
+
+socket.on('error', (error) => {
+  console.error('TLS connection error:', error);
+});
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import * as https from 'https';
+import { readFileSync } from 'fs';
+
+const caCertificate = readFileSync('path/to/self-signed-ca.pem');
+
+const options = {
+  hostname: 'secure.example.com',
+  port: 443,
+  path: '/data',
+  method: 'GET',
+  rejectUnauthorized: false, // Noncompliant: Disables validation even for self-signed certificates.
+  ca: caCertificate         // The CA certificate is loaded but not used correctly due to disabled validation.
+};
+
+const req = https.request(options, (res) => {
+  console.log(`Server Response Status: ${res.statusCode}`);
+  res.on('data', (chunk) => {
+    console.log(`Data chunk: ${chunk}`);
+  });
+});
+
+req.on('error', (error) => {
+  console.error('HTTPS request error:', error);
+});
+req.end();
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import * as https from 'https';
+import { readFileSync } from 'fs';
+
+// Load the self-signed CA certificate.
+const caCertificate = readFileSync('path/to/self-signed-ca.pem');
+
+const options = {
+  hostname: 'secure.example.com',
+  port: 443,
+  path: '/data',
+  method: 'GET',
+  rejectUnauthorized: true, // Compliant: Validation remains enabled.
+  ca: caCertificate        // Trusted certificate added.
+};
+
+const req = https.request(options, (res) => {
+  console.log(`Server Response Status: ${res.statusCode}`);
+  res.on('data', (chunk) => {
+    console.log(`Data chunk: ${chunk}`);
+  });
+});
+
+req.on('error', (error) => {
+  console.error('HTTPS request error:', error);
+});
+req.end();
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import * as https from 'https';
+
+const options = {
+  hostname: 'www.example.com',
+  port: 443,
+  path: '/',
+  method: 'GET',
+  rejectUnauthorized: false // Noncompliant: Disables certificate validation.
+};
+
+const req = https.request(options, (res) => {
+  console.log(`Status Code: ${res.statusCode}`);
+  res.on('data', (chunk) => {
+    process.stdout.write(chunk);
+  });
+});
+
+req.on('error', (error) => {
+  console.error('Request error:', error);
+});
+req.end();
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import * as https from 'https';
+
+const options = {
+  hostname: 'www.example.com',
+  port: 443,
+  path: '/',
+  method: 'GET'
+  // Compliant: Certificate validation is enabled by default.
+};
+
+const req = https.request(options, (res) => {
+  console.log(`Status Code: ${res.statusCode}`);
+  res.on('data', (chunk) => {
+    process.stdout.write(chunk);
+  });
+});
+
+req.on('error', (error) => {
+  console.error('Request error:', error);
+});
+req.end();
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import * as tls from 'tls';
+
+const options = {
+  host: 'www.example.com',
+  port: 443,
+  secureProtocol: 'TLSv1_2_method',
+  rejectUnauthorized: false // Noncompliant: Disables certificate validation.
+};
+
+const socket = tls.connect(options, () => {
+  console.log('Connected with disabled certificate validation');
+  process.stdin.pipe(socket);
+});
+
+socket.on('error', (error) => {
+  console.error('TLS connection error:', error);
+});
+```

@@ -1,0 +1,105 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Import - Prefer Object Spread Syntax Over Object.assign()
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","readability"]} />
+
+## What is it?
+This practice is triggered by using the Object.assign() method when the first argument is an object literal, for the purpose of cloning or merging objects. The issue is that Object.assign() can lead to less clear code and allows mutation of the target object, whereas object spread syntax provides a concise, immutable, and more readable way to achieve the same result.
+
+## Why apply it?
+Using the object spread syntax improves clarity and avoids unintended mutations. The spread operator was introduced in ES2018 and offers a succinct, shallow-copying mechanism which makes the code easier to understand and maintain.
+
+## How to Fix it?
+Replace calls to Object.assign() (where the target is an object literal) with object spread syntax. This transformation enhances code readability and safeguards against accidental mutations.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this compliant example, object spread syntax is used to merge two objects instead of using Object.assign(). It provides a clear and concise way to combine properties from "foo" and "bar" into a new object.
+
+<!-- #example_positive_code -->
+```ts
+const foo = { a: 1, b: 2 };
+const bar = { b: 3, c: 4 };
+
+const merged = { ...foo, ...bar }; // Compliant: Using object spread syntax for merging
+
+console.log('Merged Object:', merged);
+if (merged.a) {
+  console.log('Property a exists!');
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example shows the use of Object.assign() with an object literal as the target, which is noncompliant with the rule. This approach is more verbose and can lead to unintended mutations.
+
+<!-- #example_negative_code -->
+```ts
+const foo = { a: 1, b: 2 };
+const bar = { b: 3, c: 4 };
+
+const merged = Object.assign({}, foo, bar); // Noncompliant: Replace with spread syntax
+
+console.log('Merged Object:', merged);
+if (merged.a) {
+  console.log('Property a exists!');
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This compliant example demonstrates merging an object literal with another object using the spread operator. It clearly shows how additional properties can be combined without mutating any object.
+
+<!-- #example_positive_code -->
+```ts
+const baseUser = { id: 100, name: 'Alice' };
+const updateInfo = { active: true, name: 'Alice Cooper' };
+
+const user = { role: 'user', ...baseUser, ...updateInfo }; // Compliant: Merging with spread syntax
+
+console.log('User Object:', user);
+function displayRole() {
+  console.log('User role:', user.role);
+}
+displayRole();
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+In this noncompliant example, Object.assign() is used to merge an object literal with another object. This approach is unnecessarily verbose compared to using the spread syntax.
+
+<!-- #example_negative_code -->
+```ts
+const baseUser = { id: 100, name: 'Alice' };
+const updateInfo = { active: true, name: 'Alice Cooper' };
+
+const user = Object.assign({ role: 'user' }, baseUser, updateInfo); // Noncompliant: Use spread instead
+
+console.log('User Object:', user);
+function displayRole() {
+  console.log('User role:', user.role);
+}
+displayRole();
+```

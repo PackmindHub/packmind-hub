@@ -1,0 +1,147 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Misleading Use of Mutating Array Methods
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","clarity"]} />
+
+## What is it?
+This practice is triggered when mutating array methods, such as reverse() or sort(), are assigned to variables. These methods modify the original array in place while also returning the mutated array, which can mislead maintainers into thinking that a new array was created.
+
+## Why apply it?
+Assigning the return value of a mutating method may obscure the fact that the original array has been modified. Clear coding practices either avoid unnecessary assignments to emphasize in-place mutation or use non-mutating alternatives to explicitly create a copy of the array. This leads to more predictable and understandable code.
+
+## How to Fix it?
+Either:
+- Use non-mutating alternatives (`toReversed()` or `toSorted()`) if a new array is desired.
+- Or create a copy of the original array before invoking a mutating method (using spread syntax or slice()), ensuring that the original array remains unchanged.
+- Alternatively, if the intention is to mutate the original array, simply call the method without assigning its return value.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example assigns the result of mutating methods directly, which is misleading because the original arrays are modified.
+
+<!-- #example_negative_code -->
+```ts
+const numbers: number[] = [3, 1, 4, 1, 5];
+const sortedNumbers: number[] = numbers.sort((a, b) => a - b); // Noncompliant: sort() mutates 'numbers'
+console.log("Sorted numbers:", sortedNumbers);
+console.log("Numbers after sort:", numbers);
+
+const letters: string[] = ['d', 'c', 'b', 'a'];
+const reversedLetters: string[] = letters.reverse(); // Noncompliant: reverse() mutates 'letters'
+console.log("Reversed letters:", reversedLetters);
+console.log("Letters after reverse:", letters);
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example clearly indicates the intention to mutate the original array, by calling the mutating method without assigning its result. It also demonstrates the pattern of using a copy when a new array is actually desired.
+
+<!-- #example_positive_code -->
+```ts
+let scores: number[] = [50, 80, 90, 30, 60];
+scores.sort((a, b) => b - a);  // Intentionally mutates scores in-place
+console.log("Scores sorted in descending order (mutated):", scores);
+
+// To obtain a reversed copy without affecting the current order, create a copy first:
+const reversedScores: number[] = [...scores].reverse();
+console.log("Reversed copy of scores:", reversedScores);
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example misleadingly assigns the result of in-place mutations to new variables. The assignment makes it appear as if the original array remains unmodified, while in fact it has been mutated.
+
+<!-- #example_negative_code -->
+```ts
+let scores: number[] = [50, 80, 90, 30, 60];
+const sortedScores: number[] = scores.sort((a, b) => b - a); // Noncompliant: mutation with assignment
+console.log("Sorted scores (assigned):", sortedScores);
+console.log("Scores after sort mutation:", scores);
+
+const reversedScores: number[] = scores.reverse(); // Noncompliant: mutation with assignment
+console.log("Reversed scores (assigned):", reversedScores);
+console.log("Scores after reverse mutation:", scores);
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Here, the positive example creates copies of the original arrays before performing the mutation. This approach clarifies that the mutation is intended on a copy, keeping the original data intact.
+
+<!-- #example_positive_code -->
+```ts
+const data: number[] = [9, 2, 6, 7, 3];
+const sortedData: number[] = [...data].sort((a, b) => a - b);
+console.log("Original data:", data);
+console.log("Sorted copy:", sortedData);
+
+const words: string[] = ['orange', 'apple', 'banana'];
+const reversedWords: string[] = words.slice().reverse();
+console.log("Original words:", words);
+console.log("Reversed copy:", reversedWords);
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example improperly assigns the result of mutating methods to variables, leading to unexpected mutations in the original arrays.
+
+<!-- #example_negative_code -->
+```ts
+const data: number[] = [9, 2, 6, 7, 3];
+const sortedData: number[] = data.sort((a, b) => a - b); // Noncompliant: 'data' is mutated
+console.log("Sorted data:", sortedData);
+console.log("Data after sort call:", data);
+
+const words: string[] = ['orange', 'apple', 'banana'];
+const reversedWords: string[] = words.reverse(); // Noncompliant: 'words' is mutated
+console.log("Reversed words:", reversedWords);
+console.log("Words after reverse call:", words);
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example uses non-mutating alternatives, ensuring that the original arrays remain unmodified while obtaining sorted and reversed copies.
+
+<!-- #example_positive_code -->
+```ts
+const numbers: number[] = [3, 1, 4, 1, 5];
+const sortedNumbers: number[] = numbers.toSorted();
+console.log("Original numbers:", numbers);
+console.log("Sorted copy:", sortedNumbers);
+
+const letters: string[] = ['d', 'c', 'b', 'a'];
+const reversedLetters: string[] = letters.toReversed();
+console.log("Original letters:", letters);
+console.log("Reversed copy:", reversedLetters);
+```

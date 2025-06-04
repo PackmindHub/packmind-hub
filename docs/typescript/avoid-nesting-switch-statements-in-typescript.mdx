@@ -1,0 +1,183 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Nesting `switch` Statements in TypeScript
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Maintainability","clarity"]} />
+
+## What is it?
+This practice is triggered by the use of nested `switch` statements, which can confuse the association of each case and make the code hard to understand and maintain.
+
+## Why apply it?
+Nested `switch` statements make it easy to mistakenly attribute cases of an inner switch to the outer switch, causing logic errors and reducing code readability. Separating the inner logic into its own function results in a clearer control flow and better maintainability.
+
+## How to Fix it?
+Refactor the code to remove nested `switch` statements. If you must perform a secondary decision, extract that logic into a helper function.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function processNumbers(n: number, m: number): void {
+  switch(n) {
+    case 0:
+      switch(m) { // Noncompliant
+        case 0:
+          console.log("m equals 0");
+          break;
+        case 1:
+          console.log("m equals 1");
+          break;
+        case 2:
+          console.log("m equals 2");
+          break;
+        default:
+          console.log("m is unrecognized");
+      }
+      break;
+    case 1:
+      console.log("n is one, skipping inner switch.");
+      break;
+    default:
+      console.log("n has an unexpected value.");
+  }
+}
+
+processNumbers(0, 2);
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function handleSubCategory(subType: string): void {
+  switch(subType) {
+    case "A":
+      console.log("Subtype A processed");
+      break;
+    case "B":
+      console.log("Subtype B processed");
+      break;
+    case "C":
+      console.log("Subtype C processed");
+      break;
+    default:
+      console.log("Unknown subtype");
+  }
+}
+
+function processCategory(category: string, subType: string): void {
+  switch(category) {
+    case "primary":
+      handleSubCategory(subType);
+      break;
+    case "secondary":
+      console.log("Processing secondary category");
+      break;
+    default:
+      console.log("Category not recognized");
+  }
+}
+
+processCategory("primary", "B");
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function processCategory(category: string, subType: string): void {
+  switch(category) {
+    case "primary":
+      switch(subType) { // Noncompliant
+        case "A":
+          console.log("Subtype A processed");
+          break;
+        case "B":
+          console.log("Subtype B processed");
+          break;
+        case "C":
+          console.log("Subtype C processed");
+          break;
+        default:
+          console.log("Unknown subtype");
+      }
+      break;
+    case "secondary":
+      console.log("Processing secondary category");
+      break;
+    default:
+      console.log("Category not recognized");
+  }
+}
+
+processCategory("primary", "C");
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function evaluateM(m: number): void {
+  switch(m) {
+    case 0:
+      console.log("m equals 0");
+      break;
+    case 1:
+      console.log("m equals 1");
+      break;
+    case 2:
+      console.log("m equals 2");
+      break;
+    default:
+      console.log("m is unrecognized");
+  }
+}
+
+function processNumbers(n: number, m: number): void {
+  switch(n) {
+    case 0:
+      evaluateM(m);
+      break;
+    case 1:
+      console.log("n is one, skipping further evaluation.");
+      break;
+    default:
+      console.log("n has an unexpected value.");
+  }
+}
+
+processNumbers(0, 1);
+```

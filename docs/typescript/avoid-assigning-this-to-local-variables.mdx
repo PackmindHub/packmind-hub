@@ -1,0 +1,127 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Assigning "this" to Local Variables
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","clarity"]} />
+
+## What is it?
+In TypeScript, assigning `this` to a local variable (e.g., `let that = this;`) is unnecessary because arrow functions automatically bind to the surrounding context. This pattern is both redundant and may lead to confusion in your code.
+
+## Why apply it?
+By avoiding the assignment of `this` to a variable, you keep your code more concise and readable. Leveraging arrow functions for lexical `this` binding reduces potential mistakes and aligns with modern TypeScript best practices.
+
+## How to Fix it?
+Remove the alias assignment of `this` and use arrow functions or direct references to `this` instead. This change not only simplifies the code but also avoids misleading patterns that might confuse future maintainers.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example assigns `this` to the local variable `that` in order to preserve context, which is unnecessary in TypeScript and violates the recommended practice.
+
+<!-- #example_negative_code -->
+```ts
+function Foo() {
+  let that = this;  // Noncompliant: Unnecessary alias for 'this'
+  that.val = 0;
+
+  setInterval(function() {
+    that.val++;
+    console.log("Current value: " + that.val);
+  }, 1000);
+}
+
+new Foo();
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example refactors the code by eliminating the local alias for `this` and instead uses an arrow function to automatically bind the context.
+
+<!-- #example_positive_code -->
+```ts
+function Foo() {
+  this.val = 0;
+
+  setInterval(() => {
+    this.val++;
+    console.log("Current value: " + this.val);
+  }, 1000);
+}
+
+new Foo();
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+In this negative example, a local variable `self` is assigned to `this` to preserve context within the callback. This alias is unnecessary and should be avoided in favor of arrow functions.
+
+<!-- #example_negative_code -->
+```ts
+class Counter {
+  count: number;
+
+  constructor() {
+    this.count = 0;
+    this.start();
+  }
+
+  start() {
+    let self = this;  // Noncompliant: Alias for 'this' is unnecessary
+    setTimeout(function() {
+      self.count++;
+      console.log("Counter: " + self.count);
+    }, 1000);
+  }
+}
+
+new Counter();
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example demonstrates a class where the arrow function is used in a callback to increment a counter. No alias for `this` is created.
+
+<!-- #example_positive_code -->
+```ts
+class Counter {
+  count: number;
+
+  constructor() {
+    this.count = 0;
+    this.start();
+  }
+
+  start() {
+    setTimeout(() => {
+      this.count++;
+      console.log("Counter: " + this.count);
+    }, 1000);
+  }
+}
+
+new Counter();
+```

@@ -1,0 +1,163 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Mixing Value Types in Enum Members
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","consistency"]} />
+
+## What is it?
+This practice is triggered by mixing value types within enum members in TypeScript. Enums should consistently use either numeric or string values, but not a mix of both.
+
+## Why apply it?
+Mixing types in enums makes your code confusing and harder to maintain. Keeping the enum members consistent—by assigning them all numeric values or all string values—enhances code clarity and reduces potential type-related errors.
+
+## How to Fix it?
+Either assign all enum members with values of the same type or let them default to numeric values. Choose the style that fits best into your project and stick with it throughout your code.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The following example consistently assigns string values to all enum members, ensuring clarity and consistency.
+
+<!-- #example_positive_code -->
+```ts
+enum Color {
+  Red = "red",
+  Green = "green",
+  Blue = "blue",
+  Purple = "purple",
+  Cyan = "cyan"
+}
+
+function getColorName(color: Color): string {
+  switch (color) {
+    case Color.Red:
+      return "Red";
+    case Color.Green:
+      return "Green";
+    case Color.Blue:
+      return "Blue";
+    case Color.Purple:
+      return "Purple";
+    case Color.Cyan:
+      return "Cyan";
+    default:
+      return "Unknown Color";
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The following example mixes numeric defaults and explicit string assignments within the same enum, which can lead to confusion and potential bugs.
+
+<!-- #example_negative_code -->
+```ts
+enum Color {
+  Red,             // Implicitly 0 (number)
+  Green = 1,       // Explicit number
+  Blue = "blue",   // String value
+  Purple = 3,      // Explicit number
+  Cyan = "cyan"    // String value
+}
+
+function getColorCode(color: Color): string {
+  switch (color) {
+    case Color.Red:
+      return "Code 0";
+    case Color.Green:
+      return "Code 1";
+    case Color.Blue:
+      return "Code for blue";
+    case Color.Purple:
+      return "Code 3";
+    case Color.Cyan:
+      return "Code for cyan";
+    default:
+      return "Unknown Code";
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example uses numeric values consistently for the enum members representing HTTP status codes, ensuring they are auto-assigned or explicitly defined as numbers.
+
+<!-- #example_positive_code -->
+```ts
+enum HttpStatus {
+  OK = 200,
+  Created = 201,
+  Accepted = 202,
+  NoContent = 203,
+  BadRequest = 400
+}
+
+function getStatusMessage(status: HttpStatus): string {
+  switch (status) {
+    case HttpStatus.OK:
+      return "Success: OK";
+    case HttpStatus.Created:
+      return "Success: Created";
+    case HttpStatus.Accepted:
+      return "Success: Accepted";
+    case HttpStatus.NoContent:
+      return "Success: No Content";
+    case HttpStatus.BadRequest:
+      return "Error: Bad Request";
+    default:
+      return "Error: Unknown Status";
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The following negative example mixes numeric and string values within the same enum. This inconsistent assignment can lead to confusion when handling enum values.
+
+<!-- #example_negative_code -->
+```ts
+enum HttpStatus {
+  OK = 200,
+  Created,           // Implicitly 201 (number)
+  Accepted = "ACCEPTED", // String value
+  NoContent,         // Would be auto-assigned but conflicts with previous string type
+  BadRequest = 400
+}
+
+function getResponseMessage(status: HttpStatus): string {
+  switch (status) {
+    case HttpStatus.OK:
+      return "Response OK";
+    case HttpStatus.Created:
+      return "Resource Created";
+    case HttpStatus.Accepted:
+      return "Request Accepted";
+    case HttpStatus.NoContent:
+      return "No Content Available";
+    case HttpStatus.BadRequest:
+      return "Bad Request Error";
+    default:
+      return "Unknown Response";
+  }
+}
+```

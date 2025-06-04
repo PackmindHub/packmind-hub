@@ -1,0 +1,178 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use Meaningful Type Intersections in TypeScript
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["type-safety","Maintainability","clarity"]} />
+
+## What is it?
+This practice is triggered by the misuse of type intersections in TypeScript. Intersections combine multiple types into a single type. However, intersecting with certain basic types such as never, any, undefined, null, or void—or using an intersection with an empty type (e.g. {})—can yield types that are either always never, always any, or simply redundant.
+
+## Why apply it?
+Using meaningless type intersections undermines type safety and clarity. Intersecting with never, null, undefined, or void can result in types that are unusable, leading to unexpected compile-time errors. Similarly, adding an intersection with an empty object type does not alter the type and only adds confusion. Ensuring that intersections are meaningful and intended makes your code more robust and maintainable.
+
+## How to Fix it?
+- Avoid intersecting with basic types like never, any, undefined, null, or void.
+- Use union types where you need to allow for null or undefined values.
+- Remove redundant intersections with types that do not add any members, such as {}.
+- Combine only meaningful types that enrich the type’s description.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+type Person = { name: string };
+type ImpossiblePerson = Person & null;  // Noncompliant: 'ImpossiblePerson' is always 'never'
+
+function greet(person: ImpossiblePerson): void {
+  // This block is unreachable because 'person' can never exist
+  console.log("Hello, " + person.name);
+}
+
+greet(null);  // Compile-time error
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+type Data = { value: number };
+type DataNever = Data & undefined;  // Noncompliant: 'DataNever' is always 'never'
+
+function displayData(data: DataNever): void {
+  // This function is unreachable because 'data' can never have a valid value
+  console.log("Data value is: " + data.value);
+}
+
+displayData(undefined);  // Compile-time error
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+type Person = { name: string };
+type NullablePerson = Person | null;
+
+function greet(person: NullablePerson): void {
+  if (person !== null) {
+    console.log("Hello, " + person.name);
+  } else {
+    console.log("Hello, Guest!");
+  }
+}
+
+greet({ name: "Alice" });
+greet(null);
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+interface Employee {
+  id: number;
+  name: string;
+}
+
+interface Manager {
+  department: string;
+  reports: number;
+}
+
+type RedundantEmployeeManager = Employee & Manager & {};  // Noncompliant: '{}' is redundant
+
+function printInfo(emp: RedundantEmployeeManager): void {
+  console.log(`ID: ${emp.id}, Name: ${emp.name}, Dept: ${emp.department}, Reports: ${emp.reports}`);
+}
+
+printInfo({ id: 102, name: "Carol", department: "HR", reports: 3 });
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+type Data = { value: number };
+type OptionalData = Data | undefined;
+
+function displayData(data: OptionalData): void {
+  if (data !== undefined) {
+    console.log("Data value is: " + data.value);
+  } else {
+    console.log("No data available.");
+  }
+}
+
+displayData({ value: 200 });
+displayData(undefined);
+```
+
+### Example 5:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+interface Employee {
+  id: number;
+  name: string;
+}
+
+interface Manager {
+  department: string;
+  reports: number;
+}
+
+type EmployeeManager = Employee & Manager;
+
+function printInfo(emp: EmployeeManager): void {
+  console.log(`ID: ${emp.id}, Name: ${emp.name}, Dept: ${emp.department}, Reports: ${emp.reports}`);
+}
+
+printInfo({ id: 101, name: "Bob", department: "Sales", reports: 5 });
+```

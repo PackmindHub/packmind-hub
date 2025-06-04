@@ -1,0 +1,159 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Mixing Non-Case Labels in Switch Statements
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Maintainability","clarity"]} />
+
+## What is it?
+This practice is triggered by the presence of labels in a switch statement that are not part of a case (or default) clause. Although legal, mixing case labels with non-case labels (like custom labels for loops or mistaken identifiers) can be confusing and may lead to unexpected behavior.
+
+## Why apply it?
+Using non-case labels in switch statements can cause confusion as they may not be associated with the intended control flow. This makes the code less readable and potentially introduces bugs, especially if a developer mistakenly writes a label out of context.
+
+## How to Fix it?
+Ensure that every label inside a switch statement is either a case label or a default label. If you need to use labeled statements (for instance, to exit nested loops), extract that logic into a separate function or block outside the switch statement.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+enum Day {
+  MONDAY,
+  TUESDAY,
+  WEDNESDAY,
+  THURSDAY,
+  FRIDAY
+}
+
+function handleDay(day: Day): void {
+  switch(day) {
+    case Day.MONDAY:
+    case Day.TUESDAY:
+    case Day.WEDNESDAY:
+      console.log("Midweek is here!");
+      break;
+    case Day.THURSDAY:
+    case Day.FRIDAY:
+      console.log("Almost weekend!");
+      break;
+    default:
+      console.log("Invalid day");
+  }
+}
+
+handleDay(Day.TUESDAY);
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+enum Day {
+  MONDAY,
+  TUESDAY,
+  WEDNESDAY,
+  THURSDAY,
+  FRIDAY
+}
+
+function handleDay(day: Day): void {
+  switch(day) {
+    case Day.MONDAY:
+    case Day.TUESDAY:
+    WEDNESDAY:  // Noncompliant: Should be "case Day.WEDNESDAY:"
+      console.log("Midweek is here!");
+      break;
+    case Day.THURSDAY:
+    case Day.FRIDAY:
+      console.log("Almost weekend!");
+      break;
+    default:
+      console.log("Invalid day");
+  }
+}
+
+handleDay(Day.TUESDAY);
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function processValue(value: number): void {
+  switch(value) {
+    case 1:
+      console.log("Value is one");
+      break;
+    case 2:
+      executeLoop(value);
+      break;
+    default:
+      console.log("Default case");
+  }
+}
+
+function executeLoop(val: number): void {
+  for (let i = 0; i < 5; i++) {
+    if (i === val) {
+      break;  // Exiting the loop normally without using a label inside the switch
+    }
+    console.log("Loop index:", i);
+  }
+}
+
+processValue(2);
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function processValue(value: number): void {
+  switch(value) {
+    case 1:
+      console.log("Value is one");
+      break;
+    case 2:
+      loopLabel: for (let i = 0; i < 5; i++) {  // Noncompliant: using a label inside the switch
+        if (i === value) {
+          break loopLabel;
+        }
+        console.log("Loop index:", i);
+      }
+      break;
+    default:
+      console.log("Default case");
+  }
+}
+
+processValue(2);
+```

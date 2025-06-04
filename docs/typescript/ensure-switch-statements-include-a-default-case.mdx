@@ -1,0 +1,137 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure Switch Statements Include a Default Case
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Maintainability","defensive programming"]} />
+
+## What is it?
+This practice ensures that every non-exempt switch statement in TypeScript includes a final `default` clause. The `default` clause acts as a catch-all to handle any unexpected values and enforces defensive programming.
+
+## Why apply it?
+Including a default clause in switch statements helps safeguard against unforeseen or incorrect values, contributing to more maintainable and predictable code. It also provides an opportunity to log errors or manage fallback behavior, enhancing system robustness.
+
+## How to Fix it?
+Review your switch statements and add a final `default` clause. The clause should either execute appropriate fallback actions or include a comment explaining why no action is required. Be aware that switches over a fully exhaustive TypeScript union or enum type are exempt.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function handleStatus(status: number): void {
+  switch (status) {
+    case 0:
+      console.log("Status is zero");
+      break;
+    case 1:
+      console.log("Status is one");
+      break;
+    case 2:
+      console.log("Status is two");
+      break;
+    default:
+      console.error("Unexpected status encountered: ", status);
+      break;
+  }
+}
+
+handleStatus(3);
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function handleError(errorCode: string): void {
+  switch (errorCode) {
+    default: // Noncompliant: default clause should be the last one
+      console.error("Error occurred with code: ", errorCode);
+      break;
+    case "NOT_FOUND":
+      console.log("Resource not found");
+      break;
+    case "UNAUTHORIZED":
+      console.log("Unauthorized access");
+      break;
+    case "BAD_REQUEST":
+      console.log("Bad request");
+      break;
+  }
+}
+
+handleError("SERVER_ERROR");
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function processErrorCode(errorCode: string): void {
+  switch (errorCode) {
+    case "NOT_FOUND":
+      console.log("Resource not found");
+      break;
+    case "UNAUTHORIZED":
+      console.log("Unauthorized access");
+      break;
+    case "BAD_REQUEST":
+      console.log("Bad request");
+      break;
+    default:
+      console.error("Unknown error code received: ", errorCode);
+      break;
+  }
+}
+
+processErrorCode("TIMEOUT");
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function checkStatus(status: number): void {
+  switch (status) {
+    // Missing default clause
+    case 0:
+      console.log("Status is zero");
+      break;
+    case 1:
+      console.log("Status is one");
+      break;
+    case 2:
+      console.log("Status is two");
+      break;
+  }
+}
+
+checkStatus(5);
+```

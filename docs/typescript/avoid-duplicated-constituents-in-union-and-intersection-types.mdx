@@ -1,0 +1,138 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Duplicated Constituents in Union and Intersection Types
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Maintainability","redundancy","Readability"]} />
+
+## What is it?
+This practice warns against using duplicate types inside union and intersection type declarations in TypeScript. Duplicated constituents result in redundant, verbose type definitions that can decrease code clarity and maintainability.
+
+## Why apply it?
+Having duplicate types in unions or intersections does not add any benefit but rather confuses the type system. By ensuring that each constituent is unique, you make your code cleaner, more explicit, and easier to maintain. This helps avoid unexpected behavior and improves the overall static type checking reliability provided by TypeScript.
+
+## How to Fix it?
+Remove any repeated type constituents from union or intersection type definitions. Review your type declarations and ensure that each constituent appears only once. This eliminates redundancy and makes your type definitions more precise.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+interface Person {
+  name: string;
+  age: number;
+}
+
+interface Loggable {
+  log: () => void;
+}
+
+function extend(p: Person): Person & Loggable {
+  return {
+    ...p,
+    log() {
+      console.log(`${p.name} is ${p.age} years old.`);
+    },
+  };
+}
+
+const person: Person = { name: "Alice", age: 30 };
+const extendedPerson = extend(person);
+extendedPerson.log();
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function padLeft(value: string, padding: string | number | boolean): void {
+  if (typeof padding === 'number') {
+    const paddedValue = ' '.repeat(padding) + value;
+    console.log(paddedValue);
+  } else if (typeof padding === 'boolean') {
+    console.log(padding ? value.toUpperCase() : value.toLowerCase());
+  } else {
+    console.log(padding + value);
+  }
+}
+
+padLeft("Hello", 5);
+padLeft("Hello", false);
+padLeft("Hello", ">> ");
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function padLeft(value: string, padding: string | number | string): void { // Noncompliant: 'string' appears twice
+  if (typeof padding === 'number') {
+    const paddedValue = ' '.repeat(padding) + value;
+    console.log(paddedValue);
+  } else {
+    console.log(padding + value);
+  }
+}
+
+padLeft("Hello", ">> ");
+padLeft("Hello", 3);
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+interface Person {
+  name: string;
+  age: number;
+}
+
+interface Loggable {
+  log: () => void;
+}
+
+function extend(p: Person): Person & Person & Loggable { // Noncompliant: 'Person' is duplicated
+  return {
+    ...p,
+    log() {
+      console.log(`${p.name} is ${p.age} years old.`);
+    },
+  };
+}
+
+const person: Person = { name: "Alice", age: 30 };
+const extendedPerson = extend(person);
+extendedPerson.log();
+```

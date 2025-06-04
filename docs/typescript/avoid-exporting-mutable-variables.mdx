@@ -1,0 +1,76 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Exporting Mutable Variables
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["Maintainability","Reliability"]} />
+
+## What is it?
+This practice is triggered by the export of mutable variables declared with let or by exporting mutable instances directly. Exporting mutable constructs exposes internal state that can be modified unexpectedly by other modules.
+
+## Why apply it?
+When a mutable variable is exported, any module that imports it can change its value. This may lead to unpredictable behavior, harder-to-maintain code, and bugs that are difficult to trace. Using immutable exports (such as using const) or abstracting mutable state behind a factory or class API protects your code from unintended mutations.
+
+## How to Fix it?
+If the variable’s value should remain fixed, declare it as a constant (using the const keyword). If you need a mutable state, encapsulate it in a class and export a factory function that creates instances of that class, thereby controlling how the state is managed.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+const immutableVar = "constant value";
+
+function displayMessage(): void {
+  console.log("The constant value is:", immutableVar);
+}
+
+function additionalLogic(): void {
+  // even though we use the value in computations, the original value remains unchanged
+  const computedValue = immutableVar + " is used here";
+  console.log("Computed value:", computedValue);
+}
+
+displayMessage();
+additionalLogic();
+
+export { immutableVar };
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+let mutableVar = "initial value";
+
+function updateVar(newVal: string): void {
+  mutableVar = newVal;
+  console.log("Updated mutableVar to:", mutableVar);
+}
+
+function logVar(): void {
+  console.log("Current mutableVar value:", mutableVar);
+}
+
+updateVar("changed value");
+logVar();
+
+export { mutableVar }; // Noncompliant: exporting mutable variable
+```

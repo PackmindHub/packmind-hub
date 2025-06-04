@@ -1,0 +1,209 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Creating Unused Objects
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Performance","Maintainability"]} />
+
+## What is it?
+This practice addresses the creation of objects that are immediately dropped without being used. Instantiating an object without assigning it to a variable or using its methods may suggest that a piece of code is missing, or that the object’s side effects were intended to be harnessed in a different way, thereby impacting performance and code clarity.
+
+## Why apply it?
+Creating objects solely for the purpose of invoking side effects, while neither storing the instance nor using it later in the control flow, can lead to inefficient use of resources and obscure potential bugs. Ensuring that each object’s creation is purposeful and its instance is reused makes your code clearer, more maintainable, and more efficient.
+
+## How to Fix it?
+Assign the instantiated object to a variable if you intend to leverage it later. If the constructor’s side effects are the desired behavior, consider refactoring the code by moving the side effects into a dedicated function that can be called directly.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+class Logger {
+  private message: string;
+
+  constructor(message: string) {
+    this.message = message;
+    console.log("Logger initialized: " + message);
+  }
+
+  log() {
+    console.log("Log entry: " + this.message);
+  }
+}
+
+function startLogging(): void {
+  const logger = new Logger("System startup complete");  // Compliant: instance is assigned for later use
+  logger.log();
+  // Additional operations that rely on the same logger instance
+  logger.log();
+  console.log("Logger instance is actively used.");
+}
+
+startLogging();
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+class AlertService {
+  private alertText: string;
+
+  constructor(alertText: string) {
+    this.alertText = alertText;
+    console.log("AlertService initialized with alert: " + alertText);
+    this.showAlert();
+  }
+
+  showAlert() {
+    console.log("Alert: " + this.alertText);
+  }
+}
+
+function triggerAlert(): void {
+  new AlertService("Warning: High memory usage");  // Noncompliant: instance is not stored for further operations
+  // No further actions can be performed with the AlertService instance
+  console.log("No reference to AlertService; further alerts cannot be triggered on the same instance.");
+}
+
+triggerAlert();
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+class AlertService {
+  private alertText: string;
+
+  constructor(alertText: string) {
+    this.alertText = alertText;
+    console.log("AlertService initialized with alert: " + alertText);
+    this.showAlert();
+  }
+
+  showAlert() {
+    console.log("Alert: " + this.alertText);
+  }
+}
+
+function triggerAlert(): void {
+  const service = new AlertService("Warning: High memory usage"); // Compliant: instance is stored
+  // Use the same instance later to update or repeat the alert procedure
+  service.showAlert();
+  console.log("AlertService instance is retained for later use.");
+}
+
+triggerAlert();
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+class Logger {
+  private message: string;
+
+  constructor(message: string) {
+    this.message = message;
+    console.log("Logger initialized: " + message);
+  }
+
+  log() {
+    console.log("Log entry: " + this.message);
+  }
+}
+
+function startLogging(): void {
+  new Logger("System startup complete");  // Noncompliant: created object is not assigned to any variable
+  // Without a reference, further method calls on Logger are not possible
+  console.log("Logger instance was not retained for further logging.");
+}
+
+startLogging();
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+class DataProcessor {
+  private data: number[];
+
+  constructor(data: number[]) {
+    this.data = data;
+    console.log("Initializing DataProcessor");
+    this.process();
+  }
+
+  process() {
+    console.log("Processing data: " + this.data.join(", "));
+  }
+}
+
+const processor = new DataProcessor([10, 20, 30, 40, 50]);  // Compliant: instance stored for later use
+// Use the stored instance for further operations
+processor.process();
+console.log("DataProcessor instance is in use.");
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+class DataProcessor {
+  private data: number[];
+
+  constructor(data: number[]) {
+    this.data = data;
+    console.log("Initializing DataProcessor");
+    this.process();
+  }
+
+  process() {
+    console.log("Processing data: " + this.data.join(", "));
+  }
+}
+
+new DataProcessor([10, 20, 30, 40, 50]);  // Noncompliant: the instance is not retained or reused
+// Further code does not have access to the created DataProcessor instance.
+console.log("No reference to the DataProcessor was kept.");
+```

@@ -1,0 +1,96 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Using Equality Operators in "for" Loop Termination Conditions
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","maintainability"]} />
+
+## What is it?
+This practice is triggered when equality operators (== or !=) are used in the termination conditions of for loops. Such usage can lead to infinite loops when the loop counter skips over the termination value. Using broader relational operators (like \<, \<=, \>, \>=) makes the termination condition more flexible and reduces the risk of an infinite loop.
+
+## Why apply it?
+Using equality operators in loop termination conditions is error-prone. A small change in the loop counter update (for example, incrementing by 2 instead of 1) could cause the loop counter to bypass the termination value entirely, leading to an infinite loop. By replacing equality operators with relational ones, you help ensure that the loop exits in all intended cases.
+
+## How to Fix it?
+Replace the equality operator in the loop termination condition with a relational operator that correctly reflects the intended loop boundaries. Review the loop’s increments or decrements to ensure that the logic reaches the termination condition reliably.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+const tasks: string[] = ["Review", "Test", "Deploy", "Monitor", "Report"];
+
+for (let i = 0; i < tasks.length; i++) {  // Compliant: using '<' ensures proper termination even if tasks array length changes.
+  console.log(`Task ${i + 1}: ${tasks[i]}`);
+  
+  // Simulate processing the task.
+  if (tasks[i] === "Deploy") {
+    console.log("Deployment in progress...");
+  } else {
+    console.log("Task processing...");
+  }
+  
+  // More operations can be added here.
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+for (let i = 1; i != 10; i += 2) {  // Noncompliant: using '!=' can lead to an infinite loop.
+  console.log("Processing i =", i);
+  
+  // Perform some operation.
+  if (i % 3 === 0) {
+    console.log("Multiple of 3 found!");
+  } else {
+    console.log("Not a multiple of 3");
+  }
+  
+  // This loop might never terminate if i skips over 10.
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+for (let i = 1; i <= 10; i += 2) {  // Compliant: using '<=' prevents skipping over the termination value.
+  console.log("Current value of i:", i);
+  
+  // Process some logic with the current value.
+  if (i % 3 === 0) {
+    console.log("i is divisible by 3");
+  } else {
+    console.log("i is not divisible by 3");
+  }
+  
+  // Additional processing can be added here.
+}
+```

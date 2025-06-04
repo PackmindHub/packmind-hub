@@ -1,0 +1,121 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Nested "if" Statements in "else" Blocks—Use "else if"
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","readability"]} />
+
+## What is it?
+This practice is triggered by the use of a nested "if" statement as the only statement inside an "else" block. Instead of nesting the condition, you should use an "else if" clause. This makes the code simpler, more concise, and easier to read.
+
+## Why apply it?
+Using "else if" instead of a nested "if" in an "else" block reduces the levels of indentation and clarifies the control flow. It improves maintainability, reduces potential bugs and makes it easier for developers to follow the logic in the code.
+
+## How to Fix it?
+If an "else" block contains only a single "if" statement, combine them into "else if". This small change minimizes nesting and enhances code clarity.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example refactors a nested "if" inside the "else" block into an "else if" clause, reducing unnecessary nesting and clarifying the logic.
+
+<!-- #example_positive_code -->
+```ts
+function evaluateInput(a: number, b: number): void {
+  if (a > 100) {
+    console.log("a is greater than 100");
+  } else if (b < 50) {  /* Compliant */
+    console.log("b is less than 50");
+  } else {
+    console.log("No special conditions met");
+  }
+}
+
+evaluateInput(80, 30);
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example nests multiple "if" statements inside the "else" block, making the control flow harder to follow due to deeper nesting levels.
+
+<!-- #example_negative_code -->
+```ts
+function assessPerformance(score: number): void {
+  if (score >= 90) {
+    console.log("Outstanding performance");
+  } else {
+    if (score >= 75) {  /* Noncompliant */
+      console.log("Good performance");
+    } else {
+      if (score >= 50) {
+        console.log("Satisfactory performance");
+      } else {
+        console.log("Needs improvement");
+      }
+    }
+  }
+}
+
+assessPerformance(77);
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this positive example, a series of conditions is handled using multiple "else if" clauses instead of nesting several "if" statements inside "else" blocks, resulting in a flatter and clearer structure.
+
+<!-- #example_positive_code -->
+```ts
+function assessPerformance(score: number): void {
+  if (score >= 90) {
+    console.log("Outstanding performance");
+  } else if (score >= 75) {  /* Compliant */
+    console.log("Good performance");
+  } else if (score >= 50) {
+    console.log("Satisfactory performance");
+  } else {
+    console.log("Needs improvement");
+  }
+}
+
+assessPerformance(77);
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example shows an "else" block containing only an "if" statement, which unnecessarily nests the condition instead of using an "else if".
+
+<!-- #example_negative_code -->
+```ts
+function evaluateInput(a: number, b: number): void {
+  if (a > 100) {
+    console.log("a is greater than 100");
+  } else {
+    if (b < 50) {  /* Noncompliant */
+      console.log("b is less than 50");
+    } else {
+      console.log("No special conditions met");
+    }
+  }
+}
+
+evaluateInput(80, 30);
+```

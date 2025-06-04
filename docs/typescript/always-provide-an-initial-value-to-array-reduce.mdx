@@ -1,0 +1,125 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Always Provide an Initial Value to Array.reduce()
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["Reliability","Correctness"]} />
+
+## What is it?
+This practice is triggered by the use of the Array.reduce() method in TypeScript without an initial value. Omitting an initial value can lead to unexpected runtime errors, especially when the array is empty.
+
+## Why apply it?
+Providing an initial value ensures that Array.reduce() has a defined starting accumulator value. This avoids runtime errors like "TypeError: Reduce of empty array with no initial value" and guarantees reliable and predictable operation of your code.
+
+## How to Fix it?
+Always supply a valid initial value as the second argument to Array.reduce(). Even if you believe that the array is never empty, an explicit initial value makes your code more robust and easier to understand.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+interface Person {
+  name: string;
+  age: number;
+}
+
+const people: Person[] = [
+  { name: "Alice", age: 30 },
+  { name: "Bob", age: 25 },
+  { name: "Charlie", age: 35 }
+];
+
+const totalAge = people.reduce((total, person) => {
+  console.log("Adding age of:", person.name);
+  return total + person.age;
+}); // No initial value provided
+
+console.log("Total age:", totalAge);
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+function sum(numbers: number[]): number {
+  const total = numbers.reduce((acc, current) => {
+    console.log("Current number:", current);
+    return acc + current;
+  }, 0); // Initial value provided
+  return total;
+}
+
+console.log(sum([1, 2, 3, 4, 5])); // Prints 15
+console.log(sum([]));              // Safely prints 0
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+function sum(numbers: number[]): number {
+  const total = numbers.reduce((acc, current) => {
+    console.log("Current number:", current);
+    return acc + current;
+  }); // No initial value provided
+  return total;
+}
+
+console.log(sum([1, 2, 3, 4, 5])); // Prints 15
+console.log(sum([]));              // Runtime error: TypeError: Reduce of empty array with no initial value
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+interface Person {
+  name: string;
+  age: number;
+}
+
+const people: Person[] = [
+  { name: "Alice", age: 30 },
+  { name: "Bob", age: 25 },
+  { name: "Charlie", age: 35 }
+];
+
+const totalAge = people.reduce((total, person) => {
+  console.log("Adding age of:", person.name);
+  return total + person.age;
+}, 0); // Initial value provided
+
+console.log("Total age:", totalAge);
+```

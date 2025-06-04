@@ -1,0 +1,113 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Using the Ternary Operator
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","readability"]} />
+
+## What is it?
+This practice is triggered by the use of the ternary operator, which can lead to code that is difficult to read, especially when nested or used with complex conditions.
+
+## Why apply it?
+Although ternary expressions can be concise, they often sacrifice clarity for brevity. Replacing them with explicit control structures such as if/else statements enhances code readability, maintainability, and reduces the risk of introducing subtle bugs.
+
+## How to Fix it?
+Replace ternary expressions with clear if/else structures that explicitly explain the decision-making process, making the code easier to understand and maintain.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example uses a ternary operator to assign a value, which is less clear and harder to maintain, especially as complexity increases.
+
+<!-- #example_negative_code -->
+```ts
+function evaluateStatus(status: string): string {
+  // Using a ternary operator to determine the status (Noncompliant)
+  const result = (status === 'Active') ? 'Status is active' : 'Status is inactive';
+  console.log("Status evaluated successfully.");
+  console.log(`Result: ${result}`);
+  return result;
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example uses an if/else structure to assign a value based on a condition, which improves readability over a ternary operator.
+
+<!-- #example_positive_code -->
+```ts
+function evaluateStatus(status: string): string {
+  let result: string;
+  // Check if the status is 'Active'
+  if (status === 'Active') {
+    result = 'Status is active';
+  } else {
+    result = 'Status is inactive';
+  }
+  console.log("Status evaluated successfully.");
+  console.log(`Result: ${result}`);
+  return result;
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example uses nested ternary operators to determine a grade based on a numeric score. The nested structure makes it more difficult to follow the logic and increases the risk of mistakes.
+
+<!-- #example_negative_code -->
+```ts
+function determineGrade(score: number): string {
+  // Using nested ternary operators to decide the grade (Noncompliant)
+  const grade = (score >= 90) ? 'A' 
+               : (score >= 80) ? 'B'
+               : 'C';
+  console.log("Grade determined based on score.");
+  console.log(`Score: ${score}, Grade: ${grade}`);
+  return grade;
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example replaces a nested ternary operator with an if/else if/else chain to determine a grade based on a numeric score, providing clearer logic flow.
+
+<!-- #example_positive_code -->
+```ts
+function determineGrade(score: number): string {
+  let grade: string;
+  // Decide grade based on the score
+  if (score >= 90) {
+    grade = 'A';
+  } else if (score >= 80) {
+    grade = 'B';
+  } else {
+    grade = 'C';
+  }
+  console.log("Grade determined based on score.");
+  console.log(`Score: ${score}, Grade: ${grade}`);
+  return grade;
+}
+```

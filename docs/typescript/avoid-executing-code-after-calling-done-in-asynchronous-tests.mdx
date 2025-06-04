@@ -1,0 +1,199 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Executing Code After Calling done() in Asynchronous Tests
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["Testing","Reliability","asynchronous"]} />
+
+## What is it?
+This practice highlights tests that execute statements after calling Mocha's `done()` callback. The callback is used to signal the end of an asynchronous test, and any code following it may execute out of order, leading to unpredictable test behavior.
+
+## Why apply it?
+Calling `done()` indicates that the test is complete. Executing code after this call can result in operations running unpredictably—possibly affecting other tests—thus compromising the integrity and maintainability of your test suite.
+
+## How to Fix it?
+Make sure that any necessary operations or logging are done before calling `done()`. The `done()` callback must be the final statement to ensure the test lifecycle is properly respected.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import { expect } from "chai";
+
+describe('Asynchronous Operation', function() {
+  it('should complete async operation correctly', function(done) {
+    setTimeout(function() {
+      // Perform assertions
+      expect(Array.isArray([])).to.be.true;
+      expect("mocha".length).to.equal(5);
+      
+      // Calling done() immediately after assertions
+      done();
+      
+      // Code executed after done() - Noncompliant: may lead to unexpected order of execution
+      console.log('This log may execute out of the intended test lifecycle.');
+    }, 1000);
+  });
+});
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import { expect } from "chai";
+
+describe('Promise-based Async Test', function() {
+  it('handles asynchronous operations correctly', function(done) {
+    setTimeout(() => {
+      try {
+        const value = 42;
+        expect(value).to.equal(42);
+        // Log intermediate operations before finishing
+        console.log('Intermediate operations complete.');
+      } catch (error) {
+        // Signal error via done() if assertions fail
+        return done(error);
+      }
+      // Signal test completion after all operations
+      done();
+    }, 800);
+  });
+});
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import { expect } from "chai";
+
+describe('Cleanup Process', function() {
+  it('performs cleanup before finishing the test', function(done) {
+    setTimeout(function() {
+      // Execute calculations first
+      const result = 3 + 7;
+      expect(result).to.equal(10);
+      
+      // Signal test completion too early
+      done();
+      
+      // Subsequent code after done() - Noncompliant: could lead to unpredictable behavior
+      console.log('Cleanup operations logged out of order.');
+    }, 500);
+  });
+});
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import { expect } from "chai";
+
+describe('Cleanup Process', function() {
+  it('performs cleanup before finishing the test', function(done) {
+    setTimeout(function() {
+      // Execute calculations and cleanup operations
+      const result = 5 * 2;
+      expect(result).to.equal(10);
+      
+      // Logging is done before signaling the end of the test
+      console.log('Cleanup operations completed successfully.');
+      
+      // Signal that the asynchronous test is finished
+      done();
+    }, 500);
+  });
+});
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import { expect } from "chai";
+
+describe('Promise-based Async Test', function() {
+  it('handles asynchronous operations correctly', function(done) {
+    setTimeout(() => {
+      try {
+        const value = 100;
+        expect(value).to.equal(100);
+      } catch (error) {
+        done(error);
+      }
+      // Calling done() too early
+      done();
+      
+      // Code after done(), such as logging, is Noncompliant
+      console.log('This log should not execute after done() is called.');
+    }, 800);
+  });
+});
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import { expect } from "chai";
+
+describe('Asynchronous Operation', function() {
+  it('should complete async operation correctly', function(done) {
+    setTimeout(function() {
+      // Perform assertions first
+      expect(1 + 1).to.equal(2);
+      expect("typescript".includes("script")).to.be.true;
+      
+      // Log operations prior to test completion
+      console.log('Test operations completed successfully.');
+      
+      // Signal test completion
+      done();
+    }, 1000);
+  });
+});
+```

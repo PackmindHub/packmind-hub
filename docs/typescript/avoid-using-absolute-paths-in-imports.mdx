@@ -1,0 +1,123 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Using Absolute Paths in Imports
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["compatibility","portability"]} />
+
+## What is it?
+This practice warns against using absolute paths when importing modules in TypeScript. Absolute paths tie your code to a specific file system layout, which can hinder portability and cause issues when distributing your code, for example via NPM packages.
+
+## Why apply it?
+Using absolute paths limits the flexibility and reusability of your code. When you use relative paths or proper module names instead, your imports remain valid regardless of the file system structure, making your code easier to maintain, share, and deploy across different environments.
+
+## How to Fix it?
+Replace absolute paths in your import statements with paths relative to the current file or appropriate module names. This adjustment not only minimizes system-specific dependencies but also improves your project's portability and compatibility.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import { helperFunction } from '/home/project/api/helper';
+
+function performTask(): void {
+  console.log("Starting task...");
+  helperFunction();
+  console.log("Task finished.");
+}
+
+performTask();
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import { helperFunction } from '../api/helper';
+
+function performTask(): void {
+  console.log("Starting task...");
+  helperFunction();
+  console.log("Task finished.");
+}
+
+performTask();
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+import config from '/usr/local/project/config/settings';
+
+class Server {
+  private config: any;
+  
+  constructor() {
+    this.config = config;
+    console.log("Configuration loaded successfully.");
+  }
+  
+  start(): void {
+    console.log("Server started on port", this.config.port);
+  }
+}
+
+const app = new Server();
+app.start();
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```ts
+import config from './config/settings';
+
+class Server {
+  private config: any;
+  
+  constructor() {
+    this.config = config;
+    console.log("Configuration loaded successfully.");
+  }
+  
+  start(): void {
+    console.log("Server started on port", this.config.port);
+  }
+}
+
+const app = new Server();
+app.start();
+```
