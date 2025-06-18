@@ -1,0 +1,57 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Repository : One repository by value object or entity
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["DDD"]} />
+
+##### What is it?
+This practice is triggered when multiple value objects or entities are managed within a single repository, as it becomes evident through excessive if/else or switch-case statements to handle different object types.
+
+##### Why apply it?
+This guideline is important because managing distinct value objects or entities in separate repositories enhances clarity, promotes single responsibility principle (SRP), and improves the scalability and maintainability of the codebase.
+
+##### How to fix it?
+Refactor the code by creating separate repositories for each value object or entity to ensure that each repository focuses on a single type of object, thus following the SRP.
+
+Violations should be raised when, in classes which names end with 'Repository', the union of parameter types all of methods contains more than one object type.
+
+#### Read more:
+[https://martinfowler.com/eaaCatalog/repository.html](https://martinfowler.com/eaaCatalog/repository.html)
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```cs
+namespace Practices.DDD.Repository.RepositoryByEntity
+{
+    internal class OrderRepository
+    {
+        public void UpdateOder(Order order)
+        {
+            //Update Order
+        }
+
+        public void UpdateOrderStatus(OrderStatus orderStatus)
+        {
+            //Update Order Status
+        }
+    }
+}
+
+```

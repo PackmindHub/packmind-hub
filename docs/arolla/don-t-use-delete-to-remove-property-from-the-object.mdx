@@ -1,0 +1,37 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Don't use "delete" to remove property from the object
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Typescript","JavaScript"]} />
+
+Because you mutate the original object
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```js
+const person = {
+    firstName: 'John',
+    lastName: 'Test',
+    gender: "abc"
+}
+
+delete person.gender
+
+```

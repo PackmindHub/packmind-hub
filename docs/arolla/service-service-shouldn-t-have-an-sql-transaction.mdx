@@ -1,0 +1,72 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Service : Service shouldn't have an SQL Transaction
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["DDD"]} />
+
+Service shouldn't have an SQL Transaction.
+
+Using a technical object like a SQL a transaction is a bad smell.
+SQL transaction should be in a repository.
+
+Classes which names ends `Service`should not have any variable or method variable/parameters types which contains "SQL", "sql", or "BeginTransaction".
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```cs
+using Microsoft.Data.SqlClient;
+
+namespace Practices.DDD.Service.SQLTransaction
+{
+    public class OrderService
+    {
+        private readonly OrderRepository _orderRepository;
+
+        public OrderService(OrderRepository orderRepository)
+        {
+            _orderRepository = orderRepository;
+        }
+
+        public void UpdateData(Order order)
+        {
+            //Having SQL References in a service is bad smell
+            using (var connection = new SqlConnection())
+            {
+                //Having Database Transaction is a red flag
+                using (var transac = connection.BeginTransaction())
+                {
+                    //Process Order
+                    _orderRepository.UpdateData(order, transac);
+                    //Process Order with a second method
+                    _orderRepository.UpdateLastUpdate(order, transac);
+                }
+            }
+        }
+
+        public void UpdateDataAndLastUpdate(Order order)
+        {
+            //Process Order
+            _orderRepository.UpdateDataAndLastUpdate(order);
+        }
+
+    }
+}
+
+```

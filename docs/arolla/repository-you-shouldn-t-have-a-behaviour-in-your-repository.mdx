@@ -1,0 +1,55 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Repository : You shouldn't have a behaviour in your repository
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["DDD"]} />
+
+Except for Anti-Corruption Layer, all behaviours about update data from repository should be in domain (service, Entity, Value Object).
+
+Violations should be raised in case a class with a name ending with "Repository" contains anywhere in the code a "if" or "switch" instruction.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```cs
+namespace Practices.DDD.Repository.Behaviour
+{
+    public class OrderRepository
+    {
+        public Order GetOrder(int orderId)
+        {
+            var data = GetData(orderId);
+            if (data == null)
+            {
+                return null;
+            }
+            //LastUpdate is a behaviour
+            //Name toUpper is a behaviour
+            return new Order() { Id = orderId, Name = data.Name.ToUpper(), LastUpdateDatetime = DateTime.Now };
+        }
+
+        private DataOrder GetData(int orderId)
+        {
+            //Get Data from base
+            return new DataOrder() { Name = "Data" };
+        }
+    }
+}
+
+```

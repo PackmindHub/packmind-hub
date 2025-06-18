@@ -1,0 +1,62 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Don't use space in the function name in the production code, keep it for the test code
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Clean code","kotlin"]} />
+
+##### What is it?
+A function name in source code that contains spaces, such as 'my function', rather than following typical naming conventions like 'myFunction' or 'my_function', indicates a violation of this practice.
+
+##### Why apply it?
+Maintaining consistent naming conventions in production code is crucial for ensuring code readability, avoiding syntax errors, and adhering to language standards, whereas test code can use unconventional names to be more descriptive for testing purposes.
+
+##### How to fix it?
+Replace spaces in function names with a proper naming convention, such as camelCase or underscores, to align with language-specific standards.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```kt
+package org.example
+
+data class Combination(val colors: List<String>) {
+    infix fun `is correct for`(secret: Combination): Result {
+        var goodPlacedCpt = 0
+        val guessMutable = mutableListOf<String>()
+            guessMutable.addAll(this.colors)
+        val secretMutable = mutableListOf<String>()
+            secretMutable.addAll(secret.colors)
+        for (i in 0..<this.colors.size){
+            if (guessMutable[i] == secretMutable[i]) {
+                goodPlacedCpt++
+                secretMutable[i] = " "
+                guessMutable[i] = " "
+            }
+        }
+        var missPlaced = 0
+        guessMutable.forEach { color ->
+            if (color != " " && secretMutable.remove(color)) missPlaced++
+        }
+        return Result(goodPlacedCpt, missPlaced)
+    }
+
+}
+
+data class Result(val goodPlaced: Int, val missPlaced: Int)
+```

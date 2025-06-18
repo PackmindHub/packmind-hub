@@ -1,0 +1,101 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use reduce instead of manual accumulation
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Clean code"]} />
+
+##### What is it?
+This practice is triggered when code manually accumulates results in loops or recursion, instead of using the `reduce` function provided by languages like JavaScript, Python, or Ruby.
+
+##### Why apply it?
+Using `reduce` promotes code clarity and conciseness by expressing the accumulation logic in a declarative manner, thereby reducing potential errors and enhancing maintainability.
+
+##### How to fix it?
+Refactor the code to use a `reduce` function, passing a reducing callback and an initial accumulator value, to replace manual accumulation logic.
+
+#### Read more:
+[https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce)
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```java
+package org.example;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public final class Util {
+
+    public static Map<String, Integer> nameCount(List<String> names) {
+        return names.stream()
+                .collect(Collectors.toMap(name -> name, name -> 1, Integer::sum));
+
+    }
+
+    public static void printNames(List<String> names) {
+        names.forEach(System.out::println);
+    }
+
+    public static Integer sum(List<Integer> numbers) {
+        return numbers.stream()
+                .reduce(0, Integer::sum);
+    }
+}
+
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```java
+package org.example;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public final class Util {
+
+    public static Map<String, Integer> nameCount(List<String> names) {
+        return names.stream()
+                .collect(Collectors.toMap(name -> name, name -> 1, Integer::sum));
+
+    }
+
+    public static void printNames(List<String> names) {
+        names.forEach(System.out::println);
+    }
+
+    public static Integer sum(List<Integer> numbers) {
+        int sum = 0;
+        for (int number : numbers) {
+            sum += number;
+        }
+        return sum;
+    }
+}
+
+```

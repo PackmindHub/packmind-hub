@@ -1,0 +1,81 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use StringBuilder for concatenation of strings in loops
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Java","Clean code","csharp"]} />
+
+Avoid using the + operator to concatenate strings in loops.
+StringBuilder implies that we are building a string.
+That improves the code readability.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```java
+package org.main;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Main {
+
+	public static void main(String[] args) {
+		List<String> items = new ArrayList();
+		
+		StringBuilder sb = new StringBuilder();
+		for (String item : items) {
+		    sb.append(item);
+		}
+		String result = sb.toString();
+
+	}
+
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```java
+package org.example;
+
+import java.util.ArrayList;
+import java.util.List;
+
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+public class Main {
+
+    private void ListInitialisation() {
+        ArrayList<Integer> list = new ArrayList<>(100);
+    }
+
+    public void concat() {
+        List<String> items = new ArrayList<>();
+
+        String result = "";
+        for (String item : items) {
+            result = result + item;
+        }
+    }
+
+}
+```

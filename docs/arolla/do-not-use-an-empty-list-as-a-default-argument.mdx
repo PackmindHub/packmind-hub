@@ -1,0 +1,87 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Do not use an empty list as a default argument
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Clean code","Python"]} />
+
+Using an empty list as default argument might lead to unwanted consequences down the line.
+
+In fact, according to Python's documentation, default arguments are evaluated once when the function is defined, not each time the function is called. This means that if you use a mutable default argument like the aforementionned empty list and mutate it, you will and have mutated that object for all future calls to the function as well.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```py
+from dataclasses import dataclass
+
+
+@dataclass
+class Student:
+    name: str
+    age: int
+
+
+class Classroom:
+    def __init__(self, level, students=None):
+        self.level = level
+        if students is None:
+            self.students = []
+        else:
+        	self.students = students
+
+    @property
+    def nb_students(self) -> int:
+        return len(self.students)
+
+    @property
+    def avg_age(self) -> float:
+        return sum(student.age for student in self.students) / self.nb_students
+
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```py
+from dataclasses import dataclass
+
+
+@dataclass
+class Student:
+    name: str
+    age: int
+
+
+class Classroom:
+    def __init__(self, level, students=[]):
+        self.level = level
+        self.students = students
+
+    @property
+    def nb_students(self) -> int:
+        return len(self.students)
+
+    @property
+    def avg_age(self) -> float:
+        return sum(student.age for student in self.students) / self.nb_students
+
+```

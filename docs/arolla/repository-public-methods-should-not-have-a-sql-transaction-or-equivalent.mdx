@@ -1,0 +1,54 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Repository : Public methods should not have a SQL transaction or equivalent
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["DDD"]} />
+
+##### What is it?
+This practice is activated when public methods in a repository interface directly initiate SQL transactions or their equivalent interactions with the database, making it recognizable through the presence of transaction logic within these method bodies.
+
+Public methods in class which name ends with `Repository` should not contain any variable, parameter or type containing "sql", "SQL".
+
+##### Why apply it?
+This rule matters because it ensures separation of concerns and maintains clarity, reusability, and testability of the code by keeping transaction management outside the repository, which should only be responsible for dealing with database operations.
+
+##### How to fix it?
+Refactor the code to encapsulate transaction management within a service layer or a dedicated transaction manager, ensuring that repository methods remain focused on CRUD operations without managing transactions directly.
+
+#### Read more:
+[https://martinfowler.com/eaaCatalog/repository.html](https://martinfowler.com/eaaCatalog/repository.html)
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```cs
+using Microsoft.Data.SqlClient;
+
+namespace Practices.DDD.Repository.Interaction
+{
+    internal class OrderRepository
+    {
+        public void UpdateOrderDuringTransaction(Order order, SqlTransaction transaction, SqlConnection sqlConnection)
+        {
+            //Process Order
+        }
+    }
+}
+
+```

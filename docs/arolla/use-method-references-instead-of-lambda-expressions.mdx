@@ -1,0 +1,88 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use method references instead of lambda expressions
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Java","Clean code"]} />
+
+##### What is it?
+Use method references when you notice a lambda expression that directly forwards its parameters to another method without altering them.
+
+##### Why apply it?
+This practice enhances readability and conciseness, making the code easier to understand and maintain by clearly indicating the method being referenced.
+
+##### How to fix it?
+Replace the lambda expression with a method reference using the syntax `ClassName::methodName` or `instance::methodName`.
+
+#### Read more:
+[https://docs.oracle.com/javase/tutorial/java/javaOO/methodreferences.html](https://docs.oracle.com/javase/tutorial/java/javaOO/methodreferences.html)
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```java
+package org.example;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public final class Util {
+
+    public static Map<String, Integer> nameCount(List<String> names) {
+        return names.stream()
+                .collect(Collectors.toMap(name -> name, name -> 1, Integer::sum));
+
+    }
+
+    public static void printNames(List<String> names) {
+        names.forEach(System.out::println);
+    }
+}
+
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```java
+package org.example;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public final class Util {
+
+    public static Map<String, Integer> nameCount(List<String> names) {
+        return names.stream()
+                .collect(Collectors.toMap(name -> name, name -> 1, Integer::sum));
+
+    }
+    
+    public static void printNames(List<String> names) {
+        names.forEach(name -> System.out.println(name));
+    }
+}
+
+```

@@ -1,0 +1,69 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# No comments in a method body
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Java","refactoring","csharp"]} />
+
+Comments found in the method body should be replaced by methods.
+The benefits are :
+* readability
+* accuracy (methods are maintained, not comments)
+* may be re-used
+
+Comments on line are allowed, while comments over 2 consecutive lines should be a smell.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```java
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+public class Zoo {
+    private final List<Animal> animals = new ArrayList<>();
+
+    public void add(Animal animal) {
+        animals.add(animal);
+    }
+
+    public List<Animal> getAnimals() {
+        return animals;
+    }
+
+    public List<String> printAnimals() {
+        return animals.stream()
+                .map(this::printAnimal)
+                .toList();
+    }
+
+    private String printAnimal(final Animal animal) {
+        // capitalize animal name
+        // Line 2
+        String name = animal.name().substring(0, 1).toUpperCase(Locale.US);
+        if (animal.name().length() > 1) {
+            name += animal.name().substring(1).toLowerCase(Locale.US);
+        }
+
+        final String species = animal.species().name().toLowerCase(Locale.US);
+
+        return name + " the "+ species;
+    }
+}
+```

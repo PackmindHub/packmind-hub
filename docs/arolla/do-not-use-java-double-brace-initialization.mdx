@@ -1,0 +1,52 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Do not use Java double brace initialization
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Java","Clean code"]} />
+
+Java double brace initialisation is an anti-pattern.
+
+Cf. https://www.baeldung.com/java-double-brace-initialization
+
+Disadvantages of using double braces are:
+
+Obscure, not widely known way to do the initialization
+    It creates an extra class every time we use it
+    Doesn’t support the use of the “diamond operator” – a feature introduced in Java 7
+    Doesn’t work if the class we are trying to extend is marked final
+    Holds a hidden reference to the enclosing instance, which may cause memory leaks
+
+It’s due to these disadvantages that double brace initialization is considered as an anti-pattern.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```java
+
+public class Main {
+    public static void main(String[] args) {
+
+        Order order = new Order() {{
+            setReference("abc-123");
+            setCustomer("John Doe");
+        }};
+
+    }
+}
+```

@@ -1,0 +1,45 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use for of for increasing the performance of loop
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Typescript","Performance","JavaScript"]} />
+
+##### What is it?
+The practice is triggered when iterating over iterable objects like arrays or strings using a traditional for loop or for-in loop instead of the modern for-of loop.
+
+##### Why apply it?
+The for-of loop provides better performance and readability by directly iterating over values of an iterable object, thus eliminating issues associated with iterating over non-numeric properties or inherited properties of objects.
+
+##### How to fix it?
+Convert the for or for-in loop to a for-of loop to directly access the values of the iterable object with simpler syntax and improved clarity.
+
+#### Read more:
+[https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of)
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```js
+let people = ['John', 'Elisa', 'Micheal', 'Tom']
+
+for(let i = 0; i < people.length; i++) {
+    console.log(people[i])
+}
+
+```

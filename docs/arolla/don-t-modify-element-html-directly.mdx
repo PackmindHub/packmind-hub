@@ -1,0 +1,49 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Don't modify element HTML directly
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Clean code","Typescript","JavaScript","Separation of Concerns (SoC)"]} />
+
+Use the Web API for better maintenance and testing
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Title</title>
+    <style>
+        .red {
+            color: red;
+        }
+    </style>
+    <script>
+        function changeMyTextColor() {
+            let div = document.getElementById("my-text");
+            div.style.color = "pink";
+        }
+    </script>
+</head>
+<body>
+    <div id="my-text" class="red">My text</div>
+    <button onclick="changeMyTextColor()" type="submit">Change my color</button>
+</html>
+```

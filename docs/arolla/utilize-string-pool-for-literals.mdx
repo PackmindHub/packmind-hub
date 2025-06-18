@@ -1,0 +1,117 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Utilize String Pool for Literals
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Java"]} />
+
+##### What is it?
+This practice recommends using string literals that are automatically interned by the Java String Pool instead of explicitly creating new String objects with the 'new' keyword, which can be identified by instances of 'new String()' in code commonly misusing the pool.
+
+##### Why apply it?
+Utilizing the String Pool for literals reduces memory overhead and increases performance, as the same literal value will reference the same memory location, thus avoiding the creation of duplicate objects.
+
+##### How to fix it?
+Refactor code to use string literals directly (e.g., "example") instead of unnecessarily creating new String objects using 'new String("example")'.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```java
+package org.example;
+
+import java.util.ArrayList;
+import java.util.List;
+
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+public class Main {
+
+    private void ListInitialisation() {
+        List<Integer> list = new ArrayList<>(100);
+    }
+
+
+    private void useLambda() {
+
+        new Thread(() -> System.out.println("Hello, World!")).start();
+
+    }
+
+    private void useMethodRef() {
+
+    }
+
+    public static void main(String[] args) {
+        String string = '\u2001'+"String    with    space"+ '\u2001';
+        System.out.println("Before: \"" + string+"\"");
+        System.out.println("After trim: \"" + string.trim()+"\"");
+        System.out.println("After strip: \"" + string.strip()+"\"");
+    }
+
+    public static void createStr() {
+        String s1 = "example";
+        String s2 = "example";
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```java
+package org.example;
+
+import java.util.ArrayList;
+import java.util.List;
+
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+public class Main {
+
+    private void ListInitialisation() {
+        List<Integer> list = new ArrayList<>(100);
+    }
+
+
+    private void useLambda() {
+
+        new Thread(() -> System.out.println("Hello, World!")).start();
+
+    }
+
+    private void useMethodRef() {
+
+    }
+
+    public static void main(String[] args) {
+        String string = '\u2001'+"String    with    space"+ '\u2001';
+        System.out.println("Before: \"" + string+"\"");
+        System.out.println("After trim: \"" + string.trim()+"\"");
+        System.out.println("After strip: \"" + string.strip()+"\"");
+    }
+
+    public static void createStr() {
+        String s1 = new String("example");
+        String s2 = new String("example");
+    }
+}
+```

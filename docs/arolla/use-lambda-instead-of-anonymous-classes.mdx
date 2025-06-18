@@ -1,0 +1,95 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use Lambda instead of anonymous classes
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Java"]} />
+
+##### What is it?
+The practice recommends using lambda expressions instead of anonymous classes, which can usually be identified when anonymous classes are implemented for interfaces with a single abstract method.
+
+##### Why apply it?
+Using lambdas simplifies the code by making it more concise and readable, and leverages functional programming patterns which are advantageous in terms of performance and maintainability.
+
+##### How to fix it?
+Replace the anonymous class implementation with an equivalent lambda expression where applicable.
+
+#### Read more:
+[https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html](https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html)
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```java
+package org.example;
+
+import java.util.ArrayList;
+import java.util.List;
+
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+public class Main {
+
+    private void ListInitialisation() {
+        List<Integer> list = new ArrayList<>(100);
+    }
+
+
+    private void useLambda() {
+        
+        new Thread(() -> System.out.println("Hello, World!")).start();
+
+    }
+    
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```java
+package org.example;
+
+import java.util.ArrayList;
+import java.util.List;
+
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+public class Main {
+
+    private void ListInitialisation() {
+        List<Integer> list = new ArrayList<>(100);
+    }
+
+
+    private void useLambda() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Hello, World!");
+            }
+        }).start();
+
+    }
+    
+}
+```

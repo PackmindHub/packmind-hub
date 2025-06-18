@@ -1,0 +1,47 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Enum values should be uppercase
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Java","enum"]} />
+
+## AI-generated description suggestion
+##### What is it?
+The practice is triggered when enum values in code are found in lowercase or mixed-case formats instead of uppercase.
+
+##### Why apply it?
+Using uppercase for enum values ensures consistency, aligns with coding standards for named constants, and increases code readability by distinguishing these special types from variables and functions.
+
+##### How to fix it?
+Change the enum values from their current format to uppercase, ensuring consistency and readability throughout the codebase.
+
+#### Read more:
+[https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html](https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html)
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```java
+public enum OrderStatus {
+    validated,
+    paid,
+    shipped,
+    delivered;
+}
+
+```

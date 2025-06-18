@@ -1,0 +1,129 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use String.strip() instead of using String.trim
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Java"]} />
+
+String.trim() only removes whitespace (space, tab, etc.) defined by the ASCII character set.
+String.strip() removes all kinds of whitespace including Unicode
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```java
+package org.example;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public final class Util {
+
+    public static Map<String, Integer> nameCount(List<String> names) {
+        return names.stream()
+                .collect(Collectors.toMap(name -> name, name -> 1, Integer::sum));
+
+    }
+
+    public static void printNames(List<String> names) {
+        names.forEach(System.out::println);
+    }
+
+    public static Integer sum(List<Integer> numbers) {
+        return numbers.stream()
+                .reduce(0, Integer::sum);
+    }
+
+    public static int increment(int value) {
+        return value + 1;
+    }
+
+    public static void readFile(String fileName) throws FileNotFoundException {
+        try (InputStream input = new FileInputStream(fileName)) {
+            // Read file
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String removeWhiteSpace(String str) {
+        return str.strip();
+    }
+}
+
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```java
+package org.example;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public final class Util {
+
+    public static Map<String, Integer> nameCount(List<String> names) {
+        return names.stream()
+                .collect(Collectors.toMap(name -> name, name -> 1, Integer::sum));
+
+    }
+
+    public static void printNames(List<String> names) {
+        names.forEach(System.out::println);
+    }
+
+    public static Integer sum(List<Integer> numbers) {
+        return numbers.stream()
+                .reduce(0, Integer::sum);
+    }
+
+    public static int increment(int value) {
+        return value + 1;
+    }
+
+    public static void readFile(String fileName) throws FileNotFoundException {
+        try (InputStream input = new FileInputStream(fileName)) {
+            // Read file
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String removeWhiteSpace(String str) {
+        return str.trim();
+    }
+}
+
+```

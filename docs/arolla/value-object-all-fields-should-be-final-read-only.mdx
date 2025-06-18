@@ -1,0 +1,120 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Value Object : All fields should be final/read-only
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["DDD"]} />
+
+Value Objects are classes annotated with `[ValueObject]`.
+
+If your fields are not read-only and you update the fields, maybe it's an entity.
+
+If your fields are not read-only and you don't update the fields, your fields have to be read-only.
+
+Violations are raised on class fields that are not `readonly` but are never written, excepting in Constructors.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```cs
+namespace Practices.DDD.ValueObject.AllReadOnly
+{
+    [ValueObject]
+    public class ValueObject
+    {
+        private int _someProperty;
+        private readonly int _anotherProperty;
+
+        public ValueObject(int someProperty, int anotherProperty)
+        {
+            _someProperty = someProperty;
+            _anotherProperty = anotherProperty;
+        }
+
+        
+        public int SomeProperty
+        {
+            get => _someProperty;
+            set => _someProperty = value;
+        }
+        
+        public int AnotherProperty => _anotherProperty;
+    }
+}
+
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```cs
+namespace Practices.DDD.ValueObject.AllReadOnly
+{
+    [ValueObject]
+    public class ValueObject
+    {
+        private readonly int _someProperty;
+        private readonly int _anotherProperty;
+
+        public ValueObject(int someProperty, int anotherProperty)
+        {
+            _someProperty = someProperty;
+            _anotherProperty = anotherProperty;
+        }
+
+        public int SomeProperty => _someProperty;
+        public int AnotherProperty => _anotherProperty;
+    }
+}
+
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```cs
+namespace Practices.DDD.ValueObject.AllReadOnly
+{
+    [ValueObject]
+    public class ValueObject
+    {
+        private int _someProperty;
+        private readonly int _anotherProperty;
+
+        public ValueObject(int someProperty, int anotherProperty)
+        {
+            _someProperty = someProperty;
+            _anotherProperty = anotherProperty;
+        }
+
+        public int SomeProperty => _someProperty;
+        public int AnotherProperty => _anotherProperty;
+    }
+}
+
+```

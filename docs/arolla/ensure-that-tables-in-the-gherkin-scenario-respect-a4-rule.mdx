@@ -1,0 +1,51 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure that tables in the gherkin scenario respect A4 rule
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["BDD"]} />
+
+The A4 rule for writing Gherkin scenarios is a guideline that aims to keep scenarios concise and manageable. The "A4" reference comes from the standard size of a piece of paper, suggesting that a scenario should ideally fit within an A4 sheet.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```feature
+Feature: DealsAggregation
+Apply a multi-level aggregation on a list of items. 
+Sides : A for Asset, L for Liability
+
+Scenario: Simple aggregation
+	Given the deals
+		| Amount | Side | Bucket | Groups             | Category     | Code                 | startDate  | endDate    | counterpart | status  | currency | dealType | dealId | collateral |
+		| 16     | A    | 1M     | EF, External Loans | Central bank | Central bank         | 01/01/2024 | 01/01/2024 | BNP         | pending | EUR      | loan     | 2      | house      |
+		| 3      | A    | 2M     | EF, External Loans | Central bank | Central bank         | 01/01/2024 | 01/01/2024 | BNP         | pending | EUR      | loan     | 2      | house      |
+		| 117    | L    | 1M     | EF, External Loans | Central bank | Central bank         | 01/01/2024 | 01/01/2024 | BNP         | pending | EUR      | loan     | 2      | house      |
+		| 3      | A    | 1M     | EF, Client Deposit | Supra        | EPIC                 | 01/01/2024 | 01/01/2024 | BNP         | pending | EUR      | loan     | 2      | house      |
+		| 6      | L    | 1M     | EF, Client Deposit | Supra        | EPIC                 | 01/01/2024 | 01/01/2024 | BNP         | pending | EUR      | loan     | 2      | house      |
+		| 34     | A    | 1M     | GBIS, GLFI         | Bank         | Bank & Credit invest | 01/01/2024 | 01/01/2024 | BNP         | pending | EUR      | loan     | 2      | house      |
+	When I aggregate by buckets
+	Then I get
+		| Bucket | Side | Amount |
+		| 1M     | A    | 53     |
+		| 1M     | L    | 123    |
+		| 2M     | A    | 3      |
+		| 2M     | L    | 0      |
+
+
+```

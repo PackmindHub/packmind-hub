@@ -1,0 +1,55 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Don't use atomics to bypass stream limitations
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Java","stream"]} />
+
+Stream should not have side effects.
+
+If a state must be updated while iterating, use a class instead of a lambda.
+
+A bad smell is the usage of an `AtomicInteger` inside a stream.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```java
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class ZooService {
+    private final List<Animal> animals;
+
+    public ZooService(List<Animal> animals) {
+        this.animals = animals;
+    }
+
+    public List<IndexedValue<Animal>> indexedAnimals() {
+        final AtomicInteger lastIndex = new AtomicInteger(-1);
+        return animals.stream()
+                .map(animal -> {
+                    int currentIndex = lastIndex.incrementAndGet();
+                    return new IndexedValue<>(currentIndex, animal);
+                }).toList();
+    }
+    
+    public record IndexedValue<T>(int index, T value) {
+    }
+}
+```

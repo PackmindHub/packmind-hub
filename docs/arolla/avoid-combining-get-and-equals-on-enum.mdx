@@ -1,0 +1,110 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid combining get and equals on enum
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Java","Demeter","getter"]} />
+
+Instead of defining a getter for an enum, add one method per enum value  checking if the object matches the value.
+
+### Advantages
+* readability
+* hides the enum type
+* hides the enum values
+* can be used as a predicate
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```java
+package dev.best.practices;
+
+import java.util.List;
+
+public class Zoo {
+    private final List<Animal> animals;
+
+    public Zoo(List<Animal> animals) {
+        this.animals = animals;
+    }
+
+    public long dogsCount() {
+        return animals.stream()
+                .filter(Animal::isDog)
+                .count();
+    }
+
+    public static class Animal {
+        private final Species species;
+
+        public Animal(Species species) {
+            this.species = species;
+        }
+
+        public boolean isDog() {
+            return species == Species.DOG;
+        }
+    }
+
+    public enum Species {
+        CAT, DOG
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```java
+package dev.best.practices;
+
+import java.util.List;
+
+public class Zoo {
+    private final List<Animal> animals;
+
+    public Zoo(List<Animal> animals) {
+        this.animals = animals;
+    }
+
+    public long dogsCount() {
+        return animals.stream()
+                .filter(animal -> animal.getSpecies() == Species.DOG)
+                .count();
+    }
+
+    public static class Animal {
+        private final Species species;
+
+        public Animal(Species species) {
+            this.species = species;
+        }
+
+        public Species getSpecies() {
+            return species;
+        }
+    }
+
+    public enum Species {
+        CAT, DOG
+    }
+}
+```

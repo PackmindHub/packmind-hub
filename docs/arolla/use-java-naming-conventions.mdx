@@ -1,0 +1,105 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use Java Naming Conventions
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Java","Clean code"]} />
+
+This practice aims to ensure consistency and readability in code by adhering to standard Java naming conventions. Following these conventions helps in maintaining the code and facilitates collaboration among developers.
+
+1.Class Names
+PascalCase: Class names should be written in PascalCase, where each word starts with a capital letter.
+
+2.Variable and Method Names
+camelCase: Variable and method names should be written in camelCase, where the first word starts with a lowercase letter and each subsequent word starts with a capital letter.
+
+3.Use Meaningful and Descriptive Names
+Names should be meaningful and descriptive, clearly indicating the purpose of the class, method, or variable.
+
+Why Follow These Conventions?
+Readability: Well-named code is easier to read and understand.
+Maintainability: Consistent naming conventions make the code easier to maintain and refactor.
+Industry Standards: Following recognized conventions allows developers to collaborate more effectively.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```java
+package org.main;
+
+public class OrderProcessor {
+	
+	private int orderId;
+	private String customerName;
+
+	public int getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(int orderId) {
+		this.orderId = orderId;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+
+	public void processOrder() {
+		// Code pour traiter la commande
+	}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```java
+package org.main;
+
+public class orderProcessor {
+
+	private int OrderId;
+	private String customerName;
+
+	public int getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(int orderId) {
+		this.orderId = orderId;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+
+	public void processOrder() {
+		// Code pour traiter la commande
+	}
+
+```

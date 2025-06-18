@@ -1,0 +1,105 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Declare variables and parameters with interfaces rather than concrete classes for greater flexibility
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["OOP","Clean code"]} />
+
+##### What is it?
+This practice is activated when variables or parameters are declared using concrete classes instead of interfaces, which can be recognized by declarations like `ConcreteClass varName` instead of `InterfaceType varName`.
+
+For instance, in Java, variables should have `List`, `Set` or `Map` implementations instead of `ArrayList`, `HashMap` or `HashSet`.
+
+##### Why apply it?
+This rule matters because using interfaces for declarations provides flexibility and promotes loose coupling, allowing the system to be more adaptable to change and easier to extend or modify.
+
+##### How to fix it?
+Refactor the code by replacing declarations of variables and parameters with the appropriate interface type rather than the concrete class.
+
+#### Read more:
+[https://www.oodesign.com/programming-to-an-interface.html](https://www.oodesign.com/programming-to-an-interface.html)
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```java
+package org.example;
+
+import java.util.ArrayList;
+import java.util.List;
+
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+public class Main {
+
+    private void ListInitialisation() {
+        List<Integer> list = new ArrayList<>(100);
+    }
+
+
+
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```java
+package dev.best.practices;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class SetExample {
+
+    public void init() {
+        final Set<String> names = new HashSet<>();
+    }
+}
+
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```java
+package org.example;
+
+import java.util.ArrayList;
+import java.util.List;
+
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+public class Main {
+
+    private void ListInitialisation() {
+        ArrayList<Integer> list = new ArrayList<>(100);
+    }
+
+}
+```

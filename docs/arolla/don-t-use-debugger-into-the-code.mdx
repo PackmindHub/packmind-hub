@@ -1,0 +1,60 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Don't use "debugger" into the code
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Typescript","JavaScript"]} />
+
+##### What is it?
+This practice is triggered by the presence of the 'debugger' statement in production code, which is often recognizable by its explicit usage intended for debugging purposes.
+
+##### Why apply it?
+This rule matters because leaving 'debugger' statements in production code can cause unnecessary performance issues and disrupt user experience by pausing execution when accessed, which is not suitable for live environments.
+
+##### How to fix it?
+Remove any 'debugger' statements from the code before deploying to production, ensuring that the debugging process is complete and any necessary logging or error handling mechanisms are in place for monitoring.
+
+#### Read more:
+[https://eslint.org/docs/rules/no-debugger](https://eslint.org/docs/rules/no-debugger)
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```js
+function calculateSum(a, b) {
+    let sum = a + b;
+    debugger;
+    return sum;
+}
+
+function findMax(numbers) {
+    let max = numbers[0];
+    for (let i = 1; i < numbers.length; i++) {
+        if (numbers[i] > max) {
+            max = numbers[i];
+        }
+    }
+    return max;
+}
+
+let result = calculateSum(5, 10);
+console.log('Sum:', result);
+
+let maxNumber = findMax([3, 6, 2, 8, 4]);
+console.log('Max number:', maxNumber);
+```

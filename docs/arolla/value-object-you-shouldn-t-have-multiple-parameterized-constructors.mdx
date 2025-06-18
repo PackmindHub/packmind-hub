@@ -1,0 +1,156 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Value Object : You shouldn't have multiple parameterized constructors
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["DDD"]} />
+
+If you have different behaviours with default values or nullable values : You should have differents Value Object.
+
+If you have different constructors but all constructors call the same constructor, you should use defaults parameters.
+
+Value objects classes are annotated with `ValueObject`.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```cs
+namespace Practices.DDD.ValueObject.ParametrizedConstructor
+{
+    [ValueObject]
+    internal class VOSimpleValueConstructor
+    {
+        public VOSimpleValueConstructor(int myValue)
+        {
+            MyValue = myValue;
+        }
+
+        public int MyValue { get; }
+    }
+
+    [ValueObject]
+    internal class VOTwoValues
+    {
+        public VOTwoValues(int myValue, int secondValue)
+        {
+            MyValue = myValue;
+            SecondValue = secondValue;
+        }
+
+        public int MyValue { get; }
+        public int SecondValue { get; }
+    }
+}
+
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```cs
+namespace Practices.DDD.ValueObject.ParametrizedConstructor
+{
+    [ValueObject]
+    internal class VOSimpleValueConstructor
+    {
+        public VOSimpleValueConstructor(int myValue)
+        {
+            MyValue = myValue;
+        }
+
+        public int MyValue { get; }
+    }
+
+    [ValueObject]
+    internal class VOTwoValues
+    {
+        public VOTwoValues(int myValue, int secondValue)
+        {
+            MyValue = myValue;
+            SecondValue = secondValue;
+        }
+
+        public int MyValue { get; }
+        public int SecondValue { get; }
+    }
+
+
+    [ValueObject]
+    internal class VOMultipleConstructor
+    {
+        public VOMultipleConstructor(int myValue)
+        {
+            MyValue = myValue;
+        }
+
+        public VOMultipleConstructor(int myValue, int secondValue)
+        {
+            MyValue = myValue;
+            SecondValue = secondValue;
+        }
+
+        public int MyValue { get; }
+        public int SecondValue { get; }
+    }
+    
+}
+
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```cs
+namespace Practices.DDD.ValueObject.ParametrizedConstructor
+{
+    [ValueObject]
+    internal class VOSimpleValueConstructor
+    {
+        public VOSimpleValueConstructor(int myValue)
+        {
+            MyValue = myValue;
+        }
+
+        public int MyValue { get; }
+    }
+
+    [ValueObject]
+    internal class VOTwoValues
+    {
+        public VOTwoValues(int myValue, int secondValue)
+        {
+            MyValue = myValue;
+            SecondValue = secondValue;
+        }
+
+        public int MyValue { get; }
+        public int SecondValue { get; }
+    }
+}
+
+```

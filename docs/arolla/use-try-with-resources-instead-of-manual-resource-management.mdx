@@ -1,0 +1,138 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use try-with-resources instead of manual resource management
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Java","Clean code"]} />
+
+##### What is it?
+This practice is activated when code manually opens and closes resources such as files, network connections, or database connections without using the try-with-resources statement introduced in Java 7.
+
+##### Why apply it?
+Ensuring proper closure and cleanup of resources is critical to preventing memory leaks and resource contention, and the try-with-resources statement automates this process, making the code more robust and less error-prone.
+
+##### How to fix it?
+Replace manual try-catch-finally blocks for resource management with the try-with-resources statement to automatically handle resource closing.
+
+#### Read more:
+[https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html](https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html)
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```java
+package org.example;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public final class Util {
+
+    public static Map<String, Integer> nameCount(List<String> names) {
+        return names.stream()
+                .collect(Collectors.toMap(name -> name, name -> 1, Integer::sum));
+
+    }
+
+    public static void printNames(List<String> names) {
+        names.forEach(System.out::println);
+    }
+
+    public static Integer sum(List<Integer> numbers) {
+        return numbers.stream()
+                .reduce(0, Integer::sum);
+    }
+
+    public static int increment(int value) {
+        return value + 1;
+    }
+
+    public static void readFile(String fileName) throws FileNotFoundException {
+        try (InputStream input = new FileInputStream(fileName)) {
+            // Read file
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```java
+package org.example;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public final class Util {
+
+    public static Map<String, Integer> nameCount(List<String> names) {
+        return names.stream()
+                .collect(Collectors.toMap(name -> name, name -> 1, Integer::sum));
+
+    }
+
+    public static void printNames(List<String> names) {
+        names.forEach(System.out::println);
+    }
+
+    public static Integer sum(List<Integer> numbers) {
+        return numbers.stream()
+                .reduce(0, Integer::sum);
+    }
+
+    public static int increment(int value) {
+        return value + 1;
+    }
+
+    public static void readFile(String fileName) throws FileNotFoundException {
+        InputStream input = null;
+        try {
+            input = new FileInputStream("file.txt");
+            // Read file
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+}
+
+```

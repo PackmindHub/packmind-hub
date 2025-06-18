@@ -1,0 +1,40 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Don't use "as any" for window's global object
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["Clean code","Security","Typescript"]} />
+
+#### What is it?
+The object window is a global object providing variables and functions anywhere in brower's enviromnent. You can retrieve height, width, scroll position etc...
+
+#### Why apply it?
+If you use the window's object with "any", you disable the type checking of typescript. The risk is you can have error when the code is executed
+
+#### How to fix it?
+Declare a global variable to enable type checking
+
+### Read more:
+https://mariusschulz.com/blog/declaring-global-variables-in-typescript
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+const example = (window as any).getMyCustomProperties();
+```

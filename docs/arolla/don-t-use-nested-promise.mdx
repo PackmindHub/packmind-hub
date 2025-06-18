@@ -1,0 +1,79 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Don't use nested promise
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Typescript","JavaScript","Add example"]} />
+
+##### What is it?
+The use of nested promises occurs when promises are created or operated on within the fulfillment or rejection handlers of another promise, creating a complex and hard-to-read structure.
+
+##### Why apply it?
+Avoiding nested promises is crucial as it leads to improved code readability and maintainability, preventing the so-called 'callback hell' where the code becomes deeply indented and harder to follow, making it prone to errors.
+
+##### How to fix it?
+Refactor the code to use promise chaining or async/await syntax, which allows for linear code execution flow and significantly increases readability.
+
+#### Read more:
+[https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Promises#chaining](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Promises#chaining)
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```js
+function verifyTokenValidy(token) {
+    return fetch(`https://api.example.com/token-is-valid?token=${token}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
+}
+
+function getUserInfoById(userId) {
+    return fetch(`https://api.example.com/user-info?userId=${userId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    }) 
+}
+
+
+async function main() {
+    return verifyTokenValidy('MY_TOKEN')
+    .then((isTokenResponse) => {
+        return isTokenResponse.json().then(isTokenValid => {
+            if(!isTokenValid) {
+                return {}
+            }
+
+            return getUserInfoById('1235')
+                .then(userResponse => {
+                    return userResponse.json().then(() => userResponse)
+                })
+                .catch(() => { 
+                    throw new Error("A server error occurred when the server tried to retrieve the user's information") 
+                })
+        })
+    })
+    .catch(() => { 
+        throw new Error('A server error occurs when the server tries to check the token validation.')
+     })
+}
+```

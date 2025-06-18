@@ -1,0 +1,65 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Service : Service shouldn't have a static method
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["DDD"]} />
+
+If you have a static method in class which names ends with "Service", the behaviour should be moved into a parameters.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```cs
+namespace Practices.DDD.Service.Static
+{
+    internal class OrderService
+    {
+        public void ProcessOrder(Order order)
+        {
+            if (OrderIsValid(order))
+            {
+                //Process
+            }
+            else
+            {
+                //Process Invalid Order
+            }
+        }
+
+        private static bool OrderIsValid(Order order) 
+        {
+            //Check order fields
+            return true;
+        }
+
+        public void ProcessOrder2(Order order, bool orderIsValid)
+        {
+            if (orderIsValid)
+            {
+                //Process
+            }
+            else
+            {
+                //Process Invalid Order
+            }
+        }
+    }
+}
+
+```

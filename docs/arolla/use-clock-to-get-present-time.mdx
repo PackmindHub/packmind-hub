@@ -1,0 +1,50 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use Clock to get present time
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Java","date"]} />
+
+Static methods now() of java.time should not be used with no parameter.
+
+Using the Clock parameter makes the date testable.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```java
+package dev.best.practices;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Zoo {
+    private final List<Animal> animals = new ArrayList<>();
+
+    public List<Animal> getAnimals() {
+        return animals;
+    }
+
+    public void registerAnimalBirth(String name, Species species) {
+        final Instant birthday = Instant.now();
+        final Animal baby = new Animal(name, species, birthday);
+        this.animals.add(baby);
+    }
+}
+```

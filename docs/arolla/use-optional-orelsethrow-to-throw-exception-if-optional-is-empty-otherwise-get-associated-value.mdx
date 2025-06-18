@@ -1,0 +1,94 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use Optional orElseThrow to throw exception if optional is empty otherwise get associated value
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Java"]} />
+
+##### What is it?
+The practice is activated when working with Optional objects in Java and involves using the method orElseThrow() to either retrieve a value if present or throw an exception if the Optional is empty, instead of using direct get() calls which may lead to NoSuchElementException.
+
+##### Why apply it?
+This rule is important because it promotes safer and more predictable handling of Optional values by explicitly handling the case where the value might be absent, thereby improving code readability and reducing runtime errors.
+
+##### How to fix it?
+Refactor code using optional.get() to optional.orElseThrow() with an appropriate exception to handle empty optional scenarios explicitly.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```java
+package com.ivan.entretien.practices;
+
+import java.util.Optional;
+
+public class Practice {
+    public static void testBestPractices() throws RandomException {
+        RandomPerson randomPerson = getRandomPerson().orElseThrow(() -> new RandomException("Random exception is empty"));
+    }
+
+    public static Optional<RandomPerson> getRandomPerson() {
+        int min = 1;
+        int max = 10;
+        int randomNumber = (int)(Math.random() * ((max - min) + 1)) + min;
+
+        if (randomNumber > 5) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(new RandomPerson("Test", "Test"));
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```java
+package com.ivan.entretien.practices;
+
+import java.util.Optional;
+
+public class Practice {
+    public static void testBestPractices() throws RandomException {
+        Optional<RandomPerson> optionalRandomPerson = getRandomPerson();
+
+        if (optionalRandomPerson.isEmpty()) {
+            throw new RandomException("Random exception is empty");
+        }
+
+        RandomPerson randomPerson = optionalRandomPerson.get();
+    }
+
+    public static Optional<RandomPerson> getRandomPerson() {
+        int min = 1;
+        int max = 10;
+        int randomNumber = (int)(Math.random() * ((max - min) + 1)) + min;
+
+        if (randomNumber > 5) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(new RandomPerson("Test", "Test"));
+    }
+}
+
+```

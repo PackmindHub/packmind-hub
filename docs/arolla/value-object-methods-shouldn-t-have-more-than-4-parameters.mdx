@@ -1,0 +1,47 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Value Object : Methods shouldn't have more than 4 parameters
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["DDD"]} />
+
+Encapsulate your parameters into one. 
+This new object is more than precise for business readability.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```cs
+namespace Practices.DDD.ValueObject.ParamsFour
+{
+    [ValueObject]
+    internal class InvoiceService
+    {
+        public void CreateInvoice(int customerId, decimal amount, DateTime dueDate, string currency, string notes, string invoiceType)
+        {
+            // Implementation of invoice creation
+            Console.WriteLine("Invoice created with the following details:");
+            Console.WriteLine($"Customer ID: {customerId}");
+            Console.WriteLine($"Amount: {amount} {currency}");
+            Console.WriteLine($"Due Date: {dueDate.ToShortDateString()}");
+            Console.WriteLine($"Notes: {notes}");
+            Console.WriteLine($"InvoiceType: {invoiceType}");
+        }
+    }
+}
+```

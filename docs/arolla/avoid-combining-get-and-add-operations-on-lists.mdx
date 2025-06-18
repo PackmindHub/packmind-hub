@@ -1,0 +1,74 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid combining get and add operations on lists
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Java","Demeter","getter"]} />
+
+Modifying a list returned by a getter is a bad pratice.
+
+The returned list might be null, a copy or immutable.
+
+That's why the modification should be encapsulated.
+
+_This practice was created by Arolla_.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```java
+package dev.best.practices;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Zoo {
+    private final List<Animal> animals = new ArrayList<>();
+
+    public static Zoo create() {
+        final Zoo zoo = new Zoo();
+        zoo.getAnimals().add(new Animal("toto", Species.DOG));
+        zoo.getAnimals().add(new Animal("medor", Species.DOG));
+        zoo.getAnimals().add(new Animal("kiki", Species.CAT));
+        zoo.getAnimals().add(new Animal("nemo", Species.FISH));
+        return zoo;
+    }
+
+    public List<Animal> getAnimals() {
+        return animals;
+    }
+
+    public static class Animal {
+        private final String name;
+        private final Species species;
+
+        public Animal(String name, Species species) {
+            this.name = name;
+            this.species = species;
+        }
+
+        public boolean hasSpecies(Species species) {
+            return this.species == species;
+        }
+    }
+
+    public enum Species {
+        CAT, DOG, FISH, SNAKE, SHEEP, COW, LION, ELEPHANT
+    }
+}
+```

@@ -1,0 +1,121 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Value Object : Data validation shouldn't be in constructor
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["DDD"]} />
+
+If you don't have data validation in your VO but when you call the constructor. 
+Integrate the validation into your VO by using a factory.
+
+If you have a data validation in your VO, use a factory instead of data validation in constructor.
+
+Violations should be raised if there exists `if` instructions within a constructor.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```cs
+using CurrencyConverter.Domain.TourAttributes;
+using System;
+
+namespace CurrencyConverter.Domain
+{
+    public class Amount
+    {
+        private readonly decimal _value;
+        private readonly Currency _currency;
+
+        public Amount(decimal value, Currency currency)
+        {
+            if (value < 0)
+            {
+                throw new ArgumentException("Amount value must be positive");
+            }
+
+            if (currency == null)
+            {
+                throw new ArgumentException("Currency must be provided");
+            }
+            
+            _value = value;
+            _currency = currency;
+        }
+
+        [Step("Conversion", "Convert the source currency amount to a target currency rounding by cents or units", 2)]
+        public Amount Convert(Currency currency, Rate rate, Rounding rounding = Rounding.ToUnits)
+        {
+            if (_currency.Equals(currency))
+            {
+                return this;
+            }
+
+            if (rate == null)
+            {
+                return null;
+            }
+
+            var convertedValue = rate.Multiply(_value);
+            var roundedValue = Round(convertedValue, rounding);
+            return new Amount(roundedValue, currency);
+        }
+
+        private decimal Round(decimal convertedValue, Rounding rounding)
+        {
+            if (rounding == Rounding.ToCents)
+            {
+                return decimal.Round(convertedValue, 2);
+            }
+
+            return convertedValue;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as Amount;
+            return other != null
+                   && other._value.Equals(_value)
+                   && other._currency.Equals(_currency);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(_value, _currency);
+        }
+
+        public string Format(IAmountFormatter formatter)
+        {
+            return formatter.Format(_value, _currency);
+        }
+
+        public bool HasCurrency(Currency currency)
+        {
+            return _currency.Equals(currency);
+        }
+
+        public bool HasValue(decimal value)
+        {
+            return _value.Equals(value);
+        }
+        public override string ToString()
+        {
+            return base.ToString() + " : value = " + this._value + " & currency = " + this._currency;
+        }
+    }
+}
+```

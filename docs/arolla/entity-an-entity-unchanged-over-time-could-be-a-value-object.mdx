@@ -1,0 +1,91 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Entity : An Entity unchanged over time could be a Value Object
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["DDD"]} />
+
+If your entity doesn't change over time, it could be a Value Object.
+
+If a class annotated with `Entity` has fields that are not `readonly` but never written or updated (except in constructors), then the practice is not followed and the class should be a Value Object, and fields marked as `readonly`.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Correct implementation following the practice.
+
+<!-- #example_positive_code -->
+```cs
+namespace CurrencyConverter.Domain
+{
+    [ValueObject]
+    public class Currency
+    {
+        private readonly string _name;
+
+        public Currency(string name)
+        {
+            _name = name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Currency currency
+                   && _name.Equals(currency._name);
+        }
+
+        public override int GetHashCode()
+        {
+            return (_name != null ? _name.GetHashCode() : 0);
+        }
+
+        public bool Is(string currencyName)
+        {
+            return _name.Equals(currencyName);
+        }
+
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```cs
+namespace CurrencyConverter.Domain
+{
+    [Entity]
+    public class Currency
+    {
+        private string _name;
+
+        public Currency(string name)
+        {
+            _name = name;
+        }
+
+        public string Name => _name;
+
+
+        public bool Is(string currencyName)
+        {
+            return Name.Equals(currencyName);
+        }
+    }
+}
+```

@@ -1,0 +1,75 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use local variables and immutable data structures instead of shared mutable state
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Java","Clean code","Add example","csharp"]} />
+
+Don't mutate a method parameter.
+Instead compute the result in a local variable.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```cs
+namespace Practices.LocalVariablesAndImmutable;
+
+public class CountNamesHelper
+{
+    public static IDictionary<string, int> CountNames(IList<string> names, IDictionary<string, int> count)
+    {
+        foreach (string name in names)
+        {
+            if (!count.TryAdd(name, 1))
+            {
+                count[name]++;
+            }
+        }
+        return count;
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```java
+package practices.java.use_local_immutable;
+
+import java.util.List;
+import java.util.Map;
+
+public class CountNamesHelper {
+
+    public static Map<String, Long> countNames(List<String> names, Map<String, Long> countByName) {
+        for (String name : names) {
+            long previousCount = countByName.getOrDefault(name, 0L);
+            countByName.put(name, previousCount + 1);
+        }
+        return countByName;
+    }
+}
+
+```

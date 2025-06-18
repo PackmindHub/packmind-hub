@@ -1,0 +1,74 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Utilize utility types rather than create a new interface
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["Clean code","Typescript","Add example"]} />
+
+### What to do
+- Use utility types (Omit, Union, Pick ...)
+
+### Prevent problems
+- Copy-Paste
+- Duplication
+- Readability
+
+### Explanation
+Using spectific interface to avoid useless data and permit interface segregation.
+When we need some properties from one or several interfaces,  we should use utility types.
+
+Violations should be raised when, within the same file, there exists 'type' or 'interface' that have properties which are defined in another type or variable.
+
+For instance:
+```
+interface User {
+    firstName: string;
+    lastName: string;
+}
+
+interface FullUser {
+    firstName: string;
+    lastName: string;  
+    address: string;
+}
+```
+is an issue since FullUser contains all properties defined in the interface `User`.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Incorrect implementation that violates the practice.
+
+<!-- #example_negative_code -->
+```ts
+interface User {
+    id: string;
+    firstName: string;
+    lastName:string;
+    email: string;
+}
+
+interface UserWithoutId  {
+    firstName: string;
+    lastName:string;
+    email: string;
+}
+
+const user: UserWithoutId = {
+    firstName: 'John',
+    lastName: 'Test',
+    email: 'john.test@test.com'
+}
+```
