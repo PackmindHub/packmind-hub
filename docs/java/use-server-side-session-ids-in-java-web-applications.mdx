@@ -1,0 +1,124 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use Server-Side Session IDs in Java Web Applications
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["security","authentication"]} />
+
+### What is it?
+This rule is triggered by the use of `HttpServletRequest.getRequestedSessionId()`, which retrieves session IDs supplied by the client. These IDs might be spoofed or invalid.
+
+### Why apply it?
+Using client-supplied session IDs can jeopardize the security of your application, leading to potential session fixation attacks where attackers could hijack user sessions. This compromises authentication and may expose sensitive user data.
+
+### How to fix it?
+Use the server-side session ID obtained via `HttpServletRequest.getSession().getId()` to verify sessions, ensuring that your session management remains secure and under control of the application’s server logic.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses `HttpServletRequest.getRequestedSessionId()`, which can lead to vulnerabilities through client-supplied session IDs.
+
+<!-- #example_negative_code -->
+```java
+import javax.servlet.http.HttpServletRequest;
+
+public class SessionValidator {
+    public boolean isSessionValid(HttpServletRequest request) {
+        String clientProvidedSessionId = request.getRequestedSessionId();  // Noncompliant
+        return isValidSession(clientProvidedSessionId);
+    }
+
+    private boolean isValidSession(String sessionId) {
+        // Simulate a method that checks session validity in your application context
+        return true;  // Assumed logic
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses `HttpServletRequest.getSession().getId()` to manage session validity securely, leveraging server-side session handling.
+
+<!-- #example_positive_code -->
+```java
+import javax.servlet.http.HttpServletRequest;
+
+public class SessionHandler {
+    public boolean isSessionActive(HttpServletRequest request) {
+        String serverSessionId = request.getSession().getId();  // Compliant
+        return isActiveSession(serverSessionId);
+    }
+
+    private boolean isActiveSession(String sessionId) {
+        // Simulate a method that checks session validity in your application context
+        return true;  // Assumed logic
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example improperly relies on client-supplied session IDs, which pose a security risk by allowing potential impersonation.
+
+<!-- #example_negative_code -->
+```java
+import javax.servlet.http.HttpServletRequest;
+
+public class AccessVerifier {
+    public boolean verifyAccess(HttpServletRequest request, String resource) {
+        String userProvidedSessionId = request.getRequestedSessionId();  // Noncompliant
+        return verifyUserAccess(userProvidedSessionId, resource);
+    }
+
+    private boolean verifyUserAccess(String sessionId, String resource) {
+        // Logic to verify user access with a session ID and resource
+        return true;  // Simulated logic
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example shows securely utilizing server-side session IDs for access control verification, optimizing security.
+
+<!-- #example_positive_code -->
+```java
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+public class AccessController {
+    public boolean hasAccess(HttpServletRequest request, String resource) {
+        HttpSession session = request.getSession();  // Compliant
+        return checkAccessRights(session.getId(), resource);
+    }
+
+    private boolean checkAccessRights(String sessionId, String resource) {
+        // Logic to verify access rights based on a session ID and resource
+        return true;  // Assumed logic
+    }
+}
+```

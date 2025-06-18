@@ -1,0 +1,131 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Comparators Should Be "Serializable"
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["maintainability","reliability","defensive_programming"]} />
+
+### What is it?
+A `Comparator` is an interface used for sorting or ordering collections. By default, it is not serializable and can prevent an otherwise-`Serializable` ordered collection from being serialized.
+
+### Why apply it?
+Making a `Comparator` serializable ensures that collections using these comparators remain serializable. The change allows for good defensive programming and often requires minimal overhead.
+
+### How to fix it?
+To fix this issue, ensure that `Comparator` implementations also implement `Serializable`.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+In this negative example, the comparator is not serializable, which can cause serialization issues with collections using it.
+
+<!-- #example_negative_code -->
+```java
+import java.util.Comparator;
+
+public class FruitComparator implements Comparator<Fruit> {  // Noncompliant
+  @Override
+  public int compare(Fruit f1, Fruit f2) {
+    return f1.getName().compareTo(f2.getName());
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return this == obj || obj instanceof FruitComparator;
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example shows how to declare a comparator that is serializable, maintaining serializable integrity for collections using it.
+
+<!-- #example_positive_code -->
+```java
+import java.io.Serializable;
+import java.util.Comparator;
+
+public class FruitComparator implements Comparator<Fruit>, Serializable {
+  private static final long serialVersionUID = 1L;
+
+  @Override
+  public int compare(Fruit f1, Fruit f2) {
+    return f1.getName().compareTo(f2.getName()); // Compliant
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return this == obj || obj instanceof FruitComparator; // Compliant
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example does not implement `Serializable`, which may prevent serialization when used within a serializable collection.
+
+<!-- #example_negative_code -->
+```java
+import java.util.Comparator;
+import java.util.Locale;
+
+public class LexicalFruitComparator implements Comparator<Fruit> { // Noncompliant
+  @Override
+  public int compare(Fruit f1, Fruit f2) {
+    return f1.getName().toLowerCase(Locale.ROOT).compareTo(f2.getName().toLowerCase(Locale.ROOT));
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return this == obj || obj instanceof LexicalFruitComparator;
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Another positive example demonstrating a lexical comparator that implements `Serializable`, ensuring compatibility with serializable collections.
+
+<!-- #example_positive_code -->
+```java
+import java.io.Serializable;
+import java.util.Comparator;
+import java.util.Locale;
+
+public class LexicalFruitComparator implements Comparator<Fruit>, Serializable {
+  private static final long serialVersionUID = 2L;
+
+  @Override
+  public int compare(Fruit f1, Fruit f2) {
+    return f1.getName().toLowerCase(Locale.ROOT).compareTo(f2.getName().toLowerCase(Locale.ROOT)); // Compliant
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return this == obj || obj instanceof LexicalFruitComparator; // Compliant
+  }
+}
+```

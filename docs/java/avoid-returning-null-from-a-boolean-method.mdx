@@ -1,0 +1,119 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Returning `null` from a `Boolean` Method
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","reliability"]} />
+
+### What is it?
+This practice is triggered by returning `null` from a `Boolean` method, which could lead to a `NullPointerException` if the caller assumes only `true` or `false` will be returned.
+
+### Why apply it?
+Returning `null` from a `Boolean` method without appropriate annotations leads to runtime exceptions and makes your code less robust. Using annotations informs callers that the return value could be `null`, and allows them to handle the result safely.
+
+### How to fix it?
+Annotate methods returning `Boolean` with `@javax.annotation.Nullable` or `@javax.annotation.CheckForNull` to inform callers of potential `null` values. Ensure callers check for `null` when necessary.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example returns `null` without annotation, leading to potential `NullPointerException`.
+
+<!-- #example_negative_code -->
+```java
+public Boolean isServerHealthy() {
+  // Perform health checks
+  return null;  /* Noncompliant */
+}
+
+public void performAction() {
+  if (isServerHealthy()) {  // Could throw NullPointerException
+    // Server is healthy; proceed with action
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses annotations to inform the caller that a `Boolean` return value might be `null`. The caller properly checks for nullity.
+
+<!-- #example_positive_code -->
+```java
+@javax.annotation.Nullable
+public Boolean isServerHealthy() {
+  // Perform health checks
+  return null;  // Indicates unknown state
+}
+
+public void performAction() {
+  Boolean serverStatus = isServerHealthy();
+  if (Boolean.TRUE.equals(serverStatus)) {
+    // Server is healthy; proceed with action
+  } else {
+    // Handle unhealthy or unknown state
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example does not use any annotations, making it unclear that `null` might be returned.
+
+<!-- #example_negative_code -->
+```java
+public Boolean isFeatureEnabled() {
+  // Check feature flag
+  return null;  /* Noncompliant */
+}
+
+public void useFeature() {
+  if (isFeatureEnabled()) {  // Could lead to NullPointerException
+    // Use the feature
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses `@javax.annotation.CheckForNull` to clearly indicate that the method can return `null`.
+
+<!-- #example_positive_code -->
+```java
+@javax.annotation.CheckForNull
+public Boolean isFeatureEnabled() {
+  // Check feature flag
+  return null;  // Feature flag status is unavailable
+}
+
+public void checkFeature() {
+  Boolean featureStatus = isFeatureEnabled();
+  if (Boolean.TRUE.equals(featureStatus)) {
+    // Feature is enabled; use feature
+  } else {
+    // Feature is disabled or status is unknown
+  }
+}
+```

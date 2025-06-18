@@ -1,0 +1,105 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure Test Cases Contain Tests
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","Test Coverage"]} />
+
+### What is it?
+This practice is essential for ensuring that JUnit or similarly named test files (like `*Test`, `*Tests`, `*TestCase`) or classes inheriting from `TestCase` indeed contain concrete test methods.
+
+### Why apply it?
+Having test files or classes without appropriate test methods can lead to false assumptions regarding coverage, making you believe that the associated functionality is thoroughly tested when it's not.
+
+### How to fix it?
+Verify that each test class named according to a supported test framework convention, or implementing `TestCase`, holds actual test methods.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example shows a test class without any actual test methods, which could be misleading about test coverage.
+
+<!-- #example_negative_code -->
+```java
+public class CalculatorTest {  /* Noncompliant */
+    
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example includes a test class with a concrete test case, ensuring clarity and accurate test coverage reporting.
+
+<!-- #example_positive_code -->
+```java
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class CalculatorTest {  /* Compliant */
+    
+    @Test
+    public void testAddition() {
+        Calculator calculator = new Calculator();
+        int result = calculator.add(2, 3);
+        assertEquals(5, result);
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example demonstrates a misnamed class that might be assumed to contain tests, which it doesn't.
+
+<!-- #example_negative_code -->
+```java
+public class StringUtilsTests {  /* Noncompliant */
+    // No test methods present
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+A properly structured test file with test methods ensuring the functionality under test is covered.
+
+<!-- #example_positive_code -->
+```java
+import org.junit.jupiter.api.Test;
+
+public class StringUtilsTests {  /* Compliant */
+    
+    @Test
+    public void testIsEmptyShouldReturnTrueForEmptyString() {
+        StringUtils utils = new StringUtils();
+        assertTrue(utils.isEmpty(""));
+    }
+    
+    @Test
+    public void testIsEmptyShouldReturnFalseForNonEmptyString() {
+        StringUtils utils = new StringUtils();
+        assertFalse(utils.isEmpty("Hello"));
+    }
+}
+```

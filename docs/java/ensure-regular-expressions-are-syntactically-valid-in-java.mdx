@@ -1,0 +1,127 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure Regular Expressions are Syntactically Valid in Java
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","error-proneness"]} />
+
+### What is it?
+This practice addresses the importance of ensuring that regular expressions in Java are syntactically correct to avoid runtime exceptions.
+
+### Why apply it?
+Using syntactically incorrect regular expressions in your code can lead to runtime exceptions, causing your application to crash or behave unexpectedly. This affects the reliability and robustness of your application.
+
+### How to fix it?
+To avoid syntax errors, ensure that special characters are properly escaped and that capturing groups are referenced correctly. Alternatively, use methods or flags to handle strings literally instead of as a regex.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example utilizes the `replace` method instead of `replaceAll`, avoiding regex processing when it's not needed.
+
+<!-- #example_positive_code -->
+```java
+public class StringReplacementExample {
+    public static void main(String[] args) {
+        String initial = "Some text with ([ special pattern";
+        // Using replace to handle non-regex string replacement
+        String replaced = initial.replace("([", "{");  /* Compliant */
+        System.out.println("Replaced text: " + replaced);  // Should correctly output text with replacements
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example attempts to use `replaceAll` with an improperly escaped pattern, leading to potential syntax errors.
+
+<!-- #example_negative_code -->
+```java
+public class StringReplacementExample {
+    public static void main(String[] args) {
+        try {
+            String initial = "Some text with ([ special pattern";
+            // Incorrect use of replaceAll with a regex pattern
+            String replaced = initial.replaceAll("(\[", "{");  /* Noncompliant */
+            System.out.println("Replaced text: " + replaced);
+        } catch (Exception e) {
+            System.out.println("Exception thrown: " + e.getMessage());
+        }
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example demonstrates escaping special characters and using `Pattern.LITERAL` to safely create and work with regular expressions.
+
+<!-- #example_positive_code -->
+```java
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+public class RegexExample {
+    public static void main(String[] args) {
+        // Compiling a pattern with special characters properly escaped
+        Pattern pattern = Pattern.compile("\\\\(\\\\\\[");
+        Matcher matcher = pattern.matcher("\\([");
+        System.out.println("Match found: " + matcher.find());  // Should print false
+
+        // Using Pattern.LITERAL to treat expression as literal
+        Pattern literalPattern = Pattern.compile("([", Pattern.LITERAL);
+        Matcher literalMatcher = literalPattern.matcher("([");
+        System.out.println("Literal match found: " + literalMatcher.find());  // Should print true
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example shows improperly escaped special characters that can cause runtime exceptions due to incorrect regular expression syntax.
+
+<!-- #example_negative_code -->
+```java
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+public class RegexExample {
+    public static void main(String[] args) {
+        try {
+            // Compiling a pattern with incorrectly escaped special character
+            Pattern pattern = Pattern.compile("(\[");  /* Noncompliant */
+            Matcher matcher = pattern.matcher("([");
+            System.out.println("Match found: " + matcher.find());
+        } catch (Exception e) {
+            System.out.println("Exception thrown: " + e.getMessage());
+        }
+
+        try {
+            // Incorrect group reference leading to a syntax issue
+            String exampleStr = "word-123";
+            boolean isMatching = exampleStr.matches("(\\\\w+-(\\\\d+)");  /* Noncompliant */
+            System.out.println("Matches: " + isMatching);
+        } catch (Exception e) {
+            System.out.println("Exception thrown: " + e.getMessage());
+        }
+    }
+}
+```

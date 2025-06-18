@@ -1,0 +1,143 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use `wait()` Instead of `Thread.sleep()` When Holding a Lock
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["performance","concurrency"]} />
+
+### What is it?
+This practice addresses the improper use of `Thread.sleep()` within synchronized code blocks, where a lock is held, leading to potential performance issues and deadlocks.
+
+### Why apply it?
+In a multithreaded environment, holding a lock while a thread is put to sleep can block other threads from accessing shared resources, causing poor performance and even deadlocks.
+
+### How to fix it?
+Replace `Thread.sleep(...)` with `wait(...)` inside synchronized blocks to release the lock temporarily, allowing other threads to execute and preventing bottlenecks.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example improperly uses `Thread.sleep()` inside a synchronized block, holding the lock and preventing other threads from executing.
+
+<!-- #example_negative_code -->
+```java
+public class MonitorExample {
+
+    private final Object monitor = new Object();
+    private boolean ready = false;
+
+    public void doSomething() throws InterruptedException {
+        synchronized (monitor) {
+            while (!ready) {
+                Thread.sleep(200); // Noncompliant, any other thread synchronizing on monitor is blocked.
+            }
+            process();
+        }
+    }
+
+    private void process() {
+        System.out.println("Processing...");
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example shows the usage of `wait()` on the monitor object, which releases the lock temporarily and avoids blocking other threads.
+
+<!-- #example_positive_code -->
+```java
+public class MonitorExample {
+
+    private final Object monitor = new Object();
+    private boolean ready = false;
+
+    public void doSomething() throws InterruptedException {
+        synchronized (monitor) {
+            while (!ready) {
+                monitor.wait(200); // Compliant, the current monitor is released.
+            }
+            process();
+        }
+    }
+
+    private void process() {
+        System.out.println("Processing...");
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Using `Thread.sleep()` in this example keeps the lock engaged, hindering other threads from proceeding while waiting for a condition.
+
+<!-- #example_negative_code -->
+```java
+public class TaskManager {
+
+    private final Object lock = new Object();
+    private boolean taskCompleted = false;
+
+    public void executeTask() throws InterruptedException {
+        synchronized (lock) {
+            while (!taskCompleted) {
+                Thread.sleep(500); // Noncompliant, could cause a deadlock by holding the lock.
+            }
+            finalizeTask();
+        }
+    }
+
+    private void finalizeTask() {
+        System.out.println("Finalizing task...");
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example shows how `wait()` allows the lock to be released temporarily while checking for a particular condition.
+
+<!-- #example_positive_code -->
+```java
+public class TaskManager {
+
+    private final Object lock = new Object();
+    private boolean taskCompleted = false;
+
+    public void executeTask() throws InterruptedException {
+        synchronized (lock) {
+            while (!taskCompleted) {
+                lock.wait(500); // Compliant, releasing the lock for other threads.
+            }
+            finalizeTask();
+        }
+    }
+
+    private void finalizeTask() {
+        System.out.println("Finalizing task...");
+    }
+}
+```

@@ -1,0 +1,164 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# "switch" Statements Should Have "Default" Clauses
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","defensive programming"]} />
+
+### What is it?
+This practice is triggered by the absence of a `default` clause in a `switch` statement, which can lead to missed cases and unexpected behavior.
+
+### Why apply it?
+Having a `default` clause ensures that even when cases do not match any specified criteria, the program takes a controlled, defined action. This prevents potential logical errors and ensures code robustness.
+
+### How to fix it?
+Add a `default` clause at the end of your `switch` statements to define a clear action or to document why no action is needed when no other case is matched.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example lacks a `default` case, leaving some actions unhandled.
+
+<!-- #example_negative_code -->
+```java
+public class ActionHandler {
+    public void handleAction(String action) {
+        switch (action) {
+          case "START":
+            System.out.println("Starting");
+            break;
+          case "STOP":
+            System.out.println("Stopping");
+            break;
+          // No default case to handle other actions
+        }
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example misses a `default` clause, which can lead to ignored values if they don't match any `case`.
+
+<!-- #example_negative_code -->
+```java
+switch (param) {
+  case 0:
+    System.out.println("Zero");
+    break;
+  case 1:
+    System.out.println("One");
+    break;
+  // Missing default clause
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example shows a `switch` statement with a proper `default` clause handling unexpected values.
+
+<!-- #example_positive_code -->
+```java
+switch (param) {
+  case 0:
+    System.out.println("Zero");
+    break;
+  case 1:
+    System.out.println("One");
+    break;
+  default:
+    System.out.println("Unexpected value");
+    break;
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example ignores the need for a `default` case, missing error handling for invalid operations.
+
+<!-- #example_negative_code -->
+```java
+public int calculate(int a, int b, String operation) {
+    switch (operation) {
+      case "ADD":
+        return a + b;
+      case "SUBTRACT":
+        return a - b;
+      // Missing default causes lack of handling for unsupported operations
+    }
+}
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example demonstrates a `switch` statement with a `default` clause to handle unrecognized actions.
+
+<!-- #example_positive_code -->
+```java
+public class ActionHandler {
+    public void handleAction(String action) {
+        switch (action) {
+          case "START":
+            System.out.println("Starting");
+            break;
+          case "STOP":
+            System.out.println("Stopping");
+            break;
+          default:
+            System.out.println("Unknown action");
+            break;
+        }
+    }
+}
+```
+
+### Example 5:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example uses a `switch` with a proper `default` clause in a calculation context.
+
+<!-- #example_positive_code -->
+```java
+public int calculate(int a, int b, String operation) {
+    switch (operation) {
+      case "ADD":
+        return a + b;
+      case "SUBTRACT":
+        return a - b;
+      default:
+        throw new IllegalArgumentException("Invalid operation");
+    }
+}
+```

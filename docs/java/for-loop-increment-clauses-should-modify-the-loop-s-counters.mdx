@@ -1,0 +1,92 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# "for" Loop Increment Clauses Should Modify the Loop's Counters
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["maintainability","reliability"]} />
+
+### What is it?
+This practice relates to the misuse of `for` loop increment clauses where the loop's counter is not modified, potentially causing infinite loops or relying on code inside the loop body to update the counter.
+
+### Why apply it?
+The counter of a `for` loop should be updated in the loop's increment clause to ensure the loop functions as intended. Failing to update the counter can make the loop infinite or unclear, and alternative loops should be considered in such cases.
+
+### How to fix it?
+Ensure that the counter variable is updated within the `for` loop increment clause. If this is not possible, consider using a `while` or `do` `while` loop instead of a `for` loop.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example updates the counter variable within the loop body instead of the increment clause, which is noncompliant.
+
+<!-- #example_negative_code -->
+```java
+for (int i = 0; i < 10; ) { // Noncompliant, i not updated in increment clause
+  System.out.println("Iteration " + i);
+  i++; // Counter variable updated here
+  // Additional loop logic here...
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example shows a standard `for` loop where the counter variable is correctly updated in the increment clause.
+
+<!-- #example_positive_code -->
+```java
+for (int i = 0; i < 10; i++) { // Compliant
+  System.out.println("Iteration " + i);
+  // Additional loop logic here...
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example shows an incorrect approach by updating the loop condition variable within the loop body when the logic should dictate using a different type of loop.
+
+<!-- #example_negative_code -->
+```java
+int sum = 0;
+for (; sum < 10; ) { // Noncompliant, sum not updated in increment clause
+  System.out.println("Current value: " + sum);
+  sum++; // Incorrectly updates within the body
+  // Additional loop logic here...
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this positive example, the counter variable is properly placed in the increment clause of the `for` loop for clarity and compliance.
+
+<!-- #example_positive_code -->
+```java
+int sum = 0;
+for (int i = 0; i < 10; i++) { // Compliant
+  System.out.println("Current sum: " + sum);
+  sum += i;
+  // Additional loop logic here...
+}
+```

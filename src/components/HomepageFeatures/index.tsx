@@ -17,7 +17,6 @@ const FeatureList: FeatureItem[] = [
     description: (
       <>
         Best practices and coding guidelines for TypeScript development.
-        Learn how to write clean, maintainable TypeScript code.
       </>
     ),
     link: '/docs/typescript',
@@ -29,26 +28,25 @@ const FeatureList: FeatureItem[] = [
         Comprehensive Java coding practices and patterns for enterprise development.
       </>
     ),
-    comingSoon: true,
+    link: '/docs/java',
   },
   {
     title: 'Accessibility',
     description: (
       <>
-        Guidelines and best practices for creating accessible web applications
-        that work for everyone.
+        Best practices for creating accessible web applications in React TSX.
       </>
     ),
     link: '/docs/accessibility',
   },
   {
-    title: 'DDD',
+    title: "Craft practices by Arolla",
     description: (
       <>
-        Domain-Driven Design principles and patterns for complex software projects.
+        Domain-Driven Design and Clean Code practices by Arolla.
       </>
     ),
-    comingSoon: true,
+    link: '/docs/arolla',
   },
 ];
 

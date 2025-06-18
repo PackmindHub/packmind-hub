@@ -1,0 +1,179 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Nesting `switch` Statements in Java
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","readability"]} />
+
+### What is it?
+This practice addresses the issue of nested `switch` statements or expressions in Java, which can make the code harder to read and understand.
+
+### Why apply it?
+Nested `switch` structures can be confusing since it's easy to misinterpret the cases of an inner `switch` as belonging to an outer statement or expression. This affects the maintainability and clarity of the code.
+
+### How to fix it?
+Restructure your code to avoid the need for nested `switch` statements. Consider extracting the inner `switch` statement to a separate method.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example demonstrates a nested `switch` statement, which makes the code harder to follow.
+
+<!-- #example_negative_code -->
+```java
+public class Example {
+  public void foo(int n, int m) {
+    switch (n) {
+      case 0:
+        switch (m) {  // Noncompliant
+          case 10:
+            // logic for m = 10
+            break;
+          case 20:
+            // logic for m = 20
+            break;
+          default:
+            // default logic for m switch
+            break;
+        }
+        break;
+      case 1:
+        // additional logic for case 1
+        break;
+      default:
+        // default case logic
+        break;
+    }
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In the positive example, the inner `switch` statement is extracted into a separate method, improving readability and maintainability.
+
+<!-- #example_positive_code -->
+```java
+public class Example {
+  public void foo(int n, int m) {
+    switch (n) {
+      case 0:
+        handleInnerSwitch(m);
+        break;
+      case 1:
+        // additional logic for case 1
+        break;
+      default:
+        // default case logic
+        break;
+    }
+  }
+
+  private void handleInnerSwitch(int m) {
+    switch (m) {
+      case 10:
+        // logic for m = 10
+        break;
+      case 20:
+        // logic for m = 20
+        break;
+      default:
+        // default logic for m switch
+        break;
+    }
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example shows the use of a nested `switch` statement, complicating the code structure.
+
+<!-- #example_negative_code -->
+```java
+public class TaskHandler {
+  public void processTask(int priority, int type) {
+    switch (priority) {
+      case 1:
+        switch (type) { // Noncompliant
+          case 100:
+            // logic for type 100
+            break;
+          case 200:
+            // logic for type 200
+            break;
+          default:
+            // default logic for type switch
+            break;
+        }
+        break;
+      case 2:
+        // logic for medium priority
+        break;
+      default:
+        // default priority logic
+        break;
+    }
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example separates the concerns using a helper method, which makes the code easier to maintain and comprehend.
+
+<!-- #example_positive_code -->
+```java
+public class TaskHandler {
+  public void processTask(int priority, int type) {
+    switch (priority) {
+      case 1:
+        handleHighPriority(type);
+        break;
+      case 2:
+        // logic for medium priority
+        break;
+      default:
+        // default priority logic
+        break;
+    }
+  }
+
+  private void handleHighPriority(int type) {
+    switch (type) {
+      case 100:
+        // logic for type 100
+        break;
+      case 200:
+        // logic for type 200
+        break;
+      default:
+        // default logic for high priority
+        break;
+    }
+  }
+}
+```

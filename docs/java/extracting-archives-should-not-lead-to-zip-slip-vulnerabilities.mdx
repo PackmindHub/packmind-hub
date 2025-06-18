@@ -1,0 +1,164 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Extracting Archives Should Not Lead to Zip Slip Vulnerabilities
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["security","data protection"]} />
+
+### What is it?
+Zip slip is a path injection vulnerability where an application constructs a file path using an archive entry name and accesses this file without validating its path first. This can lead to unintended files being overwritten if an attacker inserts a payload like `../` into the archive.
+
+### Why apply it?
+If exploited, attackers could overwrite critical files on the server, leading to application corruption, data loss, or server tampering. Ensuring paths are validated properly prevents unauthorized file overwrites.
+
+### How to fix it?
+Validate the canonical paths of files extracted from archives, ensuring they are within an expected directory. Avoid direct usage of entry names when constructing file paths without validation.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example constructs a file path directly from an archive entry name and writes to it without validating the path.
+
+<!-- #example_negative_code -->
+```java
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.zip.*;
+
+public class Example {
+
+    static private String targetDirectory = "/example/directory/";
+
+    public void extractEntry(ZipFile zipFile) throws IOException {
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = entries.nextElement();
+            try (InputStream inputStream = zipFile.getInputStream(entry)) {
+                File file = new File(targetDirectory + entry.getName());
+                // Vulnerable: Path not validated, can overwrite arbitrary files
+                Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example ensures that the path constructed from an archive entry is validated, confirming it remains within an intended directory.
+
+<!-- #example_positive_code -->
+```java
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.zip.*;
+
+public class Example {
+
+    static private String targetDirectory = "/example/directory/";
+
+    public void extractEntry(ZipFile zipFile) throws IOException {
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = entries.nextElement();
+            try (InputStream inputStream = zipFile.getInputStream(entry)) {
+                File file = new File(targetDirectory + entry.getName());
+                String canonicalDestinationPath = file.getCanonicalPath();
+
+                if (canonicalDestinationPath.startsWith(targetDirectory)) {
+                    Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING, LinkOption.NOFOLLOW_LINKS);
+                }
+            }
+        }
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example does not correctly fix the directory path with a trailing slash for validation, which leaves room for partial path traversal attacks.
+
+<!-- #example_negative_code -->
+```java
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.zip.*;
+
+public class VulnerableExtractor {
+
+    static private String targetDirectory = "/unsecure/location";
+
+    public void extractWithoutValidation(ZipFile zipFile) throws IOException {
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = entries.nextElement();
+            try (InputStream inputStream = zipFile.getInputStream(entry)) {
+                File destFile = new File(entry.getName());
+                String path = destFile.getCanonicalPath();
+
+                if (path.startsWith(targetDirectory)) {
+                    Files.copy(inputStream, destFile.toPath(), StandardCopyOption.REPLACE_EXISTING, LinkOption.NOFOLLOW_LINKS);
+                }
+            }
+        }
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example ensures paths are validated, with a corrected use of the directory path that includes a final slash for validation accuracy and prevents path traversal attacks.
+
+<!-- #example_positive_code -->
+```java
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.zip.*;
+
+public class SafeExtractor {
+
+    static private String targetDirectory = "/secure/location/";
+
+    public void extractAndValidate(ZipFile zipFile) throws IOException {
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = entries.nextElement();
+            try (InputStream inputStream = zipFile.getInputStream(entry)) {
+                File destFile = new File(targetDirectory + entry.getName());
+                String canonicalPath = destFile.getCanonicalPath();
+
+                if (canonicalPath.startsWith(targetDirectory)) {
+                    Files.copy(inputStream, destFile.toPath(), StandardCopyOption.REPLACE_EXISTING, LinkOption.NOFOLLOW_LINKS);
+                }
+            }
+        }
+    }
+}
+```

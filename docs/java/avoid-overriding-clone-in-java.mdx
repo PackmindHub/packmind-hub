@@ -1,0 +1,143 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Overriding `clone` in Java
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","maintainability"]} />
+
+### What is it?
+This practice addresses the issue of overriding the `Object.clone` method in Java. Instead of using `Object.clone`, consider using copy constructors, factory methods, or custom copy functions.
+
+### Why apply it?
+The `Object.clone` mechanism is flawed due to its marker interface nature, bypassing constructors in object creation, and its inherent design issues like handling type casts and exceptions. Better alternatives exist that are more robust and clearer.
+
+### How to fix it?
+Avoid implementing `java.lang.Cloneable` and overriding `Object.clone`. Use copy constructors, factory methods, or well-defined copy functions to replicate objects safely and predictably.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Inappropriately overrides `clone`, bypasses constructor calls, and casts objects unsafely.
+
+<!-- #example_negative_code -->
+```java
+class Entity implements Cloneable { // Noncompliant
+
+  public int value;
+  public List<Entity> children;
+
+  Entity() {
+    EntityManager.register(this);
+  }
+
+  @Override
+  public Entity clone() {
+    try {
+      Entity copy = (Entity) super.clone(); // Unsafe casting and bypassing constructor
+      copy.children = children.stream().map(Entity::clone).toList();
+      return copy;
+    } catch (CloneNotSupportedException e) {
+      throw new AssertionError();
+    }
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Uses a copy constructor to create a new instance while preserving invariants and ensuring type safety.
+
+<!-- #example_positive_code -->
+```java
+class Entity { // Compliant
+
+  public int value;
+  public List<Entity> children;
+
+  // Initializing constructor
+  Entity() {
+    EntityManager.register(this);
+  }
+
+  // Copy constructor
+  Entity(Entity template) {
+    this.value = template.value;
+    this.children = template.children.stream().map(Entity::new).toList();
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Uses the `Cloneable` interface and overrides the `clone` method, leading to flawed object duplication.
+
+<!-- #example_negative_code -->
+```java
+class Entity implements Cloneable { // Noncompliant
+
+  public int value;
+  public List<Entity> children;
+
+  Entity() {
+    EntityManager.register(this);
+  }
+
+  @Override
+  public Entity clone() {
+    try {
+      Entity copy = (Entity) super.clone(); // Skips required initializations
+      copy.children = new ArrayList<>(children); // Shallow copy issue
+      return copy;
+    } catch (CloneNotSupportedException e) {
+      throw new AssertionError();
+    }
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Uses a factory method to clearly and safely create a new instance from a template.
+
+<!-- #example_positive_code -->
+```java
+class Entity { // Compliant
+
+  public int value;
+  public List<Entity> children;
+
+  Entity() {
+    EntityManager.register(this);
+  }
+
+  public static Entity create(Entity template) {
+    Entity entity = new Entity();
+    entity.value = template.value;
+    entity.children = template.children.stream().map(Entity::new).toList();
+    return entity;
+  }
+}
+```

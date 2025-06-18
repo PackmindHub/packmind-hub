@@ -1,0 +1,150 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure Serializable Classes Have a `serialVersionUID`
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","maintainability","reliability"]} />
+
+### What is it?
+This practice requires all classes that implement `Serializable` to explicitly declare a `serialVersionUID` with the modifiers `static final long`.
+
+### Why apply it?
+Failing to declare a `serialVersionUID` can result in a new, incompatible value being generated when the class is compiled. This can cause deserialization failures if the class evolves by missing its original intent of compatibility during object serialization.
+
+### How to fix it?
+Add a `static final long serialVersionUID` field with a fixed value in all serializable classes.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+In this negative example, the class `Mango` implements `Serializable` but does not declare a `serialVersionUID`, leading to potential compatibility issues.
+
+<!-- #example_negative_code -->
+```java
+import java.io.Serializable;
+
+public class Mango implements Serializable {  // Noncompliant; no serialVersionUID
+  private String color;
+  private double weight;
+
+  public Mango(String color, double weight) {
+    this.color = color;
+    this.weight = weight;
+  }
+
+  public String getColor() {
+    return color;
+  }
+
+  public double getWeight() {
+    return weight;
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this positive example, the class `Mango` properly implements the `Serializable` interface and includes a `static final long serialVersionUID`.
+
+<!-- #example_positive_code -->
+```java
+import java.io.Serializable;
+
+public class Mango implements Serializable {
+  private static final long serialVersionUID = 123456789L;
+  private String color;
+  private double weight;
+
+  public Mango(String color, double weight) {
+    this.color = color;
+    this.weight = weight;
+  }
+
+  public String getColor() {
+    return color;
+  }
+
+  public double getWeight() {
+    return weight;
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+In this negative example, the `Apple` class declares `serialVersionUID`, but incorrectly uses an `int` type instead of `long`, and the modifiers are inappropriate.
+
+<!-- #example_negative_code -->
+```java
+import java.io.Serializable;
+
+public class Apple implements Serializable {
+  private final int serialVersionUID = 12345; // Noncompliant; not static & int rather than long
+  private String type;
+  private boolean isRipe;
+
+  public Apple(String type, boolean isRipe) {
+    this.type = type;
+    this.isRipe = isRipe;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public boolean getIsRipe() {
+    return isRipe;
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this positive example, the `Apple` class declares `serialVersionUID` correctly with all the necessary modifiers: `static`, `final`, and `long`.
+
+<!-- #example_positive_code -->
+```java
+import java.io.Serializable;
+
+public class Apple implements Serializable {
+  private static final long serialVersionUID = 987654321L;
+  private String type;
+  private boolean isRipe;
+
+  public Apple(String type, boolean isRipe) {
+    this.type = type;
+    this.isRipe = isRipe;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public boolean getIsRipe() {
+    return isRipe;
+  }
+}
+```

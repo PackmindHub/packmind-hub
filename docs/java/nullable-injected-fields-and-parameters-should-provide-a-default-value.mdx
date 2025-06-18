@@ -1,0 +1,131 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Nullable Injected Fields and Parameters Should Provide a Default Value
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","stability"]} />
+
+### What is it?
+This practice is invoked when a nullable field or parameter is annotated with `@Value` in a Spring application without providing a default value.
+
+### Why apply it?
+Without a default value, undefined properties may lead to runtime exceptions when the Spring framework attempts to inject dependencies during bean creation, causing application instabilities.
+
+### How to fix it?
+Add a default value to the `@Value` annotation using the colon (`:`) operator. For nullable fields, the default value should typically be `#{null}`.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example shows a nullable field with a `@Value` annotation missing a default value, leading to potential runtime exceptions if the property is undefined.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.Nullable;
+
+public class Config {
+
+    @Nullable
+    @Value("${my.property}") // Noncompliant: no default value is provided
+    private String myProperty;
+
+    public void displayProperty() {
+        System.out.println("Property: " + myProperty);
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example provides a default value in the `@Value` annotation for a nullable field, ensuring stability when the property is undefined.
+
+<!-- #example_positive_code -->
+```java
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.Nullable;
+
+public class Config {
+
+    @Nullable
+    @Value("${my.property:#{null}}") // Compliant: a default value is provided
+    private String myProperty;
+
+    public void displayProperty() {
+        System.out.println("Property: " + myProperty);
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+In this negative example, a method parameter is annotated with `@Value` but without a default value, risking a null pointer exception when the property is undefined.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.Nullable;
+
+@Service
+public class NotificationService {
+
+    public void sendNotification(
+        @Nullable
+        @Value("${notification.recipient}") String recipient) { // Noncompliant: no default value is provided
+        if (recipient != null) {
+            System.out.println("Sending notification to: " + recipient);
+        } else {
+            System.out.println("No recipient specified.");
+        }
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example ensures that a method parameter uses a default value in the `@Value` annotation, offering a safeguard against undefined properties.
+
+<!-- #example_positive_code -->
+```java
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.Nullable;
+
+@Service
+public class NotificationService {
+
+    public void sendNotification(
+        @Nullable
+        @Value("${notification.recipient:#{null}}") String recipient) {
+        if (recipient != null) {
+            System.out.println("Sending notification to: " + recipient);
+        } else {
+            System.out.println("No recipient specified.");
+        }
+    }
+}
+```

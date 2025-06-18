@@ -1,0 +1,117 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure Constant Names Comply with Naming Conventions
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","readability"]} />
+
+### What is it?
+This practice focuses on ensuring that constant names in your Java code follow a consistent naming convention, typically using uppercase letters with underscores to separate words.
+
+### Why apply it?
+Following a consistent naming convention for constants makes your code more readable and helps distinguish constants from variables, which is crucial for maintaining code clarity and preventing errors.
+
+### How to fix it?
+Rename constant identifiers to match the project's naming convention, ensuring they are easily recognizable. Utilize IDE refactoring features to update all usages of the constants effectively.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example has constants that do not follow the proper naming convention, using lowercase letters.
+
+<!-- #example_negative_code -->
+```java
+public class AppConfig {
+  public static final int maxConnections = 10;  /* Noncompliant */
+  public static final String hostName = "localhost";  /* Noncompliant */
+
+  public void connect() {
+    System.out.println("Connecting to " + hostName + " with a maximum of " + maxConnections + " connections.");
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example follows a proper naming convention for constants, using all uppercase letters with underscores.
+
+<!-- #example_positive_code -->
+```java
+public class AppConfig {
+  public static final int MAX_CONNECTIONS = 10;  /* Compliant */
+  public static final String HOST_NAME = "localhost";  /* Compliant */
+
+  public void connect() {
+    System.out.println("Connecting to " + HOST_NAME + " with a maximum of " + MAX_CONNECTIONS + " connections.");
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example does not follow naming conventions for enums, using camel case instead of uppercase letters.
+
+<!-- #example_negative_code -->
+```java
+public enum Environment {
+  prod("production"),  /* Noncompliant */
+  staging("staging"),  /* Noncompliant */
+  development("development");  /* Noncompliant */
+
+  private final String description;
+
+  Environment(String description) {
+    this.description = description;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example adheres to the naming conventions for constants, using uppercase letters separated by underscores in an enum.
+
+<!-- #example_positive_code -->
+```java
+public enum Environment {
+  PROD("production"),
+  STAGING("staging"),
+  DEVELOPMENT("development");
+
+  private final String description;
+
+  Environment(String description) {
+    this.description = description;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+}
+```

@@ -1,0 +1,116 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Empty Methods in Java
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","readability"]} />
+
+### What is it?
+This practice is triggered by the presence of empty methods in your Java code, which can be misleading and reduce code readability and maintainability.
+
+### Why apply it?
+Empty methods can confuse developers into thinking they implement specific functionality, leading to maintenance and comprehension issues. They should either perform some operation, throw an exception, or include a comment explaining their purpose.
+
+### How to fix it?
+Ensure that methods either contain functionality, throw an exception when they aren't implemented, or include a comment confirming the intentional absence of code.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example contains empty methods without functionality, exceptions, or explanatory comments.
+
+<!-- #example_negative_code -->
+```java
+public class ExampleClass {
+    public void process() {
+    }
+
+    @Override
+    public void notImplemented() {
+    }
+
+    @Override
+    public void emptyOnPurpose() {
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example provides functionality within the method or includes a comment explaining why the method is intentionally left empty.
+
+<!-- #example_positive_code -->
+```java
+public class ExampleClass {
+    public void process() {
+        // Method that performs some processing
+        System.out.println("Processing...");
+    }
+
+    @Override
+    public void notImplemented() {
+        throw new UnsupportedOperationException("notImplemented() cannot be performed yet");
+    }
+
+    @Override
+    public void emptyOnPurpose() {
+        // Intentionally left blank due to subclass requirements
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example shows an unimplemented method without any explanation or exception throwing.
+
+<!-- #example_negative_code -->
+```java
+public class Calculation {
+    public double add(double a, double b) {
+        return a + b;
+    }
+
+    public double notImplementedYet() {
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example assures the method throws an exception if it's not yet implemented.
+
+<!-- #example_positive_code -->
+```java
+public class Calculation {
+    public double add(double a, double b) {
+        return a + b;  // performs addition
+    }
+
+    public double notImplementedYet() {
+        throw new UnsupportedOperationException("Feature not yet implemented");
+    }
+}
+```

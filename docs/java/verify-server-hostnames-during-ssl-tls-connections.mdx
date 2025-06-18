@@ -1,0 +1,143 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Verify Server Hostnames During SSL/TLS Connections
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["security","integrity"]} />
+
+### What is it?
+This practice is triggered when server hostnames are not verified during SSL/TLS connections in Java. Failing to validate hostnames opens systems up to potential security breaches through man-in-the-middle attacks.
+
+### Why apply it?
+Hostname verification ensures that an SSL/TLS client connects to the intended server. Without verification, attackers can impersonate a server, intercepting and manipulating sensitive data. This threatens data integrity and confidentiality.
+
+### How to fix it?
+Ensure that hostname verification is enabled by setting the appropriate properties or methods in your SSL/TLS connection handling code. For libraries like Apache Commons Email, this involves explicitly enabling the hostname verification feature.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The noncompliant code fails to enable hostname verification, allowing potential connections to malicious servers.
+
+<!-- #example_negative_code -->
+```java
+import org.apache.commons.mail.DefaultAuthenticator;
+import org.apache.commons.mail.Email;
+import org.apache.commons.mail.SimpleEmail;
+
+public class MailSender {
+    public void sendMail(String message) {
+        Email email = new SimpleEmail();
+        email.setHostName("smtp.example.com");
+        email.setSmtpPort(465);
+        email.setAuthenticator(new DefaultAuthenticator("username", "password"));
+        email.setSSLOnConnect(true); // Noncompliant
+        email.setFrom("user@example.com");
+        email.setSubject("Test Email");
+        email.setMsg(message);
+        email.addTo("recipient@example.com");
+        email.send();
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The compliant code uses `setSSLCheckServerIdentity(true)` to ensure hostname verification is performed.
+
+<!-- #example_positive_code -->
+```java
+import org.apache.commons.mail.DefaultAuthenticator;
+import org.apache.commons.mail.Email;
+import org.apache.commons.mail.SimpleEmail;
+
+public class MailSender {
+    public void sendMail(String message) {
+        Email email = new SimpleEmail();
+        email.setHostName("smtp.example.com");
+        email.setSmtpPort(465);
+        email.setAuthenticator(new DefaultAuthenticator("username", "password"));
+        email.setSSLCheckServerIdentity(true); // Compliant
+        email.setSSLOnConnect(true);
+        email.setFrom("user@example.com");
+        email.setSubject("Test Email");
+        email.setMsg(message);
+        email.addTo("recipient@example.com");
+        email.send();
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This noncompliant example omits hostname verification, making it vulnerable to attacks.
+
+<!-- #example_negative_code -->
+```java
+import org.apache.commons.mail.DefaultAuthenticator;
+import org.apache.commons.mail.SimpleEmail;
+
+public class InsecureEmail {
+    public void sendInsecureEmail(String recipient, String content) {
+        SimpleEmail email = new SimpleEmail();
+        email.setHostName("mail.insecure-server.com");
+        email.setSmtpPort(465);
+        email.setAuthenticator(new DefaultAuthenticator("user", "pass"));
+        email.setSSLOnConnect(true); // Noncompliant
+        email.setFrom("admin@domain.com");
+        email.setSubject("Insecure Message");
+        email.setMsg(content);
+        email.addTo(recipient);
+        email.send();
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In the compliant example, hostname verification is explicitly set to true, ensuring secure communications.
+
+<!-- #example_positive_code -->
+```java
+import org.apache.commons.mail.DefaultAuthenticator;
+import org.apache.commons.mail.SimpleEmail;
+
+public class SecureEmail {
+    public void sendSecureEmail(String recipient, String content) {
+        SimpleEmail email = new SimpleEmail();
+        email.setHostName("mail.secure-server.com");
+        email.setSmtpPort(465);
+        email.setAuthenticator(new DefaultAuthenticator("secureUser", "securePass"));
+        email.setSSLCheckServerIdentity(true); // Compliant
+        email.setSSLOnConnect(true);
+        email.setFrom("secure@domain.com");
+        email.setSubject("Secure Message");
+        email.setMsg(content);
+        email.addTo(recipient);
+        email.send();
+    }
+}
+```

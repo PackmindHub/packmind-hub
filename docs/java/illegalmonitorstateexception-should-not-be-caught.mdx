@@ -1,0 +1,111 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# "IllegalMonitorStateException" Should Not Be Caught
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","error-handling"]} />
+
+### What is it?
+This practice is triggered by catching `IllegalMonitorStateException`, which occurs when monitor operations are performed without proper ownership, indicating a programming error.
+
+### Why apply it?
+Catching and handling `IllegalMonitorStateException` obscures programming errors related to synchronization, potentially leading to unpredictable behavior and faulty concurrent code.
+
+### How to fix it?
+Ensure that monitor operations like `wait()`, `notify()`, or `notifyAll()` are executed within synchronized blocks, thus preventing this exception from being thrown.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example attempts to catch `IllegalMonitorStateException` instead of using synchronization, masking the underlying issue.
+
+<!-- #example_negative_code -->
+```java
+public class Task {
+  private final Object lock = new Object();
+  
+  public void faultyTask() {
+    try {
+      lock.notify();  // Noncompliant
+    } catch (IllegalMonitorStateException e) {
+      // Ignoring exception
+    }
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example correctly uses a synchronized block to notify a thread, preventing `IllegalMonitorStateException`.
+
+<!-- #example_positive_code -->
+```java
+public class Task {
+  private final Object lock = new Object();
+  
+  public void doTask() {
+    synchronized (lock) {
+      lock.notify();  // Compliant
+    }
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example attempts to call `notifyAll()` without proper synchronization and then catches the resulting IllegalMonitorStateException.
+
+<!-- #example_negative_code -->
+```java
+public class Notifier {
+  private final Object resource = new Object();
+  
+  public void faultyNotifyAll() {
+    try {
+      resource.notifyAll();  // Noncompliant
+    } catch (IllegalMonitorStateException e) {
+      // Exception unnecessarily caught
+    }
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example ensures that `notifyAll()` is called within synchronized block, preventing unintended exceptions.
+
+<!-- #example_positive_code -->
+```java
+public class Notifier {
+  private final Object resource = new Object();
+  
+  public void notifyAllTasks() {
+    synchronized (resource) {
+      resource.notifyAll();  // Compliant
+    }
+  }
+}
+```

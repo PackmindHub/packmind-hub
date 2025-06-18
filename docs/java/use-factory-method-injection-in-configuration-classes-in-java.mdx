@@ -1,0 +1,128 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use Factory Method Injection in `@Configuration` Classes in Java
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","performance optimization"]} />
+
+### What is it?
+This practice recommends the use of constructor or method parameter injection instead of field injection in `@Configuration` classes.
+
+### Why apply it?
+Field injection can cause early initialization of beans or unnecessary context searching. By using method parameter injection, dependencies are requested as late as possible, optimizing the way the application context loads.
+
+### How to fix it?
+Define dependencies as method parameters in `@Bean` factory methods instead of annotating fields with `@Autowired`.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses field injection, causing early or undesirable initialization of beans.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import javax.sql.DataSource;
+
+@Configuration
+public class FooConfiguration {
+
+  @Autowired
+  private DataSource dataSource;  // Noncompliant
+
+  @Bean
+  public MyService myService() {
+    return new MyService(this.dataSource);
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses method parameter injection, optimizing when dependencies are resolved within the Spring context.
+
+<!-- #example_positive_code -->
+```java
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import javax.sql.DataSource;
+
+@Configuration
+public class FooConfiguration {
+
+  @Bean
+  public MyService myService(DataSource dataSource) {  // Compliant
+    return new MyService(dataSource);
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses field injection for multiple dependencies, which may lead to unintended behavior.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class BarConfiguration {
+
+  @Autowired
+  private Service1 service1;  // Noncompliant
+
+  @Autowired
+  private Service2 service2;  // Noncompliant
+
+  @Bean
+  public AnotherService anotherService() {
+    return new AnotherService(service1, service2);
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example leverages method parameter injection for multiple dependencies.
+
+<!-- #example_positive_code -->
+```java
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class BarConfiguration {
+
+  @Bean
+  public AnotherService anotherService(Service1 service1, Service2 service2) {  // Compliant
+    return new AnotherService(service1, service2);
+  }
+}
+```

@@ -1,0 +1,95 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Using `indexOf` Checks for Positive Numbers in Java
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","reliability"]} />
+
+### What is it?
+This practice is triggered when checks against an `indexOf` value compare it with any positive number, which can lead to incorrect behavior by potentially ignoring valid positions, specifically the first element.
+
+### Why apply it?
+Using `indexOf` checks for positive numbers (e.g., `> 0`) likely indicates a bug because index 0 is valid. This kind of check can skip verifying the presence of an element at the start of a string or list. If the goal is to check presence, use `contains` instead. For skipping the first element, consider `>= 1`.
+
+### How to fix it?
+Replace checks with proper intent: use `>= 1` if deliberately skipping the first element, or use `contains` for existence checks.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses `indexOf` with a `> 0` condition, which incorrectly ignores matches at the start of the string.
+
+<!-- #example_negative_code -->
+```java
+String name = "moby dick";
+if (name.indexOf("moby") > 0) {  /* Noncompliant */
+    System.out.println("The string contains 'moby'.");
+} else {
+    System.out.println("'moby' not found.");
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses the `contains` method for checking the presence of a substring, making the intention clear and avoiding pitfalls of index comparison.
+
+<!-- #example_positive_code -->
+```java
+String name = "moby dick";
+if (name.contains("moby")) {  /* Compliant */
+    System.out.println("The string contains 'moby'.");
+} else {
+    System.out.println("'moby' not found.");
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses `indexOf` with a `> 0` condition, potentially not finding a valid substring starting from the first character.
+
+<!-- #example_negative_code -->
+```java
+String phrase = "hello world";
+if (phrase.indexOf("hello") > 0) {  /* Noncompliant */
+    System.out.println("'hello' found after the first character.");
+} else {
+    System.out.println("'hello' not encountered after the first character.");
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example uses a check for `>= 1` to deliberately skip the first element when searching for a substring.
+
+<!-- #example_positive_code -->
+```java
+String phrase = "hello world";
+if (phrase.indexOf("world") >= 1) { /* Compliant: intentionally ignoring first character */
+    System.out.println("'world' found after the first character.");
+} else {
+    System.out.println("'world' not encountered after the first character.");
+}
+```

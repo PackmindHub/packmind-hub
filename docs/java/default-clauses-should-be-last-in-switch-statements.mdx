@@ -1,0 +1,125 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# "default" Clauses Should Be Last in Switch Statements
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","readability"]} />
+
+### What is it?
+This practice ensures that `default` clauses in `switch` statements appear as the last case, thereby improving readability and helping developers quickly locate the default logic applied when no other cases match.
+
+### Why apply it?
+Having the `default` clause at the end of a `switch` statement emphasizes its role as a fallback and enhances the readability of the code by ensuring a logical flow from specific cases to the catch-all default.
+
+### How to fix it?
+Place the `default` clause as the last case within each `switch` statement to clearly separate specific logic from catch-all logic.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example has the `default` clause before other case clauses, making it harder to discern that it is the fallback option.
+
+<!-- #example_negative_code -->
+```java
+switch (day) {
+  default:  /* Noncompliant */
+    System.out.println("Unknown day");
+    break;
+  case "Monday":
+    System.out.println("Start of the work week");
+    break;
+  case "Tuesday":
+    System.out.println("Second day of work week");
+    break;
+  case "Wednesday":
+    System.out.println("Mid-week day");
+    break;
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example places the `default` clause at the end, ensuring that the most general case appears after all specific cases.
+
+<!-- #example_positive_code -->
+```java
+switch (day) {
+  case "Monday":
+    System.out.println("Start of the work week");
+    break;
+  case "Tuesday":
+    System.out.println("Second day of work week");
+    break;
+  case "Wednesday":
+    System.out.println("Mid-week day");
+    break;
+  default:  /* Compliant */
+    System.out.println("Unknown day");
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+In this negative example, the `default` clause is misplaced, appearing before the specific case clauses.
+
+<!-- #example_negative_code -->
+```java
+switch (fruit) {
+  default:  /* Noncompliant */
+    System.out.println("Unknown fruit");
+    break;
+  case "Apple":
+    System.out.println("Fruit is apple");
+    break;
+  case "Banana":
+    System.out.println("Fruit is banana");
+    break;
+  case "Orange":
+    System.out.println("Fruit is orange");
+    break;
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this positive example, the `default` clause is correctly placed after all specific cases, making the order of matching clear.
+
+<!-- #example_positive_code -->
+```java
+switch (fruit) {
+  case "Apple":
+    System.out.println("Fruit is apple");
+    break;
+  case "Banana":
+    System.out.println("Fruit is banana");
+    break;
+  case "Orange":
+    System.out.println("Fruit is orange");
+    break;
+  default:  /* Compliant */
+    System.out.println("Unknown fruit");
+}
+```

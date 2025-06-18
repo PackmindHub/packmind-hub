@@ -1,0 +1,119 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# "@Scheduled" Annotation Should Only Be Applied to No-Arg Methods
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","maintainability"]} />
+
+### What is it?
+This practice targets methods in Java Spring applications annotated with `@Scheduled` that incorrectly use method arguments, which can lead to runtime errors.
+
+### Why apply it?
+According to Spring documentation, the `@Scheduled` annotation should only be applied to no-argument methods. Violating this can result in runtime errors, which affects the reliability of the application.
+
+### How to fix it?
+Transform any method annotated with `@Scheduled` to a no-argument method to avoid runtime errors and ensure compliance with Spring's guidelines.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example incorrectly adds a parameter to a method meant for `@Scheduled`, which will not execute properly.
+
+<!-- #example_negative_code -->
+```java
+public class IncorrectScheduledService {
+
+    @Scheduled(fixedRate = 10000)
+    public void processFiles(String directoryPath) { /* Noncompliant */
+        System.out.println("Processing files in directory: " + directoryPath);
+        // Logic for file processing
+    }
+
+    private void helperMethod(String directoryPath) {
+        // Helper logic using the directory path
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example transforms a scheduled task into a no-argument method, ensuring it will run without errors.
+
+<!-- #example_positive_code -->
+```java
+public class PositiveExampleService {
+
+    @Scheduled(cron = "0 0 * * * ?")
+    public void scheduledTask() { /* Compliant */
+        System.out.println("Performing scheduled task...");
+        // Other task implementation logic
+    }
+
+    public void otherMethod() {
+        // Method logic that might involve parameters
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example demonstrates an incorrect usage of @Scheduled with a method that includes arguments, leading to runtime issues.
+
+<!-- #example_negative_code -->
+```java
+public class NegativeExampleService {
+
+    @Scheduled(cron = "0 0 * * * ?")
+    public void scheduledTask(String param) { /* Noncompliant */
+        System.out.println("Scheduled task with param: " + param);
+        // Task implementation
+    }
+    
+    public void otherMethod(String param) {
+        // Method logic involving the parameter
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example shows another correct application of a no-arg method for a fixed rate scheduled task.
+
+<!-- #example_positive_code -->
+```java
+public class CorrectScheduledService {
+
+    @Scheduled(fixedRate = 10000)
+    public void processFiles() { /* Compliant */
+        System.out.println("Processing files at fixed rate...");
+        // Logic for file processing
+    }
+
+    private void helperMethod() {
+        // Helper logic if needed
+    }
+}
+```

@@ -1,0 +1,135 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Reuse `Random` Objects in Java
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","performance"]} />
+
+### What is it?
+This practice focuses on reusing `Random` objects in Java. Creating new `Random` objects every time one is needed can lead to inefficient performance and potentially non-random values due to the repeated initialization of the seed from the current time.
+
+### Why apply it?
+Reusing a single `Random` object across multiple uses can improve the efficiency of your code and ensure that the random values generated are more reliably random in their distribution.
+
+### How to fix it?
+Define a single `Random` object for the class and store it as a field for reuse.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example creates a new `Random` object every time the method is invoked, which is inefficient and potentially less random.
+
+<!-- #example_negative_code -->
+```java
+import java.util.Random;
+
+public class Dice {
+    public int roll() {
+        Random random = new Random();  // Noncompliant
+        return random.nextInt(6) + 1;
+    }
+
+    public static void main(String[] args) {
+        Dice dice = new Dice();
+        System.out.println("Roll result: " + dice.roll());
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example demonstrates defining a `Random` object as a class field and reusing it within a method.
+
+<!-- #example_positive_code -->
+```java
+import java.util.Random;
+
+public class Dice {
+    private Random random = new Random();  // Compliant
+    
+    public int roll() {
+        return random.nextInt(6) + 1;
+    }
+
+    public static void main(String[] args) {
+        Dice dice = new Dice();
+        System.out.println("Roll result: " + dice.roll());
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example creates a new `Random` object within each method, leading to excessive object creation and lack of randomness.
+
+<!-- #example_negative_code -->
+```java
+import java.util.Random;
+
+public class RandomUtil {
+
+    public static int getRandomNumber(int bound) {
+        Random random = new Random();  // Noncompliant
+        return random.nextInt(bound);
+    }
+
+    public static double getRandomDouble() {
+        Random random = new Random();  // Noncompliant
+        return random.nextDouble();
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Random number: " + getRandomNumber(10));
+        System.out.println("Random double: " + getRandomDouble());
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example shows a scenario where a `Random` object is defined as a static field in a utility class and is reused in multiple methods.
+
+<!-- #example_positive_code -->
+```java
+import java.util.Random;
+
+public class RandomUtil {
+    private static final Random random = new Random();  // Compliant
+
+    public static int getRandomNumber(int bound) {
+        return random.nextInt(bound);
+    }
+
+    public static double getRandomDouble() {
+        return random.nextDouble();
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Random number: " + getRandomNumber(10));
+        System.out.println("Random double: " + getRandomDouble());
+    }
+}
+```

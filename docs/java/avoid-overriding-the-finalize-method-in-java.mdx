@@ -1,0 +1,167 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Overriding the `finalize()` Method in Java
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","resource management","maintenance"]} />
+
+### What is it?
+This practice is triggered by overriding the `finalize()` method in Java classes, which is called by the garbage collector before reclaiming an object's storage.
+
+### Why apply it?
+Overriding `finalize()` can lead to unpredictable behavior, resource management issues, and complications with program state, as it does not reliably execute and exceptions are ignored.
+
+### How to fix it?
+Avoid overriding `finalize()`. Use other resource management techniques such as try-with-resources or explicit resource cleanup methods.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example incorrectly overrides the `finalize()` method to release resources, leading to unreliable resource management.
+
+<!-- #example_negative_code -->
+```java
+public class ResourceUser {
+
+    private LegacyResource resource = new LegacyResource();
+
+    @Override
+    protected void finalize() throws Throwable { // Noncompliant
+        try {
+            resource.release();
+        } finally {
+            super.finalize();
+        }
+    }
+}
+
+class LegacyResource {
+
+    public void release() {
+        // Resource cleanup logic
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example does not override the `finalize()` method. Instead, it uses try-with-resources for resource management, ensuring predictable and reliable release of resources.
+
+<!-- #example_positive_code -->
+```java
+public class ResourceUser {
+
+    public void useResource() {
+        try (AutoCloseableResource resource = new AutoCloseableResource()) {
+            resource.doSomething();
+        } catch (Exception e) {
+            // Handle exception
+        }
+    }
+
+}
+
+class AutoCloseableResource implements AutoCloseable {
+
+    public void doSomething() {
+        // Resource using logic
+    }
+
+    @Override
+    public void close() {
+        // Resource cleanup logic
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example relies on `finalize()` to manage resource closure, which is unpredictable and potentially unsafe.
+
+<!-- #example_negative_code -->
+```java
+public class DatabaseConnectionManager {
+
+    private DatabaseConnection connection = new DatabaseConnection();
+
+    public void openConnection() {
+        connection.open();
+    }
+    
+    @Override
+    protected void finalize() throws Throwable { // Noncompliant
+        if (connection != null) {
+            connection.close();
+        }
+        super.finalize();
+    }
+}
+
+class DatabaseConnection {
+
+    public void open() {
+        // Open connection logic
+    }
+
+    public void close() {
+        // Close connection logic
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses explicit resource releasing methods and avoids overriding the `finalize()` method.
+
+<!-- #example_positive_code -->
+```java
+public class DatabaseConnectionManager {
+
+    private DatabaseConnection connection;
+
+    public void openConnection() {
+        connection = new DatabaseConnection();
+        connection.open();
+    }
+
+    public void closeConnection() {
+        if (connection != null) {
+            connection.close();
+        }
+    }
+}
+
+class DatabaseConnection {
+
+    public void open() {
+        // Open connection logic
+    }
+
+    public void close() {
+        // Close connection logic
+    }
+}
+```

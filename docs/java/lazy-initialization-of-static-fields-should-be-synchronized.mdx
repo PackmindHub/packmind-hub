@@ -1,0 +1,149 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Lazy Initialization of Static Fields Should Be Synchronized
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","multi-threading"]} />
+
+### What is it?
+In a multi-threaded situation, un-synchronized lazy initialization of static fields could lead to a race condition, where a second thread accesses an incompletely initialized object.
+
+### Why apply it?
+Accessing an incompletely initialized object can lead to unpredictable behavior and serious bugs in applications, especially in concurrent environments. Synchronization ensures that object initialization is atomic across threads.
+
+### How to fix it?
+Synchronize the initialization block of lazy static fields to ensure thread safety.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example does not synchronize the method, risking a race condition during initialization.
+
+<!-- #example_negative_code -->
+```java
+import java.util.Properties;
+
+public class Config {
+    private static Properties fSettings = null;
+
+    private static Properties getSettings() {
+        if (fSettings == null) {
+            fSettings = new Properties(); // Noncompliant
+            fSettings.put("mode", "safe");
+            fSettings.put("timeout", "30");
+            loadSettings();
+        }
+        return fSettings;
+    }
+
+    private static void loadSettings() {
+        // Load additional settings here
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example synchronizes the method to ensure thread-safe initialization of the static field.
+
+<!-- #example_positive_code -->
+```java
+import java.util.Properties;
+
+public class Config {
+    private static Properties fSettings = null;
+
+    private static synchronized Properties getSettings() {
+        if (fSettings == null) {
+            fSettings = new Properties();
+            fSettings.put("mode", "safe");
+            fSettings.put("timeout", "30");
+            loadSettings();
+        }
+        return fSettings;
+    }
+
+    private static void loadSettings() {
+        // Load additional settings here
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example is missing the synchronized block, leading to potential concurrent issues during initialization.
+
+<!-- #example_negative_code -->
+```java
+import java.util.List;
+import java.util.ArrayList;
+
+public class Resources {
+    private static List<String> resourceNames = null;
+
+    private static List<String> getResourceNames() {
+        if (resourceNames == null) {
+            resourceNames = new ArrayList<>(); // Noncompliant
+            loadResources(resourceNames);
+        }
+        return resourceNames;
+    }
+
+    private static void loadResources(List<String> resources) {
+        resources.add("DATABASE");
+        resources.add("FILE_SYSTEM");
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example uses a synchronized block within the method to ensure thread-safe initialization of the static field.
+
+<!-- #example_positive_code -->
+```java
+import java.util.List;
+import java.util.ArrayList;
+
+public class Resources {
+    private static List<String> resourceNames = null;
+
+    private static List<String> getResourceNames() {
+        synchronized (Resources.class) {
+            if (resourceNames == null) {
+                resourceNames = new ArrayList<>();
+                loadResources(resourceNames);
+            }
+        }
+        return resourceNames;
+    }
+
+    private static void loadResources(List<String> resources) {
+        resources.add("DATABASE");
+        resources.add("FILE_SYSTEM");
+    }
+}
+```

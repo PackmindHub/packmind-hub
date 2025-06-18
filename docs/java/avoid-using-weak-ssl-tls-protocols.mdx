@@ -1,0 +1,123 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Using Weak SSL/TLS Protocols
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["security","confidentiality"]} />
+
+### What is it?
+This practice is triggered by the use of deprecated and insecure SSL/TLS protocols such as SSL v1.0-3.0 and TLS v1.0-1.1 in Java applications.
+
+### Why apply it?
+Using weak SSL/TLS protocols can expose encrypted data to attacks aimed at recovering the plaintext, potentially leading to data breaches, privacy violations, and legal non-compliance.
+
+### How to fix it?
+Ensure that only secure and recommended versions, namely TLS v1.2 or v1.3, are used for secure network communications in Java applications.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses TLS v1.0, which is deprecated and considered insecure by the cryptographic community.
+
+<!-- #example_negative_code -->
+```java
+import javax.net.ssl.SSLContext;
+import java.security.NoSuchAlgorithmException;
+
+public class InsecureConnection {
+    public static void main(String[] args) {
+        try {
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.0");  // Noncompliant
+            System.out.println("This context is insecure and deprecated.");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example ensures secure communication by using TLS v1.2 to create an SSL context.
+
+<!-- #example_positive_code -->
+```java
+import javax.net.ssl.SSLContext;
+import java.security.NoSuchAlgorithmException;
+
+public class SecureConnection {
+    public static void main(String[] args) {
+        try {
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");  // Compliant
+            System.out.println("Secure SSL/TLS context initialized.");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses the SSL v3.0 protocol, which is deprecated and should not be used.
+
+<!-- #example_negative_code -->
+```java
+import javax.net.ssl.SSLContext;
+import java.security.NoSuchAlgorithmException;
+
+public class DeprecatedConnection {
+    public static void main(String[] args) {
+        try {
+            SSLContext sslContext = SSLContext.getInstance("SSLv3");  // Noncompliant
+            System.out.println("This protocol version is deprecated and insecure.");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses the latest and most secure version, TLS v1.3, to establish an SSL context.
+
+<!-- #example_positive_code -->
+```java
+import javax.net.ssl.SSLContext;
+import java.security.NoSuchAlgorithmException;
+
+public class AdvancedSecureConnection {
+    public static void main(String[] args) {
+        try {
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.3");  // Compliant
+            System.out.println("Most secure SSL/TLS context initialized.");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```

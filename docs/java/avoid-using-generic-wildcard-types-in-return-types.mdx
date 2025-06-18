@@ -1,0 +1,115 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Using Generic Wildcard Types in Return Types
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","maintainability"]} />
+
+### What is it?
+This practice is triggered by the use of generic wildcard types in method return types in Java, which makes the return type unspecific and may not reflect the developer's true intent.
+
+### Why apply it?
+Using wildcards in return types can obscure the intended specificity of the method's output, making code harder to read, understand, and maintain. Type variance rules are misapplied when wildcards are used this way, potentially leading to runtime exceptions or logical errors.
+
+### How to fix it?
+Remove the wildcard from the return type to ensure it is specific and use invariant types. Alternatively, replace the return type with a more accurate super or subtype that matches the developer's intent.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses a wildcard in the return type, which is unnecessarily vague.
+
+<!-- #example_negative_code -->
+```java
+import java.util.List;
+import java.util.ArrayList;
+
+class Zoo {
+    public List<? extends Animal> getAnimals() {  /* Noncompliant */
+        List<Animal> animals = new ArrayList<>();
+        animals.add(new Dog());
+        animals.add(new Cat());
+        return animals;
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example provides a method with a specific return type, avoiding wildcards.
+
+<!-- #example_positive_code -->
+```java
+import java.util.List;
+import java.util.ArrayList;
+
+class Zoo {
+    public List<Animal> getAnimals() {  /* Compliant */
+        List<Animal> animals = new ArrayList<>();
+        animals.add(new Dog());
+        animals.add(new Cat());
+        return animals;
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses a wildcard in the return type, making it ambiguous and potentially misleading.
+
+<!-- #example_negative_code -->
+```java
+import java.util.List;
+import java.util.ArrayList;
+
+class PlantNursery {
+    public List<? super Plant> getPlants() {  /* Noncompliant */
+        List<Plant> plants = new ArrayList<>();
+        plants.add(new Tree());
+        plants.add(new Shrub());
+        return plants;
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this positive example, the method returns a specific subclass type, which is more explicit than a wildcard.
+
+<!-- #example_positive_code -->
+```java
+import java.util.List;
+import java.util.ArrayList;
+
+class PlantNursery {
+    public List<Flower> getFlowers() {  /* Compliant */
+        List<Flower> flowers = new ArrayList<>();
+        flowers.add(new Rose());
+        flowers.add(new Tulip());
+        return flowers;
+    }
+}
+```

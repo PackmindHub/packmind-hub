@@ -1,0 +1,141 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Methods Annotated with `@BeforeTransaction` or `@AfterTransaction` Must Respect the Contract
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","error-handling"]} />
+
+### What is it?
+This practice requires that methods annotated with `@BeforeTransaction` or `@AfterTransaction` in Spring's `@Transactional` configured tests must be void and have no arguments.
+
+### Why apply it?
+
+Deviating from this contract by having a non-void return type or accepting arguments will cause Spring to throw a runtime error, disrupting the proper execution of transactional operations within tests.
+
+### How to fix it?
+
+Ensure that methods annotated with `@BeforeTransaction` or `@AfterTransaction` have a void return type and do not accept any arguments.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example fails because the annotated methods do not return void and have arguments, violating the method contract.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.test.context.transaction.BeforeTransaction;
+import org.springframework.test.context.transaction.AfterTransaction;
+import org.springframework.transaction.annotation.Transactional;
+
+@Transactional
+public class TransactionalTest {
+
+    @BeforeTransaction
+    public String setupTransaction(int x) { // Noncompliant
+        // Setup logic
+    }
+
+    @AfterTransaction
+    public int cleanupTransaction(int x) { // Noncompliant
+        // Cleanup logic
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example correctly defines `@BeforeTransaction` and `@AfterTransaction` methods with a void return type and no arguments.
+
+<!-- #example_positive_code -->
+```java
+import org.springframework.test.context.transaction.BeforeTransaction;
+import org.springframework.test.context.transaction.AfterTransaction;
+import org.springframework.transaction.annotation.Transactional;
+
+@Transactional
+public class TransactionalTest {
+
+    @BeforeTransaction
+    public void setupTransaction() {  // Compliant
+        // Setup logic
+    }
+
+    @AfterTransaction
+    public void cleanupTransaction() { // Compliant
+        // Cleanup logic
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example incorrectly implements `@BeforeTransaction` and `@AfterTransaction` methods by providing arguments and returning non-void values.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.test.context.transaction.BeforeTransaction;
+import org.springframework.test.context.transaction.AfterTransaction;
+import org.springframework.transaction.annotation.Transactional;
+
+@Transactional
+public class BatchProcessingTest {
+
+    @BeforeTransaction
+    public String initializeDatabase(boolean flag) { // Noncompliant
+        // Initialize db
+    }
+
+    @AfterTransaction
+    public int verifyDatabaseState(boolean flag) { // Noncompliant
+        // Verify db
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example adheres to the required contract for `@BeforeTransaction` and `@AfterTransaction` methods by having the correct return type and no parameters.
+
+<!-- #example_positive_code -->
+```java
+import org.springframework.test.context.transaction.BeforeTransaction;
+import org.springframework.test.context.transaction.AfterTransaction;
+import org.springframework.transaction.annotation.Transactional;
+
+@Transactional
+public class BatchProcessingTest {
+
+    @BeforeTransaction
+    public void initializeDatabase() { // Compliant
+        // Initialize db
+    }
+
+    @AfterTransaction
+    public void verifyDatabaseState() { // Compliant
+        // Verify db
+    }
+}
+```

@@ -1,0 +1,109 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Utilize Virtual Threads for Blocking Operations in Java
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["performance","multi-threading","efficiency"]} />
+
+### What is it?
+This practice is centered around replacing platform threads with virtual threads for tasks involving significant blocking operations such as I/O or network calls. Introduced in Java 21, virtual threads enable more efficient use of operating system threads by avoiding blocking them during asynchronous operations.
+
+### Why apply it?
+Using virtual threads instead of platform threads for blocking tasks allows multiple operations to be handled without the risk of hitting operating system limits on thread resources. This results in better performance and reduced overhead, as virtual threads can be created and managed with minimal resources.
+
+### How to fix it?
+Replace platform threads with virtual threads for tasks that involve blocking operations. Use `Thread.ofVirtual().start(Runnable)` or `Thread.startVirtualThread(Runnable)` to create virtual threads.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+Here, a platform thread is incorrectly used, which can lead to resource management issues.
+
+<!-- #example_negative_code -->
+```java
+new Thread(() -> {
+    try {
+        Thread.sleep(1000); // Noncompliant: Blocking operation in platform thread
+        System.out.println("Platform thread task completed.");
+    } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+    }
+}).start();
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this example, a virtual thread is used to perform a blocking operation efficiently.
+
+<!-- #example_positive_code -->
+```java
+Thread.ofVirtual().start(() -> {
+    try {
+        Thread.sleep(1000); // Compliant: Virtual thread used for blocking operation
+        System.out.println("Virtual thread task completed.");
+    } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+    }
+});
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+A platform thread is improperly used for multiple blocking operations, reducing scalability.
+
+<!-- #example_negative_code -->
+```java
+for (int i = 0; i < 5; i++) {
+    new Thread(() -> {
+        try {
+            // Simulate a blocking database query
+            Thread.sleep(500); // Noncompliant
+            System.out.println("Query executed in platform thread.");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }).start();
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example demonstrates using a virtual thread for handling multiple blocking database queries.
+
+<!-- #example_positive_code -->
+```java
+for (int i = 0; i < 5; i++) {
+    Thread.ofVirtual().start(() -> {
+        try {
+            // Simulate a blocking database query
+            Thread.sleep(500); // Compliant
+            System.out.println("Query executed in virtual thread.");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    });
+}
+```

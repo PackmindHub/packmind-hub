@@ -1,0 +1,113 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# @EventListener Methods Should Have One Parameter at Most
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["bug","error-prone"]} />
+
+### What is it?
+This practice is triggered when methods annotated with `@EventListener` have more than one parameter, which violates the expected method signature for event handlers.
+
+### Why apply it?
+Having more than one parameter in `@EventListener` methods can lead to runtime errors because the Spring framework expects these methods to only handle one event at a time.
+
+### How to fix it?
+Modify the method to handle multiple types of events using the `classes` attribute of the `@EventListener` annotation, and ensure the method only has a single parameter representing the event.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example mistakenly uses multiple parameters, which will cause a runtime error as `@EventListener` expects a single argument.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.context.event.EventListener;
+
+public class EventProcessor {
+
+    @EventListener
+    public void handleEvent(CustomerEvent customerEvent, ExceptionalEvent exceptionalEvent) {  /* Noncompliant */
+        System.out.println("Handling multiple events.");
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example demonstrates how to use a single parameter with `@EventListener` and leverage the `classes` attribute to handle multiple event types.
+
+<!-- #example_positive_code -->
+```java
+import org.springframework.context.event.EventListener;
+import org.springframework.context.ApplicationEvent;
+
+public class EventProcessor {
+
+    @EventListener(classes = {CustomerEvent.class, ExceptionalEvent.class})
+    public void handleEvent(ApplicationEvent event) {  /* Compliant */
+        if (event instanceof CustomerEvent) {
+            System.out.println("Handling CustomerEvent...");
+        } else if (event instanceof ExceptionalEvent) {
+            System.out.println("Handling ExceptionalEvent...");
+        }
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example attempts to use two parameters for two different events, which violates the expected usage of `@EventListener`.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.context.event.EventListener;
+
+public class SpecialEventHandler {
+
+    @EventListener
+    public void processEvent(CustomEvent customEvent, OtherEvent otherEvent) {  /* Noncompliant */
+        System.out.println("Processing events: " + customEvent.getDescription() + " and " + otherEvent.getInfo());
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example uses a subclass of `ApplicationEvent` with a single parameter to handle specific events.
+
+<!-- #example_positive_code -->
+```java
+import org.springframework.context.event.EventListener;
+import org.springframework.context.ApplicationEvent;
+
+public class SpecialEventHandler {
+
+    @EventListener
+    public void processEvent(CustomEvent customEvent) {  /* Compliant */
+        System.out.println("Processing custom event: " + customEvent.getDescription());
+    }
+}
+```

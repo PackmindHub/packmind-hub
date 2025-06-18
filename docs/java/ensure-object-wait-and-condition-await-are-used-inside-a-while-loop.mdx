@@ -1,0 +1,101 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure `Object.wait(...)` and `Condition.await(...)` are Used Inside a "while" Loop
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","synchronization"]} />
+
+### What is it?
+In a multithreaded environment, using `Object.wait(...)` or `Condition.await(...)` methods inappropriately can lead to faulty thread execution due to "spurious wakeups".
+
+### Why apply it?
+If `wait()` or `await()` is not called inside a loop that checks the condition, spurious wakeups could cause incorrect behavior by assuming the condition is met when it isn't.
+
+### How to fix it?
+Ensure `wait()` or `await()` calls are made inside a `while` loop that checks the condition. This ensures that logic is executed only when the condition is confirmed to be true.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This noncompliant example uses `if`, which can result in code execution despite spurious wakeups.
+
+<!-- #example_negative_code -->
+```java
+synchronized (lock) {
+  if (!conditionMet()) {
+    lock.wait();  // Noncompliant; `wait` is not in a loop
+  }
+  // Risky execution as condition might not be true.
+  processTask();
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This compliant example uses a `while` loop to ensure that the condition is checked continuously even after spurious wakeups.
+
+<!-- #example_positive_code -->
+```java
+synchronized (lock) {
+  while (!conditionMet()) {
+    lock.wait();  // Compliant; `wait` is in a loop and re-checks the condition
+  }
+  // Execute logic safely assuming the condition is met
+  processTask();
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+A noncompliant example that uses an `if` statement, vulnerable to spurious wakeups.
+
+<!-- #example_negative_code -->
+```java
+synchronized (lock) {
+  if (sharedQueue.isEmpty()) {
+    lock.wait();  // Noncompliant; `wait` is not used inside a loop
+  }
+  // May fail if queue is empty due to wakeup
+  Object item = sharedQueue.poll();
+  handleItem(item);
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The compliant example handles concurrency correctly with a `while` loop that ensures the condition is met.
+
+<!-- #example_positive_code -->
+```java
+synchronized (lock) {
+  while (sharedQueue.isEmpty()) {
+    lock.wait();  // Compliant; waits inside a loop, guarding the condition
+  }
+  // Process an item from the queue
+  Object item = sharedQueue.poll();
+  handleItem(item);
+}
+```

@@ -1,0 +1,127 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Double-Checked Locking for Lazy Initialization
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","performance","concurrency"]} />
+
+### What is it?
+Double-checked locking is a pattern used to reduce synchronization overhead when initializing an object. It involves checking an object's state both before and after a `synchronized` block to determine initialization necessity.
+
+### Why apply it?
+Double-checked locking, except for `int` and `float`, does not reliably ensure thread safety in a platform-independent way. It risks a thread using an uninitialized instance while another is still creating it. Modern JVMs optimize method synchronization, making this pattern unnecessary and potentially harmful.
+
+### How to fix it?
+Use a synchronized method to ensure thread safety during initialization. Alternatively, employ a static inner class, which guarantees lazy and safe initialization by the JVM.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+In the negative example, double-checked locking is used, which is not thread-safe.
+
+<!-- #example_negative_code -->
+```java
+public class ResourceFactory {
+    private static Resource resource;
+
+    public static Resource getInstance() {
+        if (resource == null) { // Noncompliant
+            synchronized (ResourceFactory.class) {
+                if (resource == null) {
+                    resource = new Resource();
+                }
+            }
+        }
+        return resource;
+    }
+    
+    private static class Resource { /* Resource class implementation */ }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In the positive example, thread safety is ensured by synchronizing the entire method.
+
+<!-- #example_positive_code -->
+```java
+public class ResourceFactory {
+    private static Resource resource;
+
+    public static synchronized Resource getInstance() { // Compliant
+        if (resource == null) {
+            resource = new Resource();
+        }
+        return resource;
+    }
+    
+    private static class Resource { /* Resource class implementation */ }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+In the negative example, the double-checked locking pattern results in potential race conditions.
+
+<!-- #example_negative_code -->
+```java
+public class ResourceFactory {
+    private static Resource resource;
+
+    public static Resource getInstance() {
+        if (resource == null) { // Noncompliant
+            synchronized (ResourceFactory.class) {
+                if (resource == null) {
+                    resource = new Resource();
+                }
+            }
+        }
+        return resource;
+    }
+    
+    private static class Resource { /* Resource class implementation */ }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In the positive example, a static inner class is used for lazy initialization, ensuring thread safety.
+
+<!-- #example_positive_code -->
+```java
+public class ResourceFactory {
+    
+    private static class ResourceHolder {
+        public static final Resource resource = new Resource(); // Compliant
+    }
+
+    public static Resource getResource() {
+        return ResourceHolder.resource;
+    }
+    
+    private static class Resource { /* Resource class implementation */ }
+}
+```

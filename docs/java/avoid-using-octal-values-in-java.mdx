@@ -1,0 +1,133 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Using Octal Values in Java
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","understandability"]} />
+
+### What is it?
+Octal values in Java are integer literals that start with a zero (e.g., `012`), which can be mistakenly interpreted as decimal values.
+
+### Why apply it?
+Using octal values is often confusing because most developers are more accustomed to decimal literals. It may lead to misinterpretation and bugs in the code when octal numbers are mistaken for decimal integers.
+
+### How to fix it?
+Ensure that all integer literals are explicitly declared as decimal values by avoiding leading zeroes or by using hexadecimal or binary representation when appropriate.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses a leading zero, creating an octal number that's easily misinterpreted as a decimal.
+
+<!-- #example_negative_code -->
+```java
+public class Example1 {
+    public static void main(String[] args) {
+        int mistakenNumber = 010; // Noncompliant, mistaken for decimal 10
+        System.out.println("The number is: " + mistakenNumber);
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses an octal literal, which can cause confusion if considered unintended.
+
+<!-- #example_negative_code -->
+```java
+public class Example2 {
+    public static void main(String[] args) {
+        int octalValue = 052; // Noncompliant, interpreted as octal, equivalent to decimal 42
+        System.out.println("Octal value leads to: " + octalValue);
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example converts an octal declaration to a decimal declaration, making it clear to any reader what the intended value is.
+
+<!-- #example_positive_code -->
+```java
+public class Example1 {
+    public static void main(String[] args) {
+        int validNumber = 8; // Compliant
+        System.out.println("The number is: " + validNumber);
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example demonstrates a potential pitfall with octal literals leading to misinterpretation of the numeric value.
+
+<!-- #example_negative_code -->
+```java
+public class Example3 {
+    public static void main(String[] args) {
+        int ambiguousValue = 0101; // Noncompliant, possibly confused with decimal 101
+        System.out.println("Ambiguous octal value: " + ambiguousValue);
+    }
+}
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example explicitly uses a decimal integer, preventing any confusion with octal representation.
+
+<!-- #example_positive_code -->
+```java
+public class Example2 {
+    public static void main(String[] args) {
+        int decimalValue = 42; // Compliant
+        System.out.println("Decimal value: " + decimalValue);
+    }
+}
+```
+
+### Example 5:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example uses hexadecimal representation to ensure clarity intended by using a relevant format for the number system.
+
+<!-- #example_positive_code -->
+```java
+public class Example3 {
+    public static void main(String[] args) {
+        int hexValue = 0xA; // Compliant, using hexadecimal for clarity
+        System.out.println("Hexadecimal value: " + hexValue);
+    }
+}
+```

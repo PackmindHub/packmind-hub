@@ -1,0 +1,115 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Members of Spring Components Should Be Injected
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","best practices"]} />
+
+### What is it?
+This practice is triggered when a Spring `@Component`, `@Controller`, `@RestController`, `@Service`, or `@Repository` singleton contains non-`static` members that are not managed by Spring through specific annotations.
+
+### Why apply it?
+Ensures that all non-`static` members in singleton Spring beans are properly managed by Spring, increasing maintainability of the code and preventing unexpected behavior by ensuring correct dependency injection.
+
+### How to fix it?
+Add annotations like `@Resource`, `@Inject`, `@Autowired` or `@Value` to all non-`static` members of Spring singleton components to ensure they are managed by the Spring framework.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example fails to use dependency injection, which could lead to maintainability issues or unexpected behavior.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.stereotype.Controller;
+@Controller
+public class GreetingController {
+
+  private GreetingService greetingService = new GreetingService();  /* Noncompliant */
+
+  @RequestMapping("/hello", method = RequestMethod.GET)
+  public String greet(String name) {
+    return greetingService.sayHello(name);
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses `@Autowired` to inject a dependency, ensuring the Spring framework manages the non-`static` member.
+
+<!-- #example_positive_code -->
+```java
+import org.springframework.stereotype.Controller;
+@Controller
+public class GreetingController {
+
+  @Autowired
+  private GreetingService greetingService;  /* Compliant */
+
+  @RequestMapping("/hello", method = RequestMethod.GET)
+  public String greet(String name) {
+    return greetingService.sayHello(name);
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example does not utilize annotations like `@Value`, leading to less maintainable code where the dependency is not defined clearly.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.stereotype.Service;
+@Service
+public class WelcomeService {
+
+  private String welcomeMessage = "Welcome!";  /* Noncompliant */
+
+  public String getWelcomeMessage() {
+    return welcomeMessage;
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses `@Value` for injecting configuration properties, maintaining clear management of the property by Spring.
+
+<!-- #example_positive_code -->
+```java
+import org.springframework.stereotype.Service;
+@Service
+public class WelcomeService {
+
+  @Value("${welcome.message}")
+  private String welcomeMessage;  /* Compliant */
+
+  public String getWelcomeMessage() {
+    return welcomeMessage;
+  }
+}
+```

@@ -1,0 +1,135 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Conditionals Should Start on New Lines
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","readability"]} />
+
+### What is it?
+This practice is triggered when an `if` statement is placed immediately after a closing brace `}` of a previous conditional block on the same line. This style can create confusion and ambiguity in code readability.
+
+### Why apply it?
+Placing conditionals on new lines enhances readability and maintains clear code structure, minimizing potential errors and misunderstanding for anyone maintaining the code.
+
+### How to fix it?
+Ensure that each conditional statement starts on a new line. If conditions are exclusive, use `else if`. Otherwise, if independent, visually separate them by starting new lines.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example places two unrelated conditionals on the same line, leading to potential confusion.
+
+<!-- #example_negative_code -->
+```java
+if (isUserLoggedIn) {
+    displayDashboard();
+} if (hasNotifications) {  // Noncompliant
+    showNotifications();
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses two separate `if` statements without proper elif structure for exclusive conditions.
+
+<!-- #example_negative_code -->
+```java
+if (temperature > 30) {
+    turnOnCoolingSystem();
+} if (temperature < 18) {  // Noncompliant
+    activateHeater();
+} else {
+    maintainCurrentSettings();
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example separates unrelated conditionals onto new lines, reducing confusion.
+
+<!-- #example_positive_code -->
+```java
+if (isUserLoggedIn) {
+    displayDashboard();
+}
+
+if (hasNotifications) {
+    showNotifications();
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses poor formatting by including two separate conditionals for unrelated actions on the same line.
+
+<!-- #example_negative_code -->
+```java
+if (isStudentEnrolled) {
+    grantAccessToMaterial();
+} if (hasLectureToday) {  // Noncompliant
+    sendLectureReminder();
+}
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses `else if` for exclusive conditions, indicating clear control flow.
+
+<!-- #example_positive_code -->
+```java
+if (temperature > 30) {
+    turnOnCoolingSystem();
+} else if (temperature < 18) {
+    activateHeater();
+} else {
+    maintainCurrentSettings();
+}
+```
+
+### Example 5:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example properly aligns conditions meant to be separate by starting each on a new line for unrelated logic.
+
+<!-- #example_positive_code -->
+```java
+if (isStudentEnrolled) {
+    grantAccessToMaterial();
+}
+
+if (hasLectureToday) {
+    sendLectureReminder();
+}
+```

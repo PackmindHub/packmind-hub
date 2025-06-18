@@ -1,0 +1,99 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# "if ... else if" Constructs Should End with "else" Clauses
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","defensive programming"]} />
+
+### What is it?
+This practice is triggered when an `if` statement is followed by one or more `else if` statements without concluding with an `else` statement.
+
+### Why apply it?
+Having a final `else` clause ensures logical completeness and provides a fallback path for unhandled conditions, which is a sign of robust and defensive programming.
+
+### How to fix it?
+End the `if ... else if` constructs with a final `else` statement, either handling the fallback case or providing a clear explanation of why no action is needed.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example lacks a concluding `else` clause, potentially leaving some unexpected conditions unhandled.
+
+<!-- #example_negative_code -->
+```java
+if (status.equals("active")) {
+    processActiveStatus();
+} else if (status.equals("inactive")) {
+    processInactiveStatus();
+}  /* Noncompliant */
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example includes a final `else` clause that throws an exception in case an unexpected condition arises, ensuring logical completeness.
+
+<!-- #example_positive_code -->
+```java
+if (status.equals("active")) {
+    processActiveStatus();
+} else if (status.equals("inactive")) {
+    processInactiveStatus();
+} else {
+    throw new IllegalStateException("Unexpected status: " + status);  /* Compliant */
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example does not provide an `else` clause, which could result in the method finishing without returning a value if the provided `customerType` is unhandled.
+
+<!-- #example_negative_code -->
+```java
+int getDiscountRate(String customerType) {
+    if (customerType.equals("regular")) {
+        return 5;
+    } else if (customerType.equals("vip")) {
+        return 10;
+    }  /* Noncompliant */
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example completes the `if ... else if` construct with an `else` that returns a default value, demonstrating a complete decision path.
+
+<!-- #example_positive_code -->
+```java
+int getDiscountRate(String customerType) {
+    if (customerType.equals("regular")) {
+        return 5;
+    } else if (customerType.equals("vip")) {
+        return 10;
+    } else {
+        return 0;  /* Compliant */
+    }
+}
+```

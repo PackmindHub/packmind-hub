@@ -1,0 +1,153 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# "@Autowired" Should Only Be Used on a Single Constructor
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["maintainability","dependency-injection","spring"]} />
+
+### What is it?
+In a Spring application, only one constructor should be annotated with `@Autowired` in each component when the default required attribute is true, to prevent ambiguity during bean creation.
+
+### Why apply it?
+Having multiple constructors annotated with `@Autowired` without specifying `required=false` can lead to ambiguity, errors during Spring's dependency injection process, and make your code harder to understand and maintain.
+
+### How to fix it?
+Ensure that only one constructor is annotated with `@Autowired` in a component with `required=true`, or set `required=false` for additional constructors that can be used when their dependencies are available.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example shows a class with multiple constructors marked `@Autowired`, which leads to ambiguity as Spring cannot determine which constructor to use when injecting dependencies.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyComponent {
+  private final MyService myService;
+
+  @Autowired
+  public MyComponent(MyService myService) {
+    this.myService = myService;
+    // ...
+  }
+
+  @Autowired  // Noncompliant
+  public MyComponent(MyService myService, Integer i) {
+    this.myService = myService;
+    // Additional logic here
+    // ...
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example shows a class with only one constructor marked with `@Autowired`, which allows Spring to inject dependencies properly without ambiguity.
+
+<!-- #example_positive_code -->
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyComponent {
+  private final MyService myService;
+
+  @Autowired
+  public MyComponent(MyService myService) {
+    this.myService = myService;
+    // ...
+  }
+
+  public MyComponent(MyService myService, Integer i) {
+    this.myService = myService;
+    // Additional logic here
+    // ...
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Here, multiple constructors are marked with `@Autowired` and none have `required=false`, which leads to ambiguous dependency injection paths.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyComponent {
+  private final MyService myService;
+  private final String configValue;
+
+  @Autowired  // Noncompliant
+  public MyComponent(MyService myService, String configValue) {
+    this.myService = myService;
+    this.configValue = configValue;
+    // Primary constructor logic
+  }
+
+  @Autowired  // Noncompliant
+  public MyComponent(String configValue) {
+    this.myService = null;
+    this.configValue = configValue;
+    // Alternative constructor logic
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this example, only the primary constructor is marked with `@Autowired` while others are left unannotated.
+
+<!-- #example_positive_code -->
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyComponent {
+  private final MyService myService;
+  private final String configValue;
+
+  @Autowired
+  public MyComponent(MyService myService, String configValue) {
+    this.myService = myService;
+    this.configValue = configValue;
+    // Primary constructor logic
+  }
+
+  public MyComponent(String configValue) {
+    this.myService = null;
+    this.configValue = configValue;
+    // Alternative constructor logic
+  }
+}
+```

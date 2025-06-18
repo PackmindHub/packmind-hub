@@ -1,0 +1,115 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Prefer String Offset-Based Methods for Finding Substrings
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["performance","efficiency"]} />
+
+### What is it?
+This practice highlights the importance of using offset-based methods for finding substrings in `String` objects, instead of repeatedly creating new `String` instances using the `substring` method.
+
+### Why apply it?
+Using the `substring` method in combination with other `String` methods like `indexOf` or `lastIndexOf` can lead to unnecessary creation of new `String` instances. This can cause performance issues, especially in loops or when working with large strings.
+
+### How to fix it?
+Opt for offset-based methods that take start position parameters directly, which help avoid the creation of additional `String` instances.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example uses `substring` followed by `indexOf`, resulting in unnecessary creation of a new `String`.
+
+<!-- #example_negative_code -->
+```java
+public class SubstringExample {
+    public static void main(String[] args) {
+        String text = "Hello, welcome to the world of Java!";
+        int start = 7;
+        int index = text.substring(start).indexOf("welcome");
+        
+        if (index != -1) {
+            System.out.println("Found 'welcome' at index: " + (index + start));
+        }
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example uses the offset-based `indexOf` method to find a substring starting from a specified index without creating a new `String`.
+
+<!-- #example_positive_code -->
+```java
+public class OffsetExample {
+    public static void main(String[] args) {
+        String text = "Hello, welcome to the world of Java!";
+        int start = 7;
+        int index = text.indexOf("welcome", start);
+        
+        if (index != -1) {
+            System.out.println("Found 'welcome' at index: " + index);
+        }
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example wrongly creates a new `String` with `substring` before using `lastIndexOf`, leading to inefficiency.
+
+<!-- #example_negative_code -->
+```java
+public class SubstringLastIndexExample {
+    public static void main(String[] args) {
+        String text = "The quick brown fox jumps over the lazy dog. quick!";
+        int start = 4;
+        int index = text.substring(0, start).lastIndexOf("quick");
+        
+        if (index != -1) {
+            System.out.println("Found 'quick' at index: " + index);
+        }
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Here, the offset-based `lastIndexOf` method is used to efficiently find a substring without creating extra `String` objects.
+
+<!-- #example_positive_code -->
+```java
+public class OffsetLastIndexExample {
+    public static void main(String[] args) {
+        String text = "The quick brown fox jumps over the lazy dog. quick!";
+        int start = 4;
+        int index = text.lastIndexOf("quick", start);
+        
+        if (index != -1) {
+            System.out.println("Found 'quick' at index: " + index);
+        }
+    }
+}
+```

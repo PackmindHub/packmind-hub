@@ -1,0 +1,97 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure Pageable Parameters are Used in Methods Returning Page or Slice
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","maintainability"]} />
+
+### What is it?
+This practice concerns ensuring that any methods returning `Page` or `Slice` in Spring Data Repository include a `Pageable` parameter, which enables proper pagination.
+
+### Why apply it?
+Omitting the `Pageable` parameter in such methods can lead to runtime exceptions and inefficient handling of data sets, as the repository will not be able to paginate results properly.
+
+### How to fix it?
+Add a `Pageable` parameter to method signatures in Spring Data Repositories that return `Page` or `Slice`. This ensures that the pagination support is correctly implemented for query results.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+In this negative example, the method returns a `Page` but does not include a `Pageable` parameter, which will cause issues with pagination.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+interface ItemRepository extends JpaRepository<Item, Long> {
+    Page<Item> findItemsByCategory(String category);  // Noncompliant
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this positive example, the method correctly includes a `Pageable` parameter to support pagination of the `Page` result.
+
+<!-- #example_positive_code -->
+```java
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+interface ItemRepository extends JpaRepository<Item, Long> {
+    Page<Item> findItemsByCategory(String category, Pageable pageable);  // Compliant
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example demonstrates a `Slice` return type without a suitable `Pageable` parameter, which will throw an error during execution.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+interface ProductRepository extends JpaRepository<Product, Long> {
+    Slice<Product> findActiveProducts();  // Noncompliant
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this positive example, a method returning a `Slice` includes the `Pageable` parameter, ensuring proper handling of slice results.
+
+<!-- #example_positive_code -->
+```java
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+interface ProductRepository extends JpaRepository<Product, Long> {
+    Slice<Product> findActiveProducts(Pageable pageable);  // Compliant
+}
+```

@@ -1,0 +1,135 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Execution of the Garbage Collector Should Be Triggered Only by the JVM
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","performance"]} />
+
+### What is it?
+This issue arises when `System.gc()` or `Runtime.getRuntime().gc()` is manually called to trigger garbage collection in a Java application. This is because the behavior of these calls is unpredictable and varies depending on the JVM's vendor, version, and configuration.
+
+### Why apply it?
+Manually invoking the garbage collector can lead to unpredictable application behavior, such as potential application freezes or ignored requests, which can cause performance degradation. It's best to rely on the JVM to handle garbage collection.
+
+### How to fix it?
+Avoid using `System.gc()` or `Runtime.getRuntime().gc()`. Trust the JVM to manage memory efficiently without manual intervention.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses `System.gc()` to manually suggest garbage collection, leading to unpredictable results.
+
+<!-- #example_negative_code -->
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+public class MemoryManagement {
+    private static List<byte[]> memoryBuffer = new ArrayList<>();
+
+    public void processData() {
+        for (int i = 0; i < 100; i++) {
+            memoryBuffer.add(new byte[1024 * 1024]); // Add 1MB data chunks
+            if (i % 10 == 0) {
+                System.gc();  // Noncompliant: Suggests explicit garbage collection
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        MemoryManagement management = new MemoryManagement();
+        management.processData();
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this positive example, the application lets the JVM handle garbage collection without manual intervention.
+
+<!-- #example_positive_code -->
+```java
+public class MemoryManagement {
+    private static List<byte[]> memoryBuffer = new ArrayList<>();
+
+    public void processData() {
+        for (int i = 0; i < 100; i++) {
+            memoryBuffer.add(new byte[1024 * 1024]); // Add 1MB data chunks
+        }
+    }
+
+    public static void main(String[] args) {
+        MemoryManagement management = new MemoryManagement();
+        management.processData();
+        
+        // Allow JVM to optimize memory use as needed
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example calls `Runtime.getRuntime().runFinalization()` unnecessarily, which can cause undesirable effects.
+
+<!-- #example_negative_code -->
+```java
+public class Application {
+    public static void performOperations() {
+        // Simulated operations
+        for (int i = 0; i < 1000; i++) {
+            String value = "String " + i;
+            // Manual attempt to finalize objects
+            Runtime.getRuntime().runFinalization();  // Noncompliant: Requests finalization
+        }
+    }
+
+    public static void main(String[] args) {
+        performOperations();
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example avoids any explicit call to trigger finalization or garbage collection, relying on JVM efficiencies.
+
+<!-- #example_positive_code -->
+```java
+public class Application {
+    public static void performOperations() {
+        // Simulated operations
+        for (int i = 0; i < 1000; i++) {
+            String value = "String " + i;
+            // Perform operations
+        }
+    }
+
+    public static void main(String[] args) {
+        performOperations();
+        // JVM manages resources automatically
+    }
+}
+```

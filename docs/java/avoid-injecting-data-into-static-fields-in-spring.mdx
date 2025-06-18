@@ -1,0 +1,131 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Injecting Data into Static Fields in Spring
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","maintainability","reliability"]} />
+
+### What is it?
+Injecting data into static fields in Spring using annotations like @Value, @Inject, or @Autowired is ineffective as these annotations are ignored, leaving fields uninitialized.
+
+### Why apply it?
+Static fields with these annotations will not be initialized by Spring, leading to NullPointerExceptions. It also makes code misleading, as developers might expect the fields to be populated automatically by Spring when they aren't.
+
+### How to fix it?
+Instead of using static fields, apply the injection annotations to instance fields to ensure they are initialized by Spring. Alternatively, remove the annotations and manually initialize the static fields.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example incorrectly uses the `@Value` annotation on a static field, which will not be initialized.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyService {
+
+    @Value("${my.app.name}")
+    private static String appName;  // Noncompliant: static field will not be injected
+
+    public static void printAppName() {
+        System.out.println("Application Name: " + appName);
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this positive example, the `@Value` annotation is used properly on an instance field, ensuring it gets initialized by Spring.
+
+<!-- #example_positive_code -->
+```java
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyService {
+
+    @Value("${my.app.name}")
+    private final String appName;  // Compliant: instance field used
+
+    public MyService(@Value("${my.app.name}") String appName) {
+        this.appName = appName;
+    }
+
+    public void printAppName() {
+        System.out.println("Application Name: " + appName);
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example incorrectly applies `@Autowired` to a static field.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class GreetingService {
+
+    @Autowired
+    private static MessageService messageService;  // Noncompliant: static fields are not injected
+
+    public static void greet() {
+        System.out.println(messageService.getMessage());
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Another positive example where `@Autowired` is used correctly on an instance field within a service class.
+
+<!-- #example_positive_code -->
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class GreetingService {
+
+    private final MessageService messageService;
+
+    @Autowired
+    public GreetingService(MessageService messageService) {  // Compliant: using constructor injection
+        this.messageService = messageService;
+    }
+
+    public void greet() {
+        System.out.println(messageService.getMessage());
+    }
+}
+```

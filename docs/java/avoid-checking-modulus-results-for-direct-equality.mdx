@@ -1,0 +1,119 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Checking Modulus Results for Direct Equality
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","reliability"]} />
+
+### What is it?
+This practice advises against checking the result of a modulus operation directly for equality in expressions.
+
+### Why apply it?
+When using modulus on negative numbers, the outcome can be either zero or negative. This behavior can lead to unexpected results if compared for equality with a positive or negative number directly.
+
+### How to fix it?
+Use inequality comparisons to determine the intent of the modulus operation, ensuring correct behavior regardless of the sign of the operand.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example directly compares the modulus result to check if the number is odd, failing for negative odd numbers.
+
+<!-- #example_negative_code -->
+```java
+public class NumberUtils {
+  public boolean isOdd(int x) {
+    return x % 2 == 1;  // Noncompliant
+  }
+  
+  public static void main(String[] args) {
+    NumberUtils utils = new NumberUtils();
+    System.out.println(utils.isOdd(3));  // true
+    System.out.println(utils.isOdd(-3)); // false (unexpected)
+    System.out.println(utils.isOdd(4));  // false
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example checks for inequality with zero to determine if a number is odd, ensuring correct handling of negative numbers.
+
+<!-- #example_positive_code -->
+```java
+public class NumberUtils {
+  public boolean isOdd(int x) {   
+    return x % 2 != 0;  // Compliant
+  }
+  
+  public static void main(String[] args) {
+    NumberUtils utils = new NumberUtils();
+    System.out.println(utils.isOdd(3));  // true
+    System.out.println(utils.isOdd(-3)); // true
+    System.out.println(utils.isOdd(4));  // false
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example directly checks if modulus by three equals one, failing if the number is negative and divisible by three.
+
+<!-- #example_negative_code -->
+```java
+public class DivisibilityChecker {
+  public boolean remainderOneWhenDividedByThree(int x) {
+    return x % 3 == 1;  // Noncompliant
+  }
+  
+  public static void main(String[] args) {
+    DivisibilityChecker checker = new DivisibilityChecker();
+    System.out.println(checker.remainderOneWhenDividedByThree(10));   // true
+    System.out.println(checker.remainderOneWhenDividedByThree(-2));   // false (unexpected)
+    System.out.println(checker.remainderOneWhenDividedByThree(4));    // true
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses a range check to confirm divisibility by three, ensuring proper handling of negative numbers.
+
+<!-- #example_positive_code -->
+```java
+public class DivisibilityChecker {
+  public boolean isDivisibleByThree(int x) {
+    return x % 3 == 0;  // Compliant
+  }
+  
+  public static void main(String[] args) {
+    DivisibilityChecker checker = new DivisibilityChecker();
+    System.out.println(checker.isDivisibleByThree(9));   // true
+    System.out.println(checker.isDivisibleByThree(-9));  // true
+    System.out.println(checker.isDivisibleByThree(4));   // false
+  }
+}
+```

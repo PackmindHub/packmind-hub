@@ -1,0 +1,138 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# "main" should not "throw" anything
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","error-handling"]} />
+
+### What is it?
+This practice is triggered by the `main` method in Java programs throwing exceptions, which should be avoided as there is no context in which these exceptions can be gracefully caught and handled.
+
+### Why apply it?
+Handling exceptions directly within the `main` method allows you to manage errors more effectively, log useful debugging information, and exit gracefully with a meaningful status code.
+
+### How to fix it?
+Instead of allowing exceptions to propagate out of the `main` method, use try-catch blocks within the method to catch and handle any exceptions, logging appropriate details and terminating the program with a non-zero exit code in case of errors.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example incorrectly declares the `main` method to throw an exception, leaving it unhandled.
+
+<!-- #example_negative_code -->
+```java
+public class ExampleApp {
+
+    public static void main(String[] args) throws Exception {
+        performOperation(); // Noncompliant
+    }
+
+    private static void performOperation() {
+        // Operation that might throw an exception
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example handles exceptions within the `main` method using a try-catch block, logs the error, and exits with a non-zero status code.
+
+<!-- #example_positive_code -->
+```java
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ExampleApp {
+    private static final Logger log = LoggerFactory.getLogger(ExampleApp.class);
+
+    public static void main(String[] args) {
+        try {
+            performOperation();
+        } catch (Throwable t) {
+            log.error("An error occurred: ", t);
+            System.exit(1);
+        }
+    }
+
+    private static void performOperation() {
+        // Example operation that might throw an exception
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example illustrates leaving multiple exceptions to be thrown out of the `main` method, which is noncompliant.
+
+<!-- #example_negative_code -->
+```java
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+public class FileProcessor {
+
+    public static void main(String[] args) throws IOException {
+        processFile("data.txt");  // Noncompliant
+    }
+
+    private static void processFile(String fileName) throws FileNotFoundException, IOException {
+        // Code that might throw FileNotFoundException or IOException
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example demonstrates catching different types of exceptions in the `main` method and responding appropriately.
+
+<!-- #example_positive_code -->
+```java
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class FileProcessor {
+    private static final Logger log = LoggerFactory.getLogger(FileProcessor.class);
+
+    public static void main(String[] args) {
+        try {
+            processFile("data.txt");
+        } catch (FileNotFoundException e) {
+            log.error("File not found: ", e);
+            System.exit(2);
+        } catch (IOException e) {
+            log.error("I/O error: ", e);
+            System.exit(3);
+        } catch (Throwable t) {
+            log.error("Unexpected error: ", t);
+            System.exit(1);
+        }
+    }
+
+    private static void processFile(String fileName) throws IOException {
+        // Code that might throw FileNotFoundException or IOException
+    }
+}
+```

@@ -1,0 +1,124 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Equality Operators Should Not be Used in "for" Loop Termination Conditions
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","reliability","safety"]} />
+
+### What is it?
+This practice addresses the use of equality operators (`==` and `!=`) in the termination conditions of `for` loops, which can lead to infinite loops if not used carefully.
+
+### Why apply it?
+An incorrect termination condition using an equality operator can lead to infinite loops, making your program less reliable and potentially causing it to hang indefinitely. Using broader relational operators like `<`, `<=`, `>`, or `>=` generally offers a safer approach.
+
+### How to fix it?
+Replace equality operators in loop termination conditions with appropriate relational operators that form a more robust termination criterion, thus preventing unintentional infinite loops.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example incorrectly uses the inequality operator, which causes the loop to potentially never terminate because the increment step skips the condition.
+
+<!-- #example_negative_code -->
+```java
+for (int i = 1; i != 10; i += 2) {  // Noncompliant - infinite loop
+  System.out.println("i = " + i);
+}
+System.out.println("This line will never be reached due to infinite loop.");
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+In this negative example, the use of `!=` can be problematic if the loop's incremental logic mistakenly skips the condition, especially with floating-point numbers.
+
+<!-- #example_negative_code -->
+```java
+for (int i = 0; i != 8; i += 2) {  // Noncompliant - might skip
+  System.out.println("I reached: " + i);
+}
+System.out.println("This line might be part of an infinite loop.");
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses a relational operator to ensure the loop terminates correctly when the index surpasses a defined limit.
+
+<!-- #example_positive_code -->
+```java
+for (int i = 1; i <= 10; i += 2) {  // Compliant
+  System.out.println("i = " + i);
+}
+System.out.println("Loop terminated correctly.");
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example uses an equality operator with decrement logic, which risks non-termination due to overshooting.
+
+<!-- #example_negative_code -->
+```java
+for (int j = 10; j != 0; j--) {  // Noncompliant - risks overshooting
+  System.out.println("j = " + j);
+}
+System.out.println("May never reach this statement due to infinite loop.");
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Here, the positive example employs a broader relational operator and functional logic that safely terminates the loop.
+
+<!-- #example_positive_code -->
+```java
+int array[] = {1, 2, 3, 4, 5, 6, 7, 8};
+for (int i = 0; i < array.length; i++) {  // Compliant
+  if (array[i] % 2 == 0) {
+    System.out.println("Even number: " + array[i]);
+  }
+}
+System.out.println("Processed all elements of the array.");
+```
+
+### Example 5:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+A positive example where the loop correctly uses a decrementing logic with a relational operator, ensuring safe termination.
+
+<!-- #example_positive_code -->
+```java
+for (int j = 10; j >= 1; j--) {  // Compliant
+  System.out.println("j = " + j);
+}
+System.out.println("Countdown complete.");
+```

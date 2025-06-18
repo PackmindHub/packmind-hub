@@ -1,0 +1,107 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Unnecessary Bit Operations Should Not Be Performed
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","performance"]} />
+
+### What is it?
+This practice alerts on the use of unnecessary bit operations whose results are predictable and have no impact on the output.
+
+### Why apply it?
+Using these redundant operations increases code complexity without providing any benefit. It can make your code less efficient and more difficult to read and maintain.
+
+### How to fix it?
+Remove any unnecessary bit operations from your code. These include `& -1`, `| 0`, and `^ 0`, which do nothing but clutter the code.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses `| 0`, which is unnecessary since it has no effect on the integer value.
+
+<!-- #example_negative_code -->
+```java
+public class BitOperation {
+    public static int calculateValue(int a, int b) {
+        return (a + b) | 0;  // Noncompliant
+    }
+
+    public static void main(String[] args) {
+        System.out.println(calculateValue(5, 10));  // Output: 15
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example demonstrates a calculation without using unnecessary bit operations, leading to cleaner and more efficient code.
+
+<!-- #example_positive_code -->
+```java
+public class BitOperation {
+    public static int calculateValue(int a, int b) {
+        return a + b;  // Compliant
+    }
+
+    public static void main(String[] args) {
+        System.out.println(calculateValue(5, 10));  // Output: 15
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example utilizes `^ 0`, which does not alter the value and unnecessarily complicates the code.
+
+<!-- #example_negative_code -->
+```java
+public class BitOperation {
+    public static boolean isEven(int number) {
+        return ((number % 2) == 0) ^ false;  // Noncompliant
+    }
+
+    public static void main(String[] args) {
+        System.out.println(isEven(4));  // Output: true
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example displays a logical operation that avoids redundant bit operations, maintaining clarity and performance.
+
+<!-- #example_positive_code -->
+```java
+public class BitOperation {
+    public static boolean isEven(int number) {
+        return (number % 2) == 0;  // Compliant
+    }
+
+    public static void main(String[] args) {
+        System.out.println(isEven(4));  // Output: true
+    }
+}
+```

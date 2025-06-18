@@ -1,0 +1,169 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Interfaces Consisting Solely of Constants
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","architectural soundness"]} />
+
+### What is it?
+This practice advises against using interfaces that consist only of constant definitions without any method declarations.
+
+### Why apply it?
+Interfaces are intended to define APIs via function declarations and not to act as containers for constants. Using interfaces in such a manner can lead to misuse and misunderstanding of their intended purpose.
+
+### How to fix it?
+Replace the interface with either an `enum` or a final class with a private constructor to properly encapsulate the constants.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example defines an interface with only constant values, which should instead be represented by an `enum`.
+
+<!-- #example_negative_code -->
+```java
+public interface Status {  /* Noncompliant */
+  int OPEN = 1;
+  int CLOSED = 2;
+}
+
+public class TaskManager {
+  public void setStatus(int status) {
+    // Implementation here
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example misuses an interface to hold a collection of color constants, which could be better represented by a final class.
+
+<!-- #example_negative_code -->
+```java
+public interface ColorTheme {  /* Noncompliant */
+  int COLOR_ERROR = 0xff0000;   // red
+  int COLOR_WARNING = 0xffff00; // yellow
+  int COLOR_OK = 0x00cf00;      // green
+}
+
+public class ThemeManager {
+  public int getErrorColor() {
+    return ColorTheme.COLOR_ERROR;
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses an `enum` to represent constant values, which is more appropriate when constants serve as identifiers without an essential concrete value.
+
+<!-- #example_positive_code -->
+```java
+public enum Status {  /* Compliant */
+  OPEN,
+  CLOSED
+}
+
+public class TaskManager {
+  public void setStatus(Status status) {
+    // Implementation here
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses an interface for constants used exclusively by the `WordPacker` class, leading to unnecessary exposure.
+
+<!-- #example_negative_code -->
+```java
+interface AuxiliaryConstants {  /* Noncompliant */
+  int BITS_PER_WORD = 16;
+  int WORD_MASK = (1 << BITS_PER_WORD) - 1;
+  int HI_WORD_BK_MASK = ~(WORD_MASK << BITS_PER_WORD);
+}
+
+class WordPacker {
+  public static int getHiWord(int value) {
+    return (value >>> AuxiliaryConstants.BITS_PER_WORD);
+  }
+
+  public static int setHiWord(int value, int wordValue) {
+    return (value & AuxiliaryConstants.HI_WORD_BK_MASK) | (wordValue << AuxiliaryConstants.BITS_PER_WORD);
+  }
+}
+```
+
+### Example 4:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses a final class with a private constructor to encapsulate constants shared across multiple classes.
+
+<!-- #example_positive_code -->
+```java
+public final class ColorTheme {  /* Compliant */
+  public static final int COLOR_ERROR = 0xff0000;   // red
+  public static final int COLOR_WARNING = 0xffff00; // yellow
+  public static final int COLOR_OK = 0x00cf00;      // green
+
+  private ColorTheme() {}  // Prevents instantiation
+}
+
+public class ThemeManager {
+  public int getErrorColor() {
+    return ColorTheme.COLOR_ERROR;
+  }
+}
+```
+
+### Example 5:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example consolidates constants within the primary class that makes use of them, ensuring they remain implementation details.
+
+<!-- #example_positive_code -->
+```java
+public class WordPacker {  /* Compliant */
+  private static final int BITS_PER_WORD = 16;
+  private static final int WORD_MASK = (1 << BITS_PER_WORD) - 1;
+  private static final int HI_WORD_BK_MASK = ~(WORD_MASK << BITS_PER_WORD);
+
+  public static int getHiWord(int value) {
+    return (value >>> BITS_PER_WORD);
+  }
+
+  public static int setHiWord(int value, int wordValue) {
+    return (value & HI_WORD_BK_MASK) | (wordValue << BITS_PER_WORD);
+  }
+}
+```

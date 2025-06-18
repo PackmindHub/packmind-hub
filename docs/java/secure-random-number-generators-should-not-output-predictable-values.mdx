@@ -1,0 +1,131 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Secure Random Number Generators should not output predictable values
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["security","cryptography"]} />
+
+### What is it?
+This practice addresses the proper use of secure random number generators (CSPRNG) to ensure their output remains unpredictable, which is critical for cryptographic security.
+
+### Why apply it?
+Using predictable seeds with secure random number generators compromises the security of cryptographic algorithms that depend on random numbers, potentially exposing sensitive data to attackers.
+
+### How to fix it?
+Do not set predictable seeds on CSPRNGs like `SecureRandom`. Use the default constructor or `SecureRandom.getInstanceStrong()` to ensure unpredictability.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example sets a predictable seed, which makes random number output predictable and insecure for cryptographic uses.
+
+<!-- #example_negative_code -->
+```java
+import java.security.SecureRandom;
+
+public class InsecureExample {
+    public static void main(String[] args) {
+        SecureRandom sr = new SecureRandom();
+        sr.setSeed(987654321L);  // Noncompliant
+        byte[] bytes = new byte[20];
+        sr.nextBytes(bytes);
+
+        System.out.println("Generated insecure random bytes:");
+        for (byte b : bytes) {
+            System.out.format("%02X ", b);
+        }
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses `SecureRandom` properly by not setting a seed, allowing it to initialize with an unpredictable source of randomness.
+
+<!-- #example_positive_code -->
+```java
+import java.security.SecureRandom;
+
+public class SecureExample {
+    public static void main(String[] args) {
+        SecureRandom sr = new SecureRandom(); 
+        byte[] bytes = new byte[20];
+        sr.nextBytes(bytes);
+
+        System.out.println("Generated secure random bytes:");
+        for (byte b : bytes) {
+            System.out.format("%02X ", b);
+        }
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example initializes `SecureRandom` with a byte array seed derived from a constant string, making the random output predictable.
+
+<!-- #example_negative_code -->
+```java
+import java.security.SecureRandom;
+import java.nio.charset.StandardCharsets;
+
+public class InsecureSeedExample {
+    public static void main(String[] args) {
+        byte[] seedBytes = "predictableseed".getBytes(StandardCharsets.UTF_8);
+        SecureRandom sr = new SecureRandom(seedBytes);  // Noncompliant
+        
+        byte[] bytes = new byte[20];
+        sr.nextBytes(bytes);
+
+        System.out.println("Generated insecure seed random bytes:");
+        for (byte b : bytes) {
+            System.out.format("%02X ", b);
+        }
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example utilizes `SecureRandom.getInstanceStrong()` to ensure the use of a strong algorithm for random number generation.
+
+<!-- #example_positive_code -->
+```java
+import java.security.SecureRandom;
+
+public class StrongSecureExample {
+    public static void main(String[] args) throws Exception {
+        SecureRandom sr = SecureRandom.getInstanceStrong();
+        byte[] bytes = new byte[20];
+        sr.nextBytes(bytes);
+
+        System.out.println("Generated strong secure random bytes:");
+        for (byte b : bytes) {
+            System.out.format("%02X ", b);
+        }
+    }
+}
+```

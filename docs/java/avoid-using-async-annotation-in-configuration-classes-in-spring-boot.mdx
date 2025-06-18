@@ -1,0 +1,126 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Using `@Async` Annotation in `@Configuration` Classes in Spring Boot
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["maintainability","reliability","architecture"]} />
+
+### What is it?
+This practice highlights the misuse of the `@Async` annotation within methods of a class annotated with `@Configuration` in Spring Boot.
+
+### Why apply it?
+Using `@Async` in `@Configuration` classes is problematic because it can lead to unexpected behavior due to the asynchronous infrastructure not being properly set up or inappropriate for a configuration context. The `@Async` annotation is designed for asynchronous method execution outside of a configuration class.
+
+### How to fix it?
+Remove the `@Async` annotation from methods within `@Configuration` classes. Instead, delegate asynchronous processing to appropriate service-like components.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+In this noncompliant example, a method within the `@Configuration` class is annotated with `@Async`, which is incorrect.
+
+<!-- #example_negative_code -->
+```java
+@EnableAsync
+@Configuration
+public class InvalidConfiguration {
+
+  @Async // Noncompliant
+  public void performAsyncTask() {
+    // Asynchronous logic here
+  }
+  
+  @Bean
+  public MyComponent myComponent() {
+    return new MyComponent();
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this compliant example, no method within the `@Configuration` class uses the `@Async` annotation. Asynchronous processing, if needed, should be handled elsewhere.
+
+<!-- #example_positive_code -->
+```java
+@EnableAsync
+@Configuration
+public class MyConfiguration {
+  
+  @Bean
+  public MyService myService() {
+    return new MyService();
+  }
+  
+  public void setup() {
+    // Setup logic here
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example incorrectly places an `@Async` annotation on a method within a `@Configuration` class, which should be avoided.
+
+<!-- #example_negative_code -->
+```java
+@EnableAsync
+@Configuration
+public class WrongConfig {
+
+  @Async // Noncompliant
+  public void asyncOperation() {
+    // Logic meant to be asynchronous
+  }
+  
+  @Bean
+  public SomeOtherBean someOtherBean() {
+    return new SomeOtherBean();
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example demonstrates how to properly separate asynchronous logic into a service class rather than placing it within a `@Configuration` class.
+
+<!-- #example_positive_code -->
+```java
+@EnableAsync
+@Configuration
+public class AppConfig {
+  
+  @Bean
+  public TaskExecutor taskExecutor() {
+    return new ThreadPoolTaskExecutor();
+  }
+  
+  @Bean
+  public AsyncService asyncService() {
+    return new AsyncService();
+  }
+}
+```

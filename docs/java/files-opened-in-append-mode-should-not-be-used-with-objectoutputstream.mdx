@@ -1,0 +1,185 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Files Opened in Append Mode Should Not Be Used with `ObjectOutputStream`
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","reliability"]} />
+
+## Why is this an issue?
+An `ObjectOutputStream` writes primitive data types and graphs of Java objects to an `OutputStream`. The objects can be read (reconstituted) using an `ObjectInputStream`.
+
+When `ObjectOutputStream` is used with files opened in append mode, it can cause data corruption and unexpected behavior. This is because when `ObjectOutputStream` is created, it writes metadata to the output stream, which can conflict with the existing metadata when the file is opened in append mode. This can lead to errors and data loss.
+
+When used with serialization, an `ObjectOutputStream` first writes the serialization stream header. This header should appear once per file at the beginning. When you’re trying to read your object(s) back from the file, only the first one will be read successfully, and a `StreamCorruptedException` will be thrown after that.
+
+## How to fix it
+
+Open the file to use the default action (writes stream header).
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example opens the file in append mode, which can lead to a `StreamCorruptedException` when reading the data back.
+
+<!-- #example_negative_code -->
+```java
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
+public class SerializeExample {
+    public static class ExampleObject implements Serializable {
+        private static final long serialVersionUID = 1L;
+        private int id;
+        private String data;
+
+        public ExampleObject(int id, String data) {
+            this.id = id;
+            this.data = data;
+        }
+    }
+
+    public static void main(String[] args) {
+        try (FileOutputStream fos = new FileOutputStream("example.dat", true);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            
+            ExampleObject obj = new ExampleObject(1, "sample data");
+            oos.writeObject(obj);  // Noncompliant
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example opens the file with the default action for `FileOutputStream`, ensuring the stream header is written correctly.
+
+<!-- #example_positive_code -->
+```java
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
+public class SerializeExample {
+    public static class ExampleObject implements Serializable {
+        private static final long serialVersionUID = 1L;
+        private int id;
+        private String data;
+
+        public ExampleObject(int id, String data) {
+            this.id = id;
+            this.data = data;
+        }
+    }
+
+    public static void main(String[] args) {
+        try (FileOutputStream fos = new FileOutputStream("example.dat");
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            
+            ExampleObject obj = new ExampleObject(1, "sample data");
+            oos.writeObject(obj);  // Compliant
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example incorrectly uses append mode, which will corrupt any existing serialized data.
+
+<!-- #example_negative_code -->
+```java
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
+public class RecordExample {
+    public static class Record implements Serializable {
+        private static final long serialVersionUID = 1L;
+        private String name;
+        private int score;
+
+        public Record(String name, int score) {
+            this.name = name;
+            this.score = score;
+        }
+    }
+
+    public static void main(String[] args) {
+        try (FileOutputStream fos = new FileOutputStream("records.dat", true);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            
+            Record record = new Record("Alice", 95);
+            oos.writeObject(record);  // Noncompliant
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example properly overwrites the file each time by not using the append mode.
+
+<!-- #example_positive_code -->
+```java
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
+public class RecordExample {
+    public static class Record implements Serializable {
+        private static final long serialVersionUID = 1L;
+        private String name;
+        private int score;
+
+        public Record(String name, int score) {
+            this.name = name;
+            this.score = score;
+        }
+    }
+
+    public static void main(String[] args) {
+        try (FileOutputStream fos = new FileOutputStream("records.dat");
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            
+            Record record = new Record("Alice", 95);
+            oos.writeObject(record);  // Compliant
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```

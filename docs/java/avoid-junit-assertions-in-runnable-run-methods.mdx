@@ -1,0 +1,141 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid JUnit Assertions in `Runnable` run Methods
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","multi-threading"]} />
+
+### What is it?
+JUnit assertions should not be used in the `run` method of a `Runnable` because assertion failures in a separate thread may not be detected, preventing the test from failing as expected.
+
+### Why apply it?
+Assertions failing in threads other than the main test thread might not get reported as failed tests, potentially leading to incorrect test results.
+
+### How to fix it?
+Move JUnit assertions outside of `run` methods or ensure they're executed in the main test thread to ensure assertion results are correctly captured.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses assertions within the `run` method, causing assertion failures to potentially go unnoticed.
+
+<!-- #example_negative_code -->
+```java
+class RunnableWithAnAssertion extends Thread {
+  @Override
+  public void run() {
+    Assert.assertEquals(expected, actual);  // Noncompliant
+  }
+
+  @Test
+  void test() throws InterruptedException {
+    RunnableWithAnAssertion otherThread = new RunnableWithAnAssertion();
+    otherThread.start(); 
+    otherThread.join();
+    // Test will not fail even if the assertion in `run` fails
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example executes assertions outside of the `run` method, ensuring test failure is captured properly.
+
+<!-- #example_positive_code -->
+```java
+class RunnableWithAssertions extends Thread {
+  private boolean isSuccessful;
+
+  @Override
+  public void run() {
+    isSuccessful = expected.equals(actual);  // No assertion here
+  }
+
+  @Test
+  void test() throws InterruptedException {
+    RunnableWithAssertions runnable = new RunnableWithAssertions();
+    runnable.start();
+    runnable.join();  // Wait for the thread to finish
+    Assert.assertTrue(runnable.isSuccessful); // Assertions performed here
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example directly uses assertions within the `run` method, risking failures that are not reported correctly.
+
+<!-- #example_negative_code -->
+```java
+class CalculationThread extends Thread {
+  @Override
+  public void run() {
+    Assert.assertEquals(42, calculateComplexNumber());  // Noncompliant
+  }
+
+  @Test
+  void testCalculation() throws InterruptedException {
+    CalculationThread thread = new CalculationThread();
+    thread.start();
+    thread.join();
+    // Assertion failure here would not report a test failure
+  }
+
+  private int calculateComplexNumber() {
+    // Complex calculation
+    return 42;
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example moves the execution logic to the `run` method and validates the result in the main test thread.
+
+<!-- #example_positive_code -->
+```java
+class CalculationThread extends Thread {
+  private int result;
+
+  @Override
+  public void run() {
+    result = calculateComplexNumber();
+  }
+
+  @Test
+  void testCalculation() throws InterruptedException {
+    CalculationThread thread = new CalculationThread();
+    thread.start();
+    thread.join();  // Wait for the calculation to complete
+    Assert.assertEquals(42, thread.result); // Assert in the main thread
+  }
+
+  private int calculateComplexNumber() {
+    // Complex calculation
+    return 42;
+  }
+}
+```

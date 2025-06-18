@@ -1,0 +1,103 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Future Keywords Should Not Be Used as Names
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","compatibility"]} />
+
+### What is it?
+This practice is concerned with avoiding the future use of certain keywords as identifiers in your Java code.
+
+### Why apply it?
+Programming languages, including Java, evolve over time. Using potential future keywords as identifiers can lead to compatibility issues, failures during compilation, or unexpected behavior when upgrading to newer Java versions. For example, the underscore (`_`) was deprecated in Java 9 and subsequently disallowed in Java 11; thus, conflict arises if it is used as an identifier.
+
+### How to fix it?
+Ensure that you rename identifiers that might conflict with future versions of Java's reserved keywords to prevent such issues.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses `_` as a variable name, which can lead to compatibility issues in future Java versions.
+
+<!-- #example_negative_code -->
+```java
+public class User {
+    private String _ = "guest";         // Noncompliant
+    private int userId = 12345;
+
+    public void displayUserInfo() {
+        System.out.println("User: " + _, ID: " + userId);
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses valid and safe identifiers that do not clash with Java keywords.
+
+<!-- #example_positive_code -->
+```java
+public class User {
+    private String username = "guest";  // Compliant
+    private int userId = 12345;         // Compliant
+
+    public void displayUserInfo() {
+        System.out.println("User: " + username + ", ID: " + userId);
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses `_` to name a variable which can clash with Java 22 reserved keywords.
+
+<!-- #example_negative_code -->
+```java
+public class Account {
+    private double _ = 0.0;             // Noncompliant
+    private String accountNumber = "1234567890";
+    
+    public void showAccountDetails() {
+        System.out.println("Account: " + accountNumber + ", Balance: " + _);
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example avoids using deprecated or future keywords and uses descriptive variable names.
+
+<!-- #example_positive_code -->
+```java
+public class Account {
+    private double balance = 0.0;       // Compliant
+    private String accountNumber = "1234567890"; // Compliant
+
+    public void showAccountDetails() {
+        System.out.println("Account: " + accountNumber + ", Balance: " + balance);
+    }
+}
+```

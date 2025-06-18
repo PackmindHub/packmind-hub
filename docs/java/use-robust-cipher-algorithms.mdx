@@ -1,0 +1,176 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Use Robust Cipher Algorithms
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["security","cryptography"]} />
+
+### What is it?
+This practice is triggered by the use of weak or outdated cryptographic algorithms, which puts sensitive data at risk of exposure by making the encryption vulnerable to cryptanalysis.
+
+### Why apply it?
+Encryption secures data against unauthorized access and establishes trust. Using robust and up-to-date algorithms ensures that data remains confidential, maintains integrity, and cannot be tampered with.
+
+### How to fix it?
+Choose algorithms that are widely recognized as secure by the cryptographic community, such as AES, and follow best practices in cryptography such as using GCM for block ciphers.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses the weak DES algorithm, which is vulnerable to brute-force attacks.
+
+<!-- #example_negative_code -->
+```java
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.NoSuchPaddingException;
+
+public class InsecureEncryptionExample {
+    public static void main(String[] args) {
+        try {
+            KeyGenerator keyGen = KeyGenerator.getInstance("DES");
+            SecretKey key = keyGen.generateKey();
+
+            Cipher desCipher = Cipher.getInstance("DES");  // Noncompliant
+            desCipher.init(Cipher.ENCRYPT_MODE, key);
+
+            byte[] inputText = "Sensitive Data".getBytes();
+            byte[] encryptedText = desCipher.doFinal(inputText);
+
+            System.out.println("Data encrypted (insecurely)!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses the AES algorithm with GCM mode, which is considered strong and secure.
+
+<!-- #example_positive_code -->
+```java
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.NoSuchPaddingException;
+
+public class SecureEncryptionExample {
+    public static void main(String[] args) {
+        try {
+            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+            keyGen.init(256);  // Secure key size for AES
+            SecretKey key = keyGen.generateKey();
+
+            Cipher aesCipher = Cipher.getInstance("AES/GCM/NoPadding");
+            aesCipher.init(Cipher.ENCRYPT_MODE, key);
+
+            byte[] inputText = "Sensitive Data".getBytes();
+            byte[] encryptedText = aesCipher.doFinal(inputText);
+
+            System.out.println("Data encrypted successfully!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses a deprecated algorithm which is susceptible to cryptanalysis.
+
+<!-- #example_negative_code -->
+```java
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.NoSuchPaddingException;
+import java.util.Base64;
+
+public class InsecureEncryptionExample2 {
+    public static void main(String[] args) {
+        try {
+            KeyGenerator keyGen = KeyGenerator.getInstance("Blowfish");
+            keyGen.init(128);  // Less secure choice
+            SecretKey key = keyGen.generateKey();
+
+            String input = "Highly Confidential Data";
+            Cipher cipher = Cipher.getInstance("Blowfish/CBC/PKCS5Padding");  // Noncompliant
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+
+            byte[] encrypted = cipher.doFinal(input.getBytes());
+            String encryptedBase64 = Base64.getEncoder().encodeToString(encrypted);
+
+            System.out.println("Encrypted Data (insecure): " + encryptedBase64);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example demonstrates using AES in GCM mode with strong key management.
+
+<!-- #example_positive_code -->
+```java
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.NoSuchPaddingException;
+import java.util.Base64;
+
+public class SecureEncryptionExample2 {
+    public static void main(String[] args) {
+        try {
+            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+            keyGen.init(256);  // Secure key size
+            SecretKey key = keyGen.generateKey();
+
+            String input = "Highly Confidential Data";
+            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+
+            byte[] encrypted = cipher.doFinal(input.getBytes());
+            String encryptedBase64 = Base64.getEncoder().encodeToString(encrypted);
+
+            System.out.println("Encrypted Data: " + encryptedBase64);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```

@@ -1,0 +1,123 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# XML parsers should not allow inclusion of arbitrary files
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["security","xml-handling"]} />
+
+### What is it?
+This practice concerns the configuration of XML parsers in Java to prevent the inclusion of arbitrary files. The `xinclude` feature, if enabled, permits the inclusion of both local and remote XML files, which can be exploited to disclose sensitive information or perform server-side request forgery (SSRF).
+
+### Why apply it?
+Enabling `xinclude` can lead to severe security vulnerabilities including exposure of sensitive data from the local file system or unauthorized network requests when processing untrusted XML data. This can result in information disclosure or SSRF attacks.
+
+### How to fix it?
+Disable the `xinclude` feature in XML parsers to avoid the inclusion of external XML files, thereby reducing the risk of unwanted file access and network calls.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example below incorrectly configures an XML parser in Java, enabling the potential inclusion of external XML files through the `xinclude` feature.
+
+<!-- #example_negative_code -->
+```java
+import javax.xml.parsers.SAXParserFactory;
+
+public class VulnerableXMLParsing {
+    public static void main(String[] args) throws Exception {
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+
+        // Incorrect configuration that enables xinclude
+        factory.setXIncludeAware(true); // Noncompliant
+        factory.setFeature("http://apache.org/xml/features/xinclude", true); // Noncompliant
+
+        // Other XML parsing code goes here...
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example below demonstrates the correct configuration of an XML parser in Java, ensuring that external XML files are not included.
+
+<!-- #example_positive_code -->
+```java
+import javax.xml.parsers.SAXParserFactory;
+
+public class SafeXMLParsing {
+    public static void main(String[] args) throws Exception {
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+
+        // Proper configuration to disable xinclude
+        factory.setXIncludeAware(false); // Compliant
+        factory.setFeature("http://apache.org/xml/features/xinclude", false); // Compliant
+
+        // Other XML parsing code goes here...
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+In the negative example below, the `xinclude` feature is mistakenly enabled, exposing the parser to potential security threats.
+
+<!-- #example_negative_code -->
+```java
+import javax.xml.parsers.SAXParserFactory;
+
+public class InsecureParserFactory {
+    public static void configureFactory(SAXParserFactory factory) throws Exception {
+        // Vulnerable configuration enabling xinclude
+        factory.setXIncludeAware(true); // Noncompliant
+        factory.setFeature("http://apache.org/xml/features/xinclude", true); // Noncompliant
+        factory.setFeature("http://xml.org/sax/features/external-general-entities", true);
+        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", true);
+
+        // Set up for parsing tasks...
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example shows how to configure an XML parser factory, ensuring additional security by checking other features while disabling xinclude.
+
+<!-- #example_positive_code -->
+```java
+import javax.xml.parsers.SAXParserFactory;
+
+public class SecureParserFactory {
+    public static void configureFactory(SAXParserFactory factory) throws Exception {
+        // Correct security-oriented configuration 
+        factory.setXIncludeAware(false); // Compliant
+        factory.setFeature("http://apache.org/xml/features/xinclude", false); // Compliant
+        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+
+        // Set up for parsing tasks...
+    }
+}
+```

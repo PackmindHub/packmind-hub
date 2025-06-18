@@ -1,0 +1,93 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure Switch Cases End with an Unconditional `break` Statement
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["maintainability","reliability","clarity"]} />
+
+### What is it?
+This practice is triggered when a switch case does not end with an explicit termination, such as a `break` statement, which can lead to the execution falling through to subsequent cases.
+
+### Why apply it?
+Forgetting to add a `break` statement often leads to unintended fall-through behavior where subsequent case statements are executed. This results in bugs that are difficult to trace and can make the code harder to read and maintain.
+
+### How to fix it?
+Ensure each case in a switch statement ends with an unconditional break, return, throw, or continue statement, unless intentionally allowing fallthrough with a comment.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example lacks break statements, causing unintended fall-through except for the last executed case.
+
+<!-- #example_negative_code -->
+```java
+switch (dayOfWeek) {
+  case "Monday":
+    doStartOfWeekRoutine();
+  case "Wednesday":  // fall-through will execute doStartOfWeekRoutine and doMidWeekAnalysis
+    doMidWeekAnalysis();
+  case "Friday":
+    prepareForWeekend();
+  default:
+    restAndRelax();
+    break;
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example shows a switch statement where each case ends with a `break` statement, preventing unintended fall-through.
+
+<!-- #example_positive_code -->
+```java
+switch (dayOfWeek) {
+  case "Monday":
+    doStartOfWeekRoutine();
+    break;
+  case "Wednesday":
+    doMidWeekAnalysis();
+    break;
+  case "Friday":
+    prepareForWeekend();
+    break;
+  default:
+    restAndRelax();
+    break;
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example includes cases where the lack of break statements results in unintended execution of subsequent cases.
+
+<!-- #example_negative_code -->
+```java
+switch (statusCode) {
+  case 200:
+    logSuccess();
+  case 202:  // lack of break causes fall-through here unintentionally
+    handleProcessing();
+  case 404:
+    handleNotFound();
+  default:
+    logUnknownStatus();
+}
+```

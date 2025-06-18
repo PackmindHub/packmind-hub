@@ -1,0 +1,122 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Calling `runFinalizersOnExit` in Java Applications
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","resource management"]} />
+
+### What is it?
+This practice is triggered by the use of the `System.runFinalizersOnExit` method, which is considered unsafe for predictable finalization of objects during JVM termination.
+
+### Why apply it?
+Using `runFinalizersOnExit` can lead to erratic behavior and deadlocks because finalizers might be called on live objects while other threads are actively using them. Instead, attach shutdown hooks which provide a more controlled and safe way to execute operations upon JVM shutdown.
+
+### How to fix it?
+Replace the use of `System.runFinalizersOnExit` with a shutdown hook registered with `Runtime.getRuntime().addShutdownHook(Thread)`.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example calls `System.runFinalizersOnExit(true)`, leading to unsafe finalization of objects and potential deadlocks, which is a noncompliant approach.
+
+<!-- #example_negative_code -->
+```java
+public class UnsafeFinalizerExample {
+  public static void main(String[] args) {
+    System.runFinalizersOnExit(true);  // Noncompliant
+    System.out.println("Application running...");
+  }
+
+  protected void finalize(){
+    System.out.println("Finalizing resources.");
+    // Finalization logic here
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses a shutdown hook to perform cleanup operations when the JVM is shutting down, ensuring safe and predictable finalization.
+
+<!-- #example_positive_code -->
+```java
+public class ShutdownExample {
+  public static void main(String[] args) {
+    Thread cleanupThread = new Thread(() -> {
+      System.out.println("Performing cleanup operations.");
+      performCleanupTasks();
+    });
+    Runtime.getRuntime().addShutdownHook(cleanupThread);
+
+    System.out.println("Application running...");
+  }
+
+  private static void performCleanupTasks() {
+    // Cleanup logic here
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example demonstrates the use of `System.runFinalizersOnExit` which can lead to unpredictable application shutdown behavior, thus is noncompliant.
+
+<!-- #example_negative_code -->
+```java
+public class UnsafeShutdown {
+  public static void main(String[] args) {
+    System.runFinalizersOnExit(true);  // Noncompliant
+    System.out.println("Program running with unsafe finalization.");
+  }
+
+  @Override
+  protected void finalize() {
+    System.out.println("Unpredictably finalizing objects.");
+    // Risky finalization logic
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example again shows how to use a shutdown hook for safely closing resources upon JVM shutdown, instead of relying on finalization.
+
+<!-- #example_positive_code -->
+```java
+public class SafeShutdownHook {
+  public static void main(String[] args) {
+    Thread resourceThread = new Thread(() -> closeOpenResources());
+    Runtime.getRuntime().addShutdownHook(resourceThread);
+
+    System.out.println("Application performing tasks...");
+  }
+
+  private static void closeOpenResources() {
+    System.out.println("Closing open resources safely.");
+    // Logic to close resources
+  }
+}
+```

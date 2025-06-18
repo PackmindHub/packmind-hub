@@ -1,0 +1,151 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Getters and Setters Should Access the Expected Fields
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","encapsulation"]} />
+
+### What is it?
+This practice ensures that getters and setters properly access and modify the fields they are intended to encapsulate within a class.
+
+### Why apply it?
+Getters and setters are crucial for encapsulating data and maintaining a clear contract with class users. Incorrectly accessing the wrong fields disrupts this contract and can cause unexpected behavior in applications.
+
+### How to fix it?
+Always verify that your getters return and your setters modify the correct fields that correspond to the method name.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+In this noncompliant example, the `Person` class incorrectly accesses the wrong fields in its getters and setters.
+
+<!-- #example_negative_code -->
+```java
+public class Person {
+    private String name;
+    private int age;
+
+    public String getName() {  /* Noncompliant: returns incorrect field */
+        return String.valueOf(this.age);
+    }
+
+    public void setName(String name) {  /* Noncompliant: updates incorrect field */
+        this.age = Integer.parseInt(name);
+    }
+
+    public int getAge() {  /* Noncompliant: returns incorrect field */
+        return this.name.length();
+    }
+
+    public void setAge(int age) {  /* Noncompliant: updates incorrect field */
+        this.name = String.valueOf(age);
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this compliant example, the `Person` class correctly uses getters and setters to access and modify its private fields.
+
+<!-- #example_positive_code -->
+```java
+public class Person {
+    private String name;
+    private int age;
+
+    public String getName() {  /* Compliant */
+        return this.name;
+    }
+
+    public void setName(String name) {  /* Compliant */
+        this.name = name;
+    }
+
+    public int getAge() {  /* Compliant */
+        return this.age;
+    }
+
+    public void setAge(int age) {  /* Compliant */
+        this.age = age;
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+In this noncompliant example, the `Rectangle` class incorrectly links the setters to the wrong fields.
+
+<!-- #example_negative_code -->
+```java
+public class Rectangle {
+    private double width;
+    private double height;
+
+    public double getWidth() {  /* Noncompliant: returns incorrect field */
+        return this.height;
+    }
+
+    public void setWidth(double width) {  /* Noncompliant: updates incorrect field */
+        this.height = width;
+    }
+
+    public double getHeight() {  /* Noncompliant: returns incorrect field */
+        return this.width;
+    }
+
+    public void setHeight(double height) {  /* Noncompliant: updates incorrect field */
+        this.width = height;
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This compliant example ensures the `Rectangle` class manages its fields accurately with corresponding getters and setters.
+
+<!-- #example_positive_code -->
+```java
+public class Rectangle {
+    private double width;
+    private double height;
+
+    public double getWidth() {  /* Compliant */
+        return this.width;
+    }
+
+    public void setWidth(double width) {  /* Compliant */
+        this.width = width;
+    }
+
+    public double getHeight() {  /* Compliant */
+        return this.height;
+    }
+
+    public void setHeight(double height) {  /* Compliant */
+        this.height = height;
+    }
+}
+```

@@ -1,0 +1,121 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# "Cloneables" Should Implement `clone()`
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["robustness","conventions"]} />
+
+### What is it?
+This practice addresses the use of the `Cloneable` interface in Java without overriding the `clone()` method. Implementing `Cloneable` without providing a custom `clone()` method may lead to unexpected behavior and violations of the `Cloneable` contract.
+
+### Why apply it?
+When a class claims to be `Cloneable` but does not override `Object.clone()`, it may not adhere to the expected semantics of a deep or shallow copy, potentially causing bugs and maintenance problems. The expected behavior when implementing `Cloneable` is that calling `clone()` will not throw a `CloneNotSupportedException`.
+
+### How to fix it?
+Override the `clone()` method in any class that implements `Cloneable`. Ensure that it calls `super.clone()` and properly handles copying, either shallow or deep, depending on the class's needs.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+A noncompliant example where the class implements `Cloneable` but does not override `clone()`.
+
+<!-- #example_negative_code -->
+```java
+class Foo implements Cloneable {
+
+  public int value;
+
+  // Missing clone method
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+A compliant example where the class properly implements the `clone()` method, ensuring the object can be cloned safely and predictably.
+
+<!-- #example_positive_code -->
+```java
+class Foo implements Cloneable {
+
+  public int value;
+
+  @Override
+  public Foo clone() {
+    try {
+      return (Foo) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw new AssertionError(); // Can't happen because Foo is Cloneable
+    }
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example shows an incomplete or incorrect cloning implementation, which overlooks overriding `clone()` when implementing `Cloneable`.
+
+<!-- #example_negative_code -->
+```java
+import java.util.List;
+
+class Entity implements Cloneable {
+
+  public int id;
+  public List<Entity> children;
+
+  // Does not override clone method
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example demonstrates a class implementing `Cloneable` and performing additional copying logic in the `clone()` method to achieve a deep copy.
+
+<!-- #example_positive_code -->
+```java
+import java.util.List;
+import java.util.ArrayList;
+
+class Entity implements Cloneable {
+
+  public int id;
+  public List<Entity> children;
+
+  @Override
+  public Entity clone() {
+    try {
+      Entity clone = (Entity) super.clone();
+      clone.children = new ArrayList<>(children.size());
+      for (Entity child : children) {
+        clone.children.add(child.clone());
+      }
+      return clone;
+    } catch (CloneNotSupportedException e) {
+      throw new AssertionError(); // Shouldn't happen
+    }
+  }
+}
+```

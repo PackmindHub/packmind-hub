@@ -1,0 +1,147 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# JUnit5 Inner Test Classes Should Be Annotated with @Nested
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["best practices","testing","structure"]} />
+
+### What is it?
+This practice is triggered when inner test classes in JUnit5 are not annotated with `@Nested`. Without this annotation, tests within inner classes will not be executed during the build process.
+
+### Why apply it?
+If an inner test class is not annotated with `@Nested`, its tests will not be executed during the build, potentially leading to untested code. On the other hand, static nested test classes should be left without `@Nested` annotations because they do not share setup and state with the enclosing class.
+
+### How to fix it?
+Annotate inner test classes with `@Nested` to ensure they are executed during testing. Do not annotate static nested classes with `@Nested` to ensure proper test behavior.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+In this negative example, the inner class is missing the `@Nested` annotation, meaning its tests will not be executed during the build.
+
+<!-- #example_negative_code -->
+```java
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Nested;
+
+class MyJunit5Test {
+  
+  @Test
+  void test() { /* ... */ }
+  
+  class InnerClassTest { // Noncompliant, missing @Nested annotation
+    @Test
+    void testInner() { /* ... */ }
+  }
+  
+  @Nested
+  static class StaticNestedClassTest { // Noncompliant, static class should not use @Nested
+    @Test
+    void testStatic() { /* ... */ }
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this positive example, the inner class is correctly annotated with `@Nested`, ensuring its test methods are executed during the build.
+
+<!-- #example_positive_code -->
+```java
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Nested;
+
+class MyJunit5Test {
+  
+  @Test
+  void test() { /* ... */ }
+  
+  @Nested
+  class InnerClassTest {
+    @Test
+    void testInner() { /* ... */ }
+  }
+  
+  static class StaticNestedClassTest {
+    @Test
+    void testStatic() { /* ... */ }
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example shows an inner class without `@Nested`, meaning tests in the inner class won't run, and a static nested class incorrectly using `@Nested`.
+
+<!-- #example_negative_code -->
+```java
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Nested;
+
+class OuterTest {
+
+  @Test
+  void testOuter() { /* ... */ }
+
+  class NonStaticNested { // Noncompliant, missing @Nested annotation
+    @Test
+    void testNonStaticNested() { /* ... */ }
+  }
+
+  @Nested
+  static class FullyStaticNested { // Noncompliant, static nested class erroneously annotated
+    @Test
+    void testFullyStatic() { /* ... */ }
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In the positive example, a `@Nested` annotation is used correctly on an inner class, and the static nested class is left without `@Nested` to maintain clear setup separation.
+
+<!-- #example_positive_code -->
+```java
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Nested;
+
+class OuterTest {
+
+  @Test
+  void testOuter() { /* ... */ }
+
+  @Nested
+  class NonStaticNested {
+    @Test
+    void testNonStaticNested() { /* ... */ }
+  }
+
+  static class FullyStaticNested {
+    @Test
+    void testFullyStatic() { /* ... */ }
+  }
+}
+```

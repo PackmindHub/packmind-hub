@@ -1,0 +1,105 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# The Signature of "finalize()" Should Match That of "Object.finalize()"
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","maintainability"]} />
+
+### What is it?
+This practice calls attention to incorrectly overloading the `finalize` method rather than properly overriding `Object.finalize()` in Java.
+
+### Why apply it?
+Overloading `Object.finalize()` can introduce unexpected behavior, as the garbage collector does not invoke overloaded methods, leading to potential resource leaks. Correctly overriding it ensures predictability and proper resource management.
+
+### How to fix it?
+Rename the method to a more descriptive name if it does not match `Object.finalize()`, effectively preventing misuse and maintaining clarity.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example incorrectly overloads the finalize method, which the Garbage Collector does not recognize.
+
+<!-- #example_negative_code -->
+```java
+public class ResourceHandler {
+  private boolean isActive;
+
+  public int finalize(int resourceId) {  // Noncompliant
+    // Logic to close the resource
+    isActive = false;
+    return resourceId;
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This example correctly avoids overloading the `finalize()` method by using a descriptive method name.
+
+<!-- #example_positive_code -->
+```java
+public class ResourceHandler {
+  private boolean isActive;
+
+  public int closeResource(int resourceId) {  // Compliant
+    // Logic to close the resource
+    isActive = false;
+    return resourceId;
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+An incorrect example where `finalize()` is overloaded instead of overridden, potentially leading to issues.
+
+<!-- #example_negative_code -->
+```java
+public class ConnectionManager {
+  private boolean isConnected;
+
+  public void finalize(String username) {  // Noncompliant
+    // Disconnect logic here
+    isConnected = false;
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+A correct example illustrating a method named clearly, avoiding the problematic overloading of `finalize()`.
+
+<!-- #example_positive_code -->
+```java
+public class ConnectionManager {
+  private boolean isConnected;
+
+  public void disconnectUser(String username) {  // Compliant
+    // Disconnect logic here
+    isConnected = false;
+  }
+}
+```

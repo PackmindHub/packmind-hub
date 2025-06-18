@@ -1,0 +1,135 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Testing Empty Lines with Regex MULTILINE Flag without Checking String Emptiness
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","error-prone"]} />
+
+### What is it?
+This practice is triggered by the use of regular expressions with the `MULTILINE` flag to detect empty lines without checking if the entire string is empty. The use of `^$` with the `MULTILINE` flag does not match the string end for empty checks, which can lead to missing out empty lines at the end of inputs.
+
+### Why apply it?
+Using regex with the `MULTILINE` flag along with `^$` can lead to incorrect assumptions about empty lines since it fails to match empty strings at the end of input. By ensuring that we check if a string is completely empty, we can accurately detect empty lines.
+
+### How to fix it?
+When searching for empty lines, combine the use of the `^$` pattern with a check for emptiness using `isEmpty()` method of the string.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example only uses the `^$` regex with the `MULTILINE` flag without verifying if the entire input string is empty.
+
+<!-- #example_negative_code -->
+```java
+import java.util.regex.Pattern;
+
+public class EmptyLineChecker {
+    static final Pattern p = Pattern.compile("^$", Pattern.MULTILINE);  /* Noncompliant */
+
+    public boolean containsEmptyLines(String str) {
+        return p.matcher(str).find();
+    }
+
+    // Testing the method
+    public static void main(String[] args) {
+        EmptyLineChecker checker = new EmptyLineChecker();
+        System.out.println(checker.containsEmptyLines("line1\n\nline2"));  // Correctly prints 'true'
+        System.out.println(checker.containsEmptyLines(""));                // Incorrectly prints 'false'
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example correctly combines regex pattern matching for empty lines with a check that the input string itself may be empty.
+
+<!-- #example_positive_code -->
+```java
+import java.util.regex.Pattern;
+
+public class EmptyLineChecker {
+    static final Pattern p = Pattern.compile("^$", Pattern.MULTILINE);  /* Compliant */
+
+    public boolean containsEmptyLines(String str) {
+        return p.matcher(str).find() || str.isEmpty();
+    }
+
+    // Testing the method
+    public static void main(String[] args) {
+        EmptyLineChecker checker = new EmptyLineChecker();
+        System.out.println(checker.containsEmptyLines("line1\n\nline2"));  // Prints 'true'
+        System.out.println(checker.containsEmptyLines(""));                // Prints 'true'
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example misses checking if the string itself is empty, thus failing to identify scenarios where the entire input is empty.
+
+<!-- #example_negative_code -->
+```java
+import java.util.regex.Pattern;
+
+public class ContentAnalyzer {
+    private static final Pattern emptyLinePattern = Pattern.compile("^$", Pattern.MULTILINE);  /* Noncompliant */
+
+    public boolean hasEmptyLines(String content) {
+        return emptyLinePattern.matcher(content).find();
+    }
+
+    public static void main(String[] args) {
+        ContentAnalyzer analyzer = new ContentAnalyzer();
+        System.out.println(analyzer.hasEmptyLines("text\n\nmore text"));  // Correctly prints 'true'
+        System.out.println(analyzer.hasEmptyLines(""));                   // Incorrectly prints 'false'
+        System.out.println(analyzer.hasEmptyLines("\nonly line"));        // Correctly prints 'true'
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example utilizes both the regex and a direct `isEmpty()` check to correctly identify empty lines or if the string itself is empty.
+
+<!-- #example_positive_code -->
+```java
+import java.util.regex.Pattern;
+
+public class ContentAnalyzer {
+    private static final Pattern emptyLinePattern = Pattern.compile("^$", Pattern.MULTILINE);  /* Compliant */
+
+    public boolean hasEmptyLinesOrString(String content) {
+        return emptyLinePattern.matcher(content).find() || content.isEmpty();
+    }
+
+    public static void main(String[] args) {
+        ContentAnalyzer analyzer = new ContentAnalyzer();
+        System.out.println(analyzer.hasEmptyLinesOrString("text\n\nmore text"));  // Prints 'true'
+        System.out.println(analyzer.hasEmptyLinesOrString(""));                   // Prints 'true'
+        System.out.println(analyzer.hasEmptyLinesOrString("\nonly line"));        // Prints 'true'
+    }
+}
+```

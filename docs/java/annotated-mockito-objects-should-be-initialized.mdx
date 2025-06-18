@@ -1,0 +1,142 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Annotated Mockito Objects Should Be Initialized
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["correctness","testing"]} />
+
+### What is it?
+This practice is triggered by test classes containing Mockito annotations `@Mock`, `@Spy`, `@Captor`, or `@InjectMocks` that are not properly initialized. Uninitialized mocks will cause tests to fail because they are not functional.
+
+### Why apply it?
+To ensure Mockito annotations work correctly, they must be explicitly initialized. Failing to do so can lead to inaccurate test results and prevent catching errors effectively.
+
+### How to fix it?
+Initialize Mockito objects by using one of the methods provided by the framework:
+  
+- Call `MockitoAnnotations.openMocks(this)` or `MockitoAnnotations.initMocks(this)` in a setup method.
+- Annotate the test class with `@RunWith(MockitoJUnitRunner.class)` for JUnit 4.
+- Annotate the test class with `@ExtendWith(MockitoExtension.class)` for JUnit 5.
+- Use `@Rule public MockitoRule rule = MockitoJUnit.rule();` in the test class.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example shows a JUnit 5 test class using Mockito annotations without initialization, which is noncompliant.
+
+<!-- #example_negative_code -->
+```java
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+
+public class ServiceTest {
+
+  @Mock
+  private DataService dataService;
+
+  @Test
+  void testDataProcessing() {
+    // Test logic here
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example shows a JUnit 5 test class with Mockito annotations properly initialized using `MockitoExtension`.
+
+<!-- #example_positive_code -->
+```java
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+public class ServiceTest {
+
+  @Mock
+  private DataService dataService;
+
+  @Test
+  void testDataProcessing() {
+    // Test logic here
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example displays a JUnit 4 test class without proper initialization of Mockito annotations, leading to noncompliance.
+
+<!-- #example_negative_code -->
+```java
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+
+public class CalculatorTest {
+
+  @Mock
+  private MathService mathService;
+
+  @InjectMocks
+  private Calculator calculator;
+
+  @Test
+  public void testAdd() {
+    // Test logic here
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example demonstrates Mockito objects being initialized using `MockitoJUnitRunner` in a JUnit 4 test class.
+
+<!-- #example_positive_code -->
+```java
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+@RunWith(MockitoJUnitRunner.class)
+public class CalculatorTest {
+
+  @Mock
+  private MathService mathService;
+
+  @InjectMocks
+  private Calculator calculator;
+
+  @Test
+  public void testAdd() {
+    // Test logic here
+  }
+}
+```

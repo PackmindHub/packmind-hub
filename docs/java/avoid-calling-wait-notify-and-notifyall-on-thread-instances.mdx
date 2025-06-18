@@ -1,0 +1,157 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Calling `wait()`, `notify()`, and `notifyAll()` on `Thread` Instances
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","synchronization","threads"]} />
+
+### What is it?
+This practice addresses the problem of invoking synchronization methods `wait()`, `notify()`, and `notifyAll()` on instances of `Thread`, which should instead be used on objects that act as locks.
+
+## Why is this an issue?
+Calling these methods directly on `Thread` objects can disrupt the JVM's internal thread state management, leading to unexpected behavior and potential data corruption.
+
+### How to fix it?
+Use synchronization objects or lock mechanisms rather than using `Thread` objects directly for synchronization methods.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example demonstrates the incorrect use of wait() method on a Thread instance.
+
+<!-- #example_negative_code -->
+```java
+class IncorrectThreadSync {
+    private final Thread thread = new Thread();
+
+    public void execute() throws InterruptedException {
+        synchronized (thread) {
+            while (!conditionMet()) {
+                thread.wait(); // Noncompliant
+            }
+            performWork();
+            thread.notifyAll();
+        }
+    }
+
+    private boolean conditionMet() {
+        // Logic to determine if condition is met
+        return false;
+    }
+
+    private void performWork() {
+        // Work logic here
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example shows correct usage of synchronization methods on an object acting as a lock.
+
+<!-- #example_positive_code -->
+```java
+class SynchronizationExample {
+    private final Object lock = new Object();
+
+    public void performTask() throws InterruptedException {
+        synchronized (lock) {
+            while (!conditionMet()) {
+                lock.wait(); // Compliant
+            }
+            processTask();
+            lock.notifyAll();
+        }
+    }
+
+    private boolean conditionMet() {
+        // Logic to determine if condition is met
+        return true;
+    }
+
+    private void processTask() {
+        // Task processing logic
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example mistakenly invokes the notifyAll() method on a Thread instance.
+
+<!-- #example_negative_code -->
+```java
+class FaultyTaskHandler {
+    private final Thread taskThread = new Thread();
+
+    public void waitForCompletion() throws InterruptedException {
+        synchronized (taskThread) {
+            while (!isReady()) {
+                taskThread.wait(); // Noncompliant
+            }
+        }
+    }
+
+    public void signalCompletion() {
+        synchronized (taskThread) {
+            // Perform some task
+            taskThread.notifyAll(); // Noncompliant
+        }
+    }
+
+    private boolean isReady() {
+        // Task readiness logic
+        return false;
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example correctly uses the wait() method with a dedicated lock object for thread synchronization.
+
+<!-- #example_positive_code -->
+```java
+class TaskManager {
+    private final Object lock = new Object();
+    private boolean taskCompleted = false;
+
+    public void waitForTask() throws InterruptedException {
+        synchronized (lock) {
+            while (!taskCompleted) {
+                lock.wait(); // Compliant
+            }
+        }
+    }
+
+    public void completeTask() {
+        synchronized (lock) {
+            taskCompleted = true;
+            lock.notifyAll(); // Notify waiting threads
+        }
+    }
+}
+```

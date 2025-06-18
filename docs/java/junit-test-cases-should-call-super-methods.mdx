@@ -1,0 +1,115 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# JUnit Test Cases Should Call Super Methods
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","consistency"]} />
+
+### What is it?
+This practice is triggered when a JUnit test case that overrides setUp or tearDown methods fails to explicitly call the corresponding `super` method.
+
+### Why apply it?
+Overriding these methods without calling `super.setUp()` or `super.tearDown()` can lead to inconsistent test setup and teardown procedures, potentially causing tests to fail or behave unpredictably as shared logic from the parent class is skipped.
+
+### How to fix it?
+Explicitly call `super.setUp()` and `super.tearDown()` at the beginning of your overriding methods to ensure that any necessary setup or cleanup logic from the parent class is executed.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example shows a JUnit test case where the setUp method fails to call `super.setUp()`, omitting important initializations performed by the parent class.
+
+<!-- #example_negative_code -->
+```java
+public class DatabaseTest extends BaseTest {
+
+  private DatabaseConnection dbConnection;
+
+  @Override
+  protected void setUp() throws Exception { // Noncompliant
+    dbConnection = new DatabaseConnection("test-database");
+    dbConnection.initialize();
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example shows a JUnit test case where the setUp method correctly calls `super.setUp()` to include any setup logic defined in the parent class.
+
+<!-- #example_positive_code -->
+```java
+public class DatabaseTest extends BaseTest {
+
+  private DatabaseConnection dbConnection;
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp(); // Compliant
+    dbConnection = new DatabaseConnection("test-database");
+    dbConnection.initialize();
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+In the negative example, the tearDown method neglects to call `super.tearDown()`, potentially leaving resources from the parent class unhandled.
+
+<!-- #example_negative_code -->
+```java
+public class ServiceTest extends AbstractTestSetup {
+
+  private MockService service;
+
+  @Override
+  protected void tearDown() throws Exception { // Noncompliant
+    if (service != null) {
+      service.shutdown();
+    }
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example demonstrates a correct implementation of the tearDown method where `super.tearDown()` is properly invoked to ensure cleanup logic from the parent class is executed.
+
+<!-- #example_positive_code -->
+```java
+public class ServiceTest extends AbstractTestSetup {
+
+  private MockService service;
+
+  @Override
+  protected void tearDown() throws Exception {
+    if (service != null) {
+      service.shutdown();
+    }
+    super.tearDown(); // Compliant
+  }
+}
+```

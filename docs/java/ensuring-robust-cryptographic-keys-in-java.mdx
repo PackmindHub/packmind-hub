@@ -1,0 +1,127 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensuring Robust Cryptographic Keys in Java
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["security","cryptography"]} />
+
+### What is it?
+Inadequate cryptographic key sizes in applications can make encrypted data vulnerable to attacks that can decrypt and compromise sensitive information.
+
+### Why apply it?
+Robust cryptographic keys are fundamental to ensuring data confidentiality, privacy, and protecting information integrity. Short or weak keys can be easily attacked, leading to potential breaches of data and compliance issues.
+
+### How to fix it?
+Always use cryptographic key sizes that are recommended by security standards. For example, use a minimum of 2048 bits for RSA keys, 128 bits for AES, and 224 bits for ECC.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example uses a weak 1024-bit key for RSA, which is insecure and vulnerable to cryptographic attacks.
+
+<!-- #example_negative_code -->
+```java
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+
+public class InsecureRSAKeyGeneration {
+    public static void main(String[] args) {
+        try {
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(1024);  // Noncompliant
+            // Unsafe key handling, potential risk of decryption...
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this example, a 2048-bit key is used for RSA, which is considered secure and compliant with current cryptographic standards.
+
+<!-- #example_positive_code -->
+```java
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+
+public class SecureRSAKeyGeneration {
+    public static void main(String[] args) {
+        try {
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(2048);  // Compliant
+            // Additional secure key handling logic here...
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This example utilizes an insecure 64-bit key for AES, making the data susceptible to brute-force attacks.
+
+<!-- #example_negative_code -->
+```java
+import java.security.KeyGenerator;
+import java.security.NoSuchAlgorithmException;
+
+public class InsecureAESKeyGeneration {
+    public static void main(String[] args) {
+        try {
+            KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+            keyGenerator.init(64);  // Noncompliant
+            // This weak key makes the data vulnerable...
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The example shows a compliant AES key generation with a secure 128-bit key size.
+
+<!-- #example_positive_code -->
+```java
+import java.security.KeyGenerator;
+import java.security.NoSuchAlgorithmException;
+
+public class SecureAESKeyGeneration {
+    public static void main(String[] args) {
+        try {
+            KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+            keyGenerator.init(128);  // Compliant
+            // Additional secure key management logic...
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```

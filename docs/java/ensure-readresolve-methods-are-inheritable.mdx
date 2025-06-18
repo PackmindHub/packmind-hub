@@ -1,0 +1,139 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure `readResolve` Methods are Inheritable
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["maintainability","reliability"]} />
+
+### What is it?
+This practice refers to the correct use of the `readResolve` method in Java's serialization mechanism, ensuring that it can be accessed by subclasses in a class hierarchy.
+
+### Why apply it?
+Developers may need to add logic to handle deserialized objects. A `readResolve` method should be inheritable so that subclasses can have access to this functionality. Making it `protected` instead of `private` ensures it can be used effectively in inheritance chains.
+
+### How to fix it?
+Make `readResolve` methods `protected` rather than `private` to allow subclasses to inherit and possibly override the behavior as needed.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses a private `readResolve` method, preventing subclass access to the method.
+
+<!-- #example_negative_code -->
+```java
+import java.io.ObjectStreamException;
+import java.io.Serializable;
+
+public class Fruit implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private Object readResolve() throws ObjectStreamException {  // Noncompliant
+        // Custom logic for deserialization
+        return this;
+    }
+
+    // Additional fields and methods...
+}
+
+public class Raspberry extends Fruit {
+    // No access to parent's readResolve method
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example demonstrates a `protected` `readResolve` method allowing subclass access to this method for customization.
+
+<!-- #example_positive_code -->
+```java
+import java.io.ObjectStreamException;
+import java.io.Serializable;
+
+public class Fruit implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    protected Object readResolve() throws ObjectStreamException {
+        // Custom logic for deserialization
+        return this;
+    }
+
+    // Additional fields and methods...
+}
+
+public class Raspberry extends Fruit {
+    // Access to parent's readResolve method
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example demonstrates a private `readResolve` implementation wrongly preventing subclasses from leveraging any deserialization logic.
+
+<!-- #example_negative_code -->
+```java
+import java.io.ObjectStreamException;
+import java.io.Serializable;
+
+abstract class ElectronicDevice implements Serializable {
+    private static final long serialVersionUID = 2L;
+
+    private Object readResolve() throws ObjectStreamException {  // Noncompliant
+        // Restoration work omitted
+        return this;
+    }
+
+    // Device-related fields and methods...
+}
+
+public class Smartphone extends ElectronicDevice {
+    // Cannot access parent's readResolve method
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Here, a hierarchy of classes correctly uses `readResolve` with proper visibility, ensuring `readResolve` is accessible by all subclasses.
+
+<!-- #example_positive_code -->
+```java
+import java.io.ObjectStreamException;
+import java.io.Serializable;
+
+abstract class ElectronicDevice implements Serializable {
+    private static final long serialVersionUID = 2L;
+
+    protected Object readResolve() throws ObjectStreamException {
+        // Restore object invariant
+        return this;
+    }
+
+    // Device-related fields and methods...
+}
+
+public class Smartphone extends ElectronicDevice {
+    // Benefits from parent's readResolve method
+}
+```

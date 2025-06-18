@@ -1,0 +1,123 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# "ScheduledThreadPoolExecutor" Should Not Have 0 Core Threads
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["maintainability","reliability"]} />
+
+### What is it?
+This practice is triggered when the `corePoolSize` of a `ScheduledThreadPoolExecutor` is set to zero. This can lead to a situation where no tasks are executed as there are no threads available to run the scheduled tasks.
+
+### Why apply it?
+
+Having a `corePoolSize` of zero means the executor will have no threads allocated to run tasks, potentially leading to unexpected application behavior and failure to execute scheduled operations.
+
+### How to fix it?
+
+Ensure that the `corePoolSize` is set to a value greater than zero, thus allowing tasks to be scheduled and executed as intended.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example improperly sets `corePoolSize` to zero, preventing tasks from being executed by the `ScheduledThreadPoolExecutor`.
+
+<!-- #example_negative_code -->
+```java
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+public class TaskScheduler {
+
+  public void scheduleTasks() {
+    ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(0);  // Noncompliant
+    executor.schedule(() -> {
+      System.out.println("Task executed");
+    }, 1, TimeUnit.SECONDS);
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example correctly sets the `corePoolSize` of the `ScheduledThreadPoolExecutor` to a value greater than zero, ensuring tasks can be run.
+
+<!-- #example_positive_code -->
+```java
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+public class TaskScheduler {
+
+  public void scheduleTasks() {
+    ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(5);  // Compliant
+    executor.schedule(() -> {
+      System.out.println("Task executed");
+    }, 1, TimeUnit.SECONDS);
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example incorrectly sets the `corePoolSize` to zero using the `setCorePoolSize` method, leading to no threads available for task execution.
+
+<!-- #example_negative_code -->
+```java
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+public class PeriodicScheduler {
+
+  public void initiateScheduler() {
+    ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2);
+    executor.setCorePoolSize(0);  // Noncompliant
+    executor.scheduleWithFixedDelay(() -> {
+      System.out.println("Executing periodic task");
+    }, 0, 5, TimeUnit.SECONDS);
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example correctly configures the `corePoolSize` using the `setCorePoolSize` method to a value greater than zero.
+
+<!-- #example_positive_code -->
+```java
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+public class PeriodicScheduler {
+
+  public void initiateScheduler() {
+    ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2);
+    executor.setCorePoolSize(5);  // Compliant
+    executor.scheduleWithFixedDelay(() -> {
+      System.out.println("Executing periodic task");
+    }, 0, 5, TimeUnit.SECONDS);
+  }
+}
+```

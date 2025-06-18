@@ -1,0 +1,139 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Class Names Should Not Shadow Interfaces or Superclasses
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","intentionality - clear"]} />
+
+### What is it?
+This practice addresses the issue of class name shadowing, where a class name is identical to that of its superclass or an interface it implements.
+
+### Why apply it?
+Class name shadowing leads to ambiguity, making it unclear which class is being referred to, which can result in potential bugs and reduced code readability.
+
+### How to fix it?
+Rename the class to use a more descriptive and unique name that doesn’t conflict with its superclass or implemented interfaces names.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example shows a class shadowing the interface it implements, causing ambiguity and potential bugs.
+
+<!-- #example_negative_code -->
+```java
+package org.foo.domain;
+
+public interface User {
+  void login();
+}
+
+package org.foo.presentation;
+
+public class User implements org.foo.domain.User { // Noncompliant
+  public void login() {
+    System.out.println("Logging in...");
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses unique and descriptive class names that do not conflict with superclasses or implemented interfaces.
+
+<!-- #example_positive_code -->
+```java
+package org.foo.domain;
+
+public interface User {
+  void login();
+}
+
+package org.foo.presentation;
+
+import org.foo.domain.User;
+
+public class UserView implements User { // Compliant
+  public void login() {
+    System.out.println("Logging in...");
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+In this negative example, the class name shadows its superclass, leading to confusion.
+
+<!-- #example_negative_code -->
+```java
+package org.foo.domain;
+
+public class BaseEntity {
+  private int id;
+
+  public int getId() {
+    return id;
+  }
+}
+
+package org.foo.data;
+
+public class BaseEntity extends org.foo.domain.BaseEntity { // Noncompliant
+  private String recordData;
+
+  public String getRecordData() {
+    return recordData;
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example demonstrates a class uniquely named, avoiding conflicts with the superclass.
+
+<!-- #example_positive_code -->
+```java
+package org.foo.domain;
+
+public class BaseEntity {
+  private int id;
+
+  public int getId() {
+    return id;
+  }
+}
+
+package org.foo.data;
+
+import org.foo.domain.BaseEntity;
+
+public class EntityRecord extends BaseEntity { // Compliant
+  private String recordData;
+
+  public String getRecordData() {
+    return recordData;
+  }
+}
+```

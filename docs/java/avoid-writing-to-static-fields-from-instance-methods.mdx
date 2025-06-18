@@ -1,0 +1,115 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Writing to `static` Fields from Instance Methods
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","data integrity","multithreading"]} />
+
+### What is it?
+This practice is triggered when a `static` field is updated from a non-static method in Java, potentially causing issues in environments with multiple instances or threads.
+
+### Why apply it?
+Updating a `static` field from instance methods can lead to race conditions and inconsistent states if not managed correctly, especially in multithreaded environments.
+
+### How to fix it?
+Access and modify `static` fields within `synchronized static` methods to ensure consistent updates and avoid unexpected behaviors caused by concurrent modifications.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example directly modifies a static field from an instance method, risking race conditions and inconsistent states.
+
+<!-- #example_negative_code -->
+```java
+public class MyClass {
+
+  private static int count = 0;
+
+  public void doSomething() {
+    //...
+    count++;  // Noncompliant: Direct modification of static field
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example updates the static field using a synchronized static method, ensuring thread-safe operations.
+
+<!-- #example_positive_code -->
+```java
+public class MyClass {
+
+  private static int count = 0;
+
+  public static synchronized void incrementCount() {
+    count++;  // Compliant: Updates are synchronized
+  }
+
+  public void doSomething() {
+    //...
+    MyClass.incrementCount();
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example directly alters a static field from within an instance method, creating potential thread-safety and data consistency problems.
+
+<!-- #example_negative_code -->
+```java
+public class Counter {
+
+  private static int counterValue = 0;
+
+  public void process() {
+    // Perform tasks
+    counterValue += 1;  // Noncompliant: Direct modification of static field
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example groups static field updates in a dedicated synchronized static method, allowing safe access and modifications.
+
+<!-- #example_positive_code -->
+```java
+public class Counter {
+
+  private static int counterValue = 0;
+
+  public static synchronized void updateCounter() {
+    counterValue += 1;  // Compliant: Uses synchronized static method
+  }
+
+  public void process() {
+    // Perform tasks
+    Counter.updateCounter();
+  }
+}
+```

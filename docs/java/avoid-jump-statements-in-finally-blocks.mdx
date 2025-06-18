@@ -1,0 +1,150 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Jump Statements in Finally Blocks
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","error-prone"]} />
+
+### What is it?
+This practice is focused on avoiding the use of jump statements, such as `return`, `break`, `continue`, and `throw`, within `finally` blocks in Java. These statements can suppress exceptions that are thrown within the `try` or `catch` blocks, leading to unexpected program behavior and making debugging difficult.
+
+### Why apply it?
+Using jump statements in `finally` blocks can cause the program to ignore exceptions and terminate abnormally, making code execution unpredictable and maintenance challenging.
+
+### How to fix it?
+Do not use jump statements within `finally` blocks. Instead, allow the `finally` block to complete its execution naturally to ensure exceptions are properly propagated.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example uses a `return` statement within the `finally` block, which prevents the propagation of the exception thrown in the `try` block.
+
+<!-- #example_negative_code -->
+```java
+public class Main {
+  public static void main(String[] args) {
+    try {
+      someMethod();
+      System.out.println("Incorrect execution");
+    } catch (RuntimeException e) {
+      System.out.println("This should print but doesn't");
+    }
+  }
+
+  public static void someMethod() {
+    try {
+      throw new RuntimeException("Exception thrown");
+    } finally {
+      System.out.println("Finally block executed");
+      return;  /* Noncompliant */
+    }
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example avoids using the `return` statement within the `finally` block, allowing the program to correctly propagate any exceptions that occur in the `try` block.
+
+<!-- #example_positive_code -->
+```java
+public class Main {
+  public static void main(String[] args) {
+    try {
+      someMethod();
+      System.out.println("This should not print");
+    } catch (RuntimeException e) {
+      System.out.println("Caught an exception: " + e.getMessage());
+    }
+  }
+
+  public static void someMethod() {
+    try {
+      throw new RuntimeException("Exception thrown");
+    } finally {
+      System.out.println("Finally block executed");
+    }
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example contains a `continue` statement within the `finally` block of a loop, which disrupts exception handling.
+
+<!-- #example_negative_code -->
+```java
+public class ExampleNegative {
+  public static void main(String[] args) throws Exception {
+    try {
+      yetAnotherMethod();
+    } catch (Exception e) {
+      System.out.println("This will not be printed");
+    }
+  }
+  
+  public static void yetAnotherMethod() throws Exception {
+    for (int i = 0; i < 5; i++) {
+      try {
+        if (i == 2) {
+          throw new Exception("Loop exception");
+        }
+        System.out.println("Inside loop: " + i);
+      } finally {
+        System.out.println("Finally block, i = " + i);
+        if (i == 3) {
+          break;  /* Noncompliant */
+        }
+      }
+    }
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this positive example, the `finally` block is used solely for cleanup purposes, avoiding any suppression of exceptions thrown in the `try` block.
+
+<!-- #example_positive_code -->
+```java
+public class ExamplePositive {
+  public static void main(String[] args) {
+    try {
+      anotherMethod();
+    } catch (Exception e) {
+      System.out.println("Exception caught: " + e.getMessage());
+    }
+  }
+
+  public static void anotherMethod() throws Exception {
+    try {
+      throw new Exception("Test exception");
+    } finally {
+      System.out.println("Cleanup in finally block");
+    }
+  }
+}
+```

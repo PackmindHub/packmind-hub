@@ -1,0 +1,161 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid LDAP Injection Attacks
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["security","injections"]} />
+
+### What is it?
+LDAP injections occur when untrusted data is inserted into an LDAP query without proper sanitization or validation, potentially allowing execution of malicious LDAP commands.
+
+### Why apply it?
+This vulnerability can lead to data leakage, corruption, or privilege escalation. LDAP servers are often critical to organizational infrastructure, making them a target for attackers.
+
+### How to fix it?
+Use parameterized queries to safely include user input in LDAP queries. Alternatively, sanitize inputs using libraries like OWASP's ESAPI, using functions such as `encodeForLDAP`.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example directly concatenates user inputs into the LDAP query, exposing it to injection risks.
+
+<!-- #example_negative_code -->
+```java
+import javax.naming.directory.DirContext;
+import javax.naming.directory.SearchControls;
+import javax.servlet.http.HttpServletRequest;
+import javax.naming.NamingEnumeration;
+import javax.naming.directory.SearchResult;
+
+public class LdapAuthenticator {
+  public boolean authenticate(HttpServletRequest req, DirContext ctx) throws NamingException {
+    String user = req.getParameter("user");
+    String pass = req.getParameter("pass");
+
+    String filter = "(&(uid=" + user + ")(userPassword=" + pass + "))";
+
+    NamingEnumeration<SearchResult> results = ctx.search(
+        "ou=system", 
+        filter, 
+        new SearchControls()
+    );
+    
+    return results.hasMore();
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses a parameterized query to safely include user input, preventing injection attacks.
+
+<!-- #example_positive_code -->
+```java
+import javax.naming.directory.DirContext;
+import javax.naming.directory.SearchControls;
+import javax.servlet.http.HttpServletRequest;
+import javax.naming.NamingEnumeration;
+import javax.naming.directory.SearchResult;
+
+public class LdapAuthenticator {
+  public boolean authenticate(HttpServletRequest req, DirContext ctx) throws NamingException {
+    String user = req.getParameter("user");
+    String pass = req.getParameter("pass");
+
+    String filter = "(&(uid={0})(userPassword={1}))";
+
+    NamingEnumeration<SearchResult> results = ctx.search(
+        "ou=system", 
+        filter, 
+        new String[]{user, pass}, 
+        new SearchControls()
+    );
+    
+    return results.hasMore();
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example directly uses user input in the LDAP query without any sanitization or encoding.
+
+<!-- #example_negative_code -->
+```java
+import javax.naming.directory.DirContext;
+import javax.naming.directory.SearchControls;
+import javax.servlet.http.HttpServletRequest;
+import javax.naming.NamingEnumeration;
+import javax.naming.directory.SearchResult;
+
+public class UnsafeLdapSearch {
+  public boolean searchUser(HttpServletRequest req, DirContext ctx) throws NamingException {
+    String user = req.getParameter("user");
+    String pass = req.getParameter("pass");
+
+    String filter = "(&(uid=" + user + ")(userPassword=" + pass + "))";
+
+    NamingEnumeration<SearchResult> results = ctx.search(
+        "ou=users", 
+        filter, 
+        new SearchControls()
+    );
+    
+    return results.hasMore();
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example sanitizes user input using an encoding function to neutralize special characters.
+
+<!-- #example_positive_code -->
+```java
+import org.owasp.esapi.ESAPI;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.SearchControls;
+import javax.servlet.http.HttpServletRequest;
+import javax.naming.NamingEnumeration;
+import javax.naming.directory.SearchResult;
+
+public class SafeLdapSearch {
+  public boolean searchUser(HttpServletRequest req, DirContext ctx) throws NamingException {
+    String user = ESAPI.encoder().encodeForLDAP(req.getParameter("user"));
+    String pass = ESAPI.encoder().encodeForLDAP(req.getParameter("pass"));
+
+    String filter = "(&(uid=" + user + ")(userPassword=" + pass + "))";
+
+    NamingEnumeration<SearchResult> results = ctx.search(
+        "ou=users", 
+        filter, 
+        new SearchControls()
+    );
+    
+    return results.hasMore();
+  }
+}
+```

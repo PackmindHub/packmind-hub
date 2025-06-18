@@ -1,0 +1,145 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Starting Threads in Constructors
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","concurrency"]} />
+
+### What is it?
+This rule is triggered when a `Thread.start()` method is called within a constructor of a non-`final` class.
+
+### Why apply it?
+Starting a thread in a constructor can lead to complex and hard-to-debug issues, especially if the class is extended. The child class might not be fully initialized when the thread starts.
+
+### How to fix it?
+Avoid starting a thread within the constructor. Instead, provide a method to start the thread after the construction of the object is complete.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example starts a thread in the constructor, risking it is started before the object is fully initialized.
+
+<!-- #example_negative_code -->
+```java
+public class MyClass {
+
+    private Thread thread = null;
+
+    public MyClass(Runnable runnable) {
+        thread = new Thread(runnable);
+        thread.start();  // Noncompliant
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        MyClass myClass = new MyClass(() -> System.out.println("Running in thread"));
+        // Risky: the thread has already started before myClass is fully available
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In the positive example, the thread is started via a separate method, ensuring the object is fully initialized before starting the thread.
+
+<!-- #example_positive_code -->
+```java
+public class MyClass {
+
+    private Thread thread = null;
+
+    public MyClass(Runnable runnable) {
+        thread = new Thread(runnable);
+    }
+
+    public void startThread() {
+        thread.start();  // Compliant
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        MyClass myClass = new MyClass(() -> System.out.println("Running in thread"));
+        myClass.startThread();
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+In this negative example, the thread starts in the constructor leading to potential concurrency issues with inheritance.
+
+<!-- #example_negative_code -->
+```java
+public class Worker {
+
+    private Thread workerThread = null;
+
+    public Worker(Runnable task) {
+        workerThread = new Thread(task);
+        workerThread.start();  // Noncompliant
+    }
+}
+
+public class Manager {
+    public static void main(String[] args) {
+        Worker worker = new Worker(() -> {
+            System.out.println("Worker is executing a task");
+        });
+        // The thread may operate on an incompletely initialized object
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In the positive example, a separate initialization method is used to start the thread after the object is fully constructed.
+
+<!-- #example_positive_code -->
+```java
+public class Worker {
+
+    private Thread workerThread = null;
+
+    public Worker(Runnable task) {
+        workerThread = new Thread(task);
+    }
+
+    public void startWorker() {
+        workerThread.start();  // Compliant
+    }
+}
+
+public class Manager {
+    public static void main(String[] args) {
+        Worker worker = new Worker(() -> {
+            System.out.println("Worker is executing a task");
+        });
+        worker.startWorker();  // Safe to start after construction
+    }
+}
+```

@@ -1,0 +1,143 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Exit Methods Should Not Be Called in Java
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["maintainability","reliability"]} />
+
+### What is it?
+This practice warns against using exit methods such as `System.exit(int status)`, `Runtime.getRuntime().exit(int status)`, and `Runtime.getRuntime().halt(int)`, which terminate the Java Virtual Machine (JVM) abruptly.
+
+### Why apply it?
+These exit methods can unexpectedly shut down an entire application, disrupting services and causing data loss. They should be avoided, especially in managed environments like J2EE containers, where you don't have full control over the system. It is crucial to manage application lifecycles gracefully without forcibly terminating them.
+
+### How to fix it?
+Wherever possible, refactor the code to handle application shutdowns gracefully using standard application lifecycle handling techniques. This approach avoids an abrupt shutdown and provides resources with an opportunity to clean up.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+A negative example demonstrating the use of `System.exit()`, which immediately ends the JVM.
+
+<!-- #example_negative_code -->
+```java
+public class App {
+    public void run() {
+        // Application logic here
+        if (checkShutDownCondition()) {
+            System.exit(0);  // Noncompliant
+        }
+    }
+
+    private boolean checkShutDownCondition() {
+        // Logic to determine if the application should shut down
+        return true;
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+A positive example that gracefully handles shutdown using a flag and appropriate application logic, without using exit methods.
+
+<!-- #example_positive_code -->
+```java
+public class App {
+    private boolean isRunning = true;
+
+    public void run() {
+        while (isRunning) {
+            // Application logic here
+            if (checkShutDownCondition()) {
+                shutdown();
+            }
+        }
+    }
+
+    private boolean checkShutDownCondition() {
+        // Logic to determine if the application should shut down
+        return false;
+    }
+
+    private void shutdown() {
+        isRunning = false;
+        // Additional cleanup logic here
+        System.out.println("Application shutdown gracefully.");
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+A negative example showing the use of `Runtime.getRuntime().halt()`, which immediately terminates the JVM without cleanup.
+
+<!-- #example_negative_code -->
+```java
+public class Service {
+    public void startService() {
+        // Service operations
+        if (shouldStopService()) {
+            Runtime.getRuntime().halt(0);  // Noncompliant
+        }
+    }
+
+    private boolean shouldStopService() {
+        // Determine when to stop the service
+        return true;
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+A positive example shows a managed shutdown without using any JVM termination methods.
+
+<!-- #example_positive_code -->
+```java
+public class Service {
+    private volatile boolean active = true;
+
+    public void startService() {
+        while (active) {
+            // Service operations
+            if (shouldStopService()) {
+                stopService();
+            }
+        }
+    }
+
+    private boolean shouldStopService() {
+        // Determine when to stop the service
+        return false;
+    }
+
+    public void stopService() {
+        active = false;
+        // Resource cleanup
+        System.out.println("Service stopped gracefully.");
+    }
+}
+```

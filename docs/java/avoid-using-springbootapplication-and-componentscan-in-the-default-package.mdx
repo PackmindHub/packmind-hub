@@ -1,0 +1,107 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Using `@SpringBootApplication` and `@ComponentScan` in the Default Package
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","performance","best practices"]} />
+
+### What is it?
+This practice warns against using `@SpringBootApplication` and `@ComponentScan` annotations in Java classes that belong to the default package.
+
+### Why apply it?
+The default package automatically results in scanning the entire classpath, significantly slowing application startup and potentially causing `BeanDefinitionStoreException` due to scanning inappropriate packages, including the Spring Framework itself.
+
+### How to fix it?
+Always place your main Spring Boot application class and any class annotated with `@ComponentScan` into a named package. This ensures more efficient and targeted scanning of your application's beans.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example places `@SpringBootApplication` in the default package, causing inefficient scanning and potential startup failure.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication // Noncompliant
+public class DefaultPackageApp {
+    public static void main(String[] args) {
+        SpringApplication.run(DefaultPackageApp.class, args);
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this positive example, `@SpringBootApplication` is correctly used in a named package, ensuring efficient scanning and preventing startup issues.
+
+<!-- #example_positive_code -->
+```java
+package com.example.bootapp;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication // Compliant
+public class RootBootApp {
+    public static void main(String[] args) {
+        SpringApplication.run(RootBootApp.class, args);
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The following negative example demonstrates `@ComponentScan` used in the default package without any base configuration, causing scanning of the entire classpath.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@ComponentScan("") // Noncompliant
+public class DefaultConfig {
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this positive example, `@ComponentScan` is used correctly within a named package with a defined base package, avoiding scanning issues.
+
+<!-- #example_positive_code -->
+```java
+package com.example.config;
+
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@ComponentScan(basePackages = "com.example.service") // Compliant
+public class AppConfig {
+}
+```

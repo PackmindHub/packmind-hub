@@ -1,0 +1,93 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Control Structures Should Use Curly Braces
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["maintainability","reliability"]} />
+
+### What is it?
+This practice is triggered when control structures such as `if`, `for`, or `while` statements in Java do not use curly braces for their body.
+
+### Why apply it?
+Omitting curly braces can lead to code that is misleading and error-prone during maintenance. Using curly braces improves readability and ensures that control structures only affect the intended statements.
+
+### How to fix it?
+Always include curly braces with control structures to clearly define the code block they affect.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example omits curly braces, which can lead to confusion about which statements are inside the control structure.
+
+<!-- #example_negative_code -->
+```java
+for (int i = 0; i < 5; i++)
+    if (i % 2 == 0)
+        System.out.println("Even number: " + i);
+    continueProcessing(); // This will always be executed.
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses curly braces for the `if` statement and `for` loop, ensuring clear block definitions.
+
+<!-- #example_positive_code -->
+```java
+for (int i = 0; i < 5; i++) {
+    if (i % 2 == 0) {
+        System.out.println("Even number: " + i);
+        continueProcessing();
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example omits curly braces for the `while` loop, making it appear as if multiple statements are part of the loop body, when only the first one is.
+
+<!-- #example_negative_code -->
+```java
+int i = 0;
+while (i < 5)
+    if (checkCondition(i))
+        performAction(i);
+    i++;  // This will run independently of the condition.
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses curly braces with the `while` loop, clearly defining the statements within the loop body.
+
+<!-- #example_positive_code -->
+```java
+int i = 0;
+while (i < 5) {
+    if (checkCondition(i)) {
+        performAction(i);
+        i++;
+    }
+}
+```

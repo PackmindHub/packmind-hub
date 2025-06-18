@@ -1,0 +1,119 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Keep the `finalize()` Method Protected When Overriding
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["maintainability","security"]} />
+
+### What is it?
+This practice is triggered when the `finalize()` method is overridden with a public access modifier, which deviates from its intended protection level.
+
+### Why apply it?
+The `Object.finalize()` method is meant exclusively for the Garbage Collector to call. Making it public misleads clients into believing they can or should invoke it directly, potentially leading to misuse and creating security vulnerabilities.
+
+### How to fix it?
+Override the `finalize()` method with a `protected` modifier, ensuring it remains inaccessible from outside the class or package.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+In this negative example, `finalize()` is overridden with a `public` modifier, allowing unintended access.
+
+<!-- #example_negative_code -->
+```java
+public class MyResource {
+
+  @Override
+  public void finalize() throws Throwable {  /* Noncompliant */
+    try {
+      // Resource cleanup logic
+      System.out.println("Cleaning up resources");
+    } finally {
+      super.finalize();
+    }
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+In this positive example, `finalize()` is overridden with a `protected` modifier, maintaining its restricted access.
+
+<!-- #example_positive_code -->
+```java
+public class MyResource {
+
+  @Override
+  protected void finalize() throws Throwable {  /* Compliant */
+    try {
+      // Resource cleanup logic
+      System.out.println("Cleaning up resources");
+    } finally {
+      super.finalize();
+    }
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The `finalize()` method in this example is incorrectly public, offering unauthorized public access.
+
+<!-- #example_negative_code -->
+```java
+public class CacheManager {
+
+  @Override
+  public void finalize() throws Throwable {  /* Noncompliant */
+    try {
+      // Perform cleanup of cache
+      System.out.println("Finalizing cache cleanup");
+    } finally {
+      super.finalize();
+    }
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+Here, `finalize()` is correctly overridden with a `protected` access level to prevent external access.
+
+<!-- #example_positive_code -->
+```java
+public class CacheManager {
+
+  @Override
+  protected void finalize() throws Throwable {  /* Compliant */
+    try {
+      // Perform cleanup of cache
+      System.out.println("Finalizing cache cleanup");
+    } finally {
+      super.finalize();
+    }
+  }
+}
+```

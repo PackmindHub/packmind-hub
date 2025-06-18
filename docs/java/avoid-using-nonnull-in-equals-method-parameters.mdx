@@ -1,0 +1,173 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Using `@Nonnull` in `equals` Method Parameters
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","bug"]} />
+
+### What is it?
+This practice advises against using `@Nonnull` in the parameter of the overridden `equals` method, as the contract of `equals` requires it to properly handle `null` parameters.
+
+### Why apply it?
+The `equals` method should be able to process a `null` argument by returning `false`, as specified in the `java.lang.Object` documentation. Using `@Nonnull` contradicts this requirement and can lead to unexpected behavior.
+
+### How to fix it?
+Remove the `@Nonnull` annotation from the `equals` method parameter and handle `null` appropriately within the method's implementation.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example shows a noncompliant `equals` method with a `@Nonnull` parameter, violating the method's contract.
+
+<!-- #example_negative_code -->
+```java
+import javax.annotation.Nonnull;
+
+public class Car {
+  private String model;
+
+  public Car(String model) {
+    this.model = model;
+  }
+
+  @Override
+  public boolean equals(@Nonnull Object obj) {  // Noncompliant
+    if (this == obj) {
+      return true;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    Car car = (Car) obj;
+    return model != null ? model.equals(car.model) : car.model == null;
+  }
+  
+  @Override
+  public int hashCode() {
+    // Simplified hash code implementation
+    return model != null ? model.hashCode() : 0;
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example shows a compliant `equals` method that checks for `null` without using `@Nonnull`.
+
+<!-- #example_positive_code -->
+```java
+public class Car {
+  private String model;
+
+  public Car(String model) {
+    this.model = model;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
+    Car car = (Car) obj;
+    return model != null ? model.equals(car.model) : car.model == null;
+  }
+  
+  @Override
+  public int hashCode() {
+    // Simplified hash code implementation
+    return model != null ? model.hashCode() : 0;
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example incorrectly uses `@Nonnull` in the `equals` method parameter, which should accept `null`.
+
+<!-- #example_negative_code -->
+```java
+import javax.annotation.Nonnull;
+
+public class Book {
+  private String title;
+
+  public Book(String title) {
+    this.title = title;
+  }
+
+  @Override
+  public boolean equals(@Nonnull Object obj) {  // Noncompliant
+    if (this == obj) {
+      return true;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    Book book = (Book) obj;
+    return title != null ? title.equals(book.title) : book.title == null;
+  }
+
+  @Override
+  public int hashCode() {
+    return title != null ? title.hashCode() : 0;
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example correctly handles `null` by checking for it at the beginning of the `equals` method.
+
+<!-- #example_positive_code -->
+```java
+public class Book {
+  private String title;
+
+  public Book(String title) {
+    this.title = title;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
+    Book book = (Book) obj;
+    return title != null ? title.equals(book.title) : book.title == null;
+  }
+
+  @Override
+  public int hashCode() {
+    return title != null ? title.hashCode() : 0;
+  }
+}
+```

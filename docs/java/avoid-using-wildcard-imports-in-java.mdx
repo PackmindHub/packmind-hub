@@ -1,0 +1,129 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Using Wildcard Imports in Java
+
+<Severity severity={SeverityLevels.MEDIUM} />
+
+---
+
+<Categories categories={["maintainability","readability"]} />
+
+### What is it?
+This practice is triggered by the use of wildcard imports in Java, which can make code less readable and harder to maintain due to ambiguities in class usage.
+
+### Why apply it?
+Wildcard imports reduce code readability and can introduce conflicts when class names overlap, posing difficulties in understanding where a class originates from. It helps avoid potential issues during dependency upgrades or Java version migrations.
+
+### How to fix it?
+Replace wildcard imports with explicit class imports to maintain code clarity and avoid conflicts.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example uses wildcard imports, making it unclear which `Date` class is being used.
+
+<!-- #example_negative_code -->
+```java
+import java.sql.*;  // Noncompliant
+import java.util.*; // Noncompliant
+
+public class DatabaseUtility {
+    private Date date;
+    private List<String> dataList = new ArrayList<>();
+    
+    public void addData(String data) {
+        dataList.add(data);
+    }
+
+    // Additional logic for the utility
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example explicitly imports required classes to clearly establish where each class is sourced from.
+
+<!-- #example_positive_code -->
+```java
+import java.sql.Date;
+import java.util.List;
+import java.util.ArrayList;
+
+public class DatabaseUtility {
+    private Date date;
+    private List<String> dataList = new ArrayList<>();
+
+    public void addData(String data) {
+        dataList.add(data);
+    }
+
+    // Additional logic for the utility
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example uses wildcard imports, which could lead to ambiguity in large projects.
+
+<!-- #example_negative_code -->
+```java
+import java.util.*; // Noncompliant
+
+public class ConfigurationReader {
+    private Map<String, String> configMap = new HashMap<>();
+
+    public void addConfig(String key, String value) {
+        configMap.put(key, value);
+    }
+
+    public String getConfig(String key) {
+        return configMap.get(key);
+    }
+
+    // Other configuration related methods
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example details the classes needed explicitly, enhancing readability and avoiding import conflicts.
+
+<!-- #example_positive_code -->
+```java
+import java.util.Map;
+import java.util.HashMap;
+
+public class ConfigurationReader {
+    private Map<String, String> configMap = new HashMap<>();
+
+    public void addConfig(String key, String value) {
+        configMap.put(key, value);
+    }
+
+    public String getConfig(String key) {
+        return configMap.get(key);
+    }
+
+    // Other configuration related methods
+}
+```

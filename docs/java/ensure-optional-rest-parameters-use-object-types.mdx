@@ -1,0 +1,126 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Ensure Optional REST Parameters Use Object Types
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["reliability","error-prevention"]} />
+
+### What is it?
+This practice focuses on using object types for optional REST parameters to prevent runtime exceptions caused by `null` values being mapped to primitive types.
+
+### Why apply it?
+By ensuring REST parameters use object types or are wrapped in `Optional`, you prevent runtime exceptions in Spring applications caused by the inability to map `null` values to primitive types, thereby ensuring more robust and error-free applications.
+
+### How to fix it?
+Replace primitive types with their corresponding wrapper object types or use `Optional<T>`, ensuring a more graceful handling of absent parameters.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example shows using a primitive type `int` for a REST parameter marked as optional, which can lead to a runtime exception.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class ArticleController {
+
+    @RequestMapping(value = {"/article", "/article/{id}"})
+    public String getArticle(@PathVariable(required = false) int articleId) {  // Noncompliant
+        return "Article ID: " + articleId;
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example demonstrates using an object type `Integer` for a REST parameter, ensuring that a `null` value can be handled properly.
+
+<!-- #example_positive_code -->
+```java
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class ArticleController {
+
+    @RequestMapping(value = {"/article", "/article/{id}"})
+    public String getArticle(@PathVariable(required = false) Integer articleId) {
+        if (articleId != null) {
+            return "Article ID: " + articleId;
+        } else {
+            return "No Article ID provided";
+        }
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example again uses a primitive type `int` for a REST parameter with `required = false`, leading to potential issues.
+
+<!-- #example_negative_code -->
+```java
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class ArticleController {
+
+    @RequestMapping(value = {"/article", "/article/{id}"})
+    public String getArticle(@PathVariable(required = false) int articleId) {  // Noncompliant
+        return "Article ID: " + articleId;
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example uses `Optional<Integer>` for the parameter, which is a recommended practice in handling optional REST parameters gracefully.
+
+<!-- #example_positive_code -->
+```java
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
+
+@RestController
+public class ArticleController {
+
+    @RequestMapping(value = {"/article", "/article/{id}"})
+    public String getArticle(@PathVariable Optional<Integer> articleId) {
+        return articleId.map(id -> "Article ID: " + id)
+                        .orElse("No Article ID provided");
+    }
+}
+```

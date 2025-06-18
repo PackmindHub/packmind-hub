@@ -1,0 +1,146 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Avoid Using `ThreadGroup` in Java
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["security","maintenance"]} />
+
+### What is it?
+This practice is triggered by the use of `ThreadGroup` in Java applications, which is considered insecure and outdated due to many deprecated or non-thread-safe methods it contains.
+
+### Why apply it?
+Using `ThreadGroup` can lead to unsafe operations and is less maintainable. Modern Java applications have more secure alternatives for managing threads, such as `ExecutorService`, which provides better control and flexibility.
+
+### How to fix it?
+Replace the usage of `ThreadGroup` with implementations of `java.util.concurrent.ExecutorService`, which provide a robust and secure way of handling threads.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example creates and starts a thread using `ThreadGroup`, risking unsafe operations like enumeration or suspension.
+
+<!-- #example_negative_code -->
+```java
+class NetworkHandler {
+
+  void startThreadInGroup(ThreadGroup tg) { // Noncompliant
+    Thread thread = new Thread(tg, () -> {
+      System.out.println("Thread is running in a group.");
+    }, "controller");
+    thread.start();
+  }
+
+  public static void main(String[] args) {
+    ThreadGroup tg = new ThreadGroup("myGroup");
+    new NetworkHandler().startThreadInGroup(tg);
+  }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example uses an `ExecutorService` to manage threads, ensuring secure and efficient thread execution.
+
+<!-- #example_positive_code -->
+```java
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
+
+class NetworkHandler {
+    
+  void handleThreadsProperly() {
+    ExecutorService executor = Executors.newFixedThreadPool(3);
+    for (int i = 0; i < 10; i++) {
+      final int jobId = i; // Need to be final or effectively final
+      executor.submit(() -> {
+        System.out.println("Processing job: " + jobId);
+      });
+    }
+    executor.shutdown();
+  }
+
+  public static void main(String[] args) {
+    new NetworkHandler().handleThreadsProperly();
+  }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+Here, a `ThreadGroup` is incorrectly used to manage and start threads, which might compromise the secure handling of threads.
+
+<!-- #example_negative_code -->
+```java
+class TaskManager {
+
+  void manageThreadsWithGroup(ThreadGroup group) { // Noncompliant
+    for (int i = 0; i < 5; i++) {
+      Thread thread = new Thread(group, () -> {
+        System.out.println("Managing with ThreadGroup");
+      }, "worker-" + i);
+      thread.start();
+    }
+  }
+
+  public static void main(String[] args) {
+    ThreadGroup group = new ThreadGroup("groupManager");
+    new TaskManager().manageThreadsWithGroup(group);
+  }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example utilizes a `ThreadPoolExecutor` to safely manage a pool of threads with custom settings.
+
+<!-- #example_positive_code -->
+```java
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ArrayBlockingQueue;
+
+class NetworkService {
+
+  void executeTasks() {
+    ThreadPoolExecutor executorPool = new ThreadPoolExecutor(
+            2, 5, 1, TimeUnit.MINUTES,
+            new ArrayBlockingQueue<>(10));
+    
+    for (int i = 0; i < 15; i++) {
+      final int taskId = i; // Need to be final or effectively final
+      executorPool.execute(() -> {
+        System.out.println("Executing task ID: " + taskId);
+      });
+    }
+    executorPool.shutdown();
+  }
+
+  public static void main(String[] args) {
+    new NetworkService().executeTasks();
+  }
+}
+```

@@ -1,0 +1,123 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Insecure Temporary File Creation Methods in Java
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["security","best practices"]} />
+
+### What is it?
+This practice is triggered by the use of insecure methods to create temporary files, which can lead to race conditions and security vulnerabilities.
+
+### Why apply it?
+Creating temporary files in a non-atomic way can lead to serious security issues like trust boundary violations, information disclosure, and race conditions which can be exploited by attackers.
+
+### How to fix it?
+Use secure APIs that create temporary files atomically, avoiding race conditions. Ensure temporary files are created with unique and unpredictable names in non-public directories.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example uses non-atomic operations to create temporary files, leading to race conditions.
+
+<!-- #example_negative_code -->
+```java
+import java.io.File;
+import java.io.IOException;
+
+public class InsecureTempFileExample {
+    protected void createInsecureTempDir() throws IOException {
+        File tempDir;
+        tempDir = File.createTempFile("myApp", ".tmp");
+        tempDir.delete();  // Noncompliant
+        tempDir.mkdir();   // Noncompliant
+        System.out.println("Directory created at: " + tempDir.getAbsolutePath());
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example uses `Files.createTempDirectory` which securely creates a temporary directory.
+
+<!-- #example_positive_code -->
+```java
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class SecureTempFileExample {
+    public void createSecureTempDir() throws IOException {
+        Path tempPath = Files.createTempDirectory("myApp_");
+        File tempDir = tempPath.toFile();
+        System.out.println("Secure temporary directory created at: " + tempDir.getAbsolutePath());
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+This negative example manually handles file permissions, which can be error-prone and insecure.
+
+<!-- #example_negative_code -->
+```java
+import java.io.File;
+import java.io.IOException;
+
+public class InsecureTemporaryFile {
+    public void createInsecureTempFile() throws IOException {
+        File tempFile = new File(System.getProperty("java.io.tmpdir"), "unsafeFile.tmp");
+        if (tempFile.createNewFile()) {  // Noncompliant
+            boolean setReadable = tempFile.setReadable(true, true);  // Attempt to set permissions
+            boolean setWritable = tempFile.setWritable(true, true);
+            System.out.println("Insecure temporary file created at: " + tempFile.getAbsolutePath());
+        }
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+This positive example demonstrates atomic creation of a temporary file using `Files.createTempFile`.
+
+<!-- #example_positive_code -->
+```java
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.Set;
+import java.util.EnumSet;
+
+public class SecureTemporaryFile {
+    public void createSecureTempFile() throws IOException {
+        Set<PosixFilePermission> perms = EnumSet.of(PosixFilePermission.OWNER_READ, 
+                                                    PosixFilePermission.OWNER_WRITE);
+        Path tempFilePath = Files.createTempFile("secureFile_", ".tmp", 
+                                                 Files.newPosixFilePermissionsAttribute(perms));
+        System.out.println("Secure temporary file created at: " + tempFilePath.toString());
+    }
+}
+```

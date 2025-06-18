@@ -1,0 +1,135 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Always Validate Server Certificates in SSL/TLS Connections
+
+<Severity severity={SeverityLevels.CRITICAL} />
+
+---
+
+<Categories categories={["security","integrity","trust"]} />
+
+### What is it?
+This coding practice involves ensuring that server certificates are verified during SSL/TLS connections in Java applications.
+
+### Why apply it?
+Disabling certificate validation opens your application to identity spoofing and data integrity attacks, allowing attackers to intercept, manipulate, or steal data.
+
+### How to fix it?
+Use the default certificate validation mechanisms or handle custom certificates by adding them to the trust store rather than disabling validation in code.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Negative
+
+<!-- #example_negative_description -->
+The noncompliant example disables certificate validation by providing an empty `X509TrustManager`, which skips security checks.
+
+<!-- #example_negative_code -->
+```java
+import javax.net.ssl.X509TrustManager;
+import java.security.cert.X509Certificate;
+
+class InvalidTrustManager implements X509TrustManager {
+    @Override
+    public void checkClientTrusted(X509Certificate[] chain, String authType) {
+        // Empty Implementation: Noncompliant
+    }
+
+    @Override
+    public void checkServerTrusted(X509Certificate[] chain, String authType) {
+        // Empty Implementation: Noncompliant
+    }
+
+    @Override
+    public X509Certificate[] getAcceptedIssuers() {
+        return new X509Certificate[0];
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The compliant example uses the default `X509TrustManager` implementation to validate certificates properly, maintaining secure communications.
+
+<!-- #example_positive_code -->
+```java
+import javax.net.ssl.TrustManagerFactory;
+import java.security.KeyStore;
+
+public class SecureSocket {
+    public void setup() throws Exception {
+        KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        tmf.init(trustStore);
+        // Use the default TMF that includes proper certificate validation
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example bypasses certificate checks by using a custom trust manager that accepts any server certificate without verification.
+
+<!-- #example_negative_code -->
+```java
+import javax.net.ssl.X509TrustManager;
+import java.security.cert.X509Certificate;
+
+public class UnsafeClient {
+    private static class TrustAllCerts implements X509TrustManager {
+        public void checkClientTrusted(X509Certificate[] chain, String authType) {
+            // Trust all clients: Noncompliant
+        }
+
+        public void checkServerTrusted(X509Certificate[] chain, String authType) {
+            // Trust all servers: Noncompliant
+        }
+
+        public X509Certificate[] getAcceptedIssuers() {
+            return null;
+        }
+    }
+}
+```
+
+### Example 3:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The compliant example imports necessary certificates into the Java trust store to ensure the app trusts valid self-signed certificates.
+
+<!-- #example_positive_code -->
+```java
+// Ensure to import self-signed certificates with the following command line
+// Execute: keytool -import -alias myserver -file myserver.crt -keystore cacerts
+
+import java.security.KeyStore;
+import javax.net.ssl.TrustManagerFactory;
+
+public class TrustedConnectionSetup {
+    public void setupTrustManager() throws Exception {
+        KeyStore keyStore = KeyStore.getInstance("JKS");
+        // Load keys from file
+        keyStore.load(null, null);
+        TrustManagerFactory trustFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustFactory.init(keyStore);
+        // TrustManager will use the keystore which now contains the server's certificate
+    }
+}
+```

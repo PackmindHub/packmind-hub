@@ -1,0 +1,143 @@
+import {Severity, SeverityLevels} from "../../src/components/practice/severity/Severity";
+import {Categories} from "../../src/components/practice/categories/Categories";
+import {Example} from "../../src/components/practice/example/Example";
+
+
+# Methods `setUp()` and `tearDown()` Should Be Properly Annotated Since JUnit4
+
+<Severity severity={SeverityLevels.HIGH} />
+
+---
+
+<Categories categories={["maintainability","reliability"]} />
+
+### What is it?
+This practice involves correctly annotating the `setUp()` and `tearDown()` methods in JUnit test frameworks to ensure proper execution of test setup and teardown routines. These methods need to be annotated with `@Before` and `@After` for JUnit4 or `@BeforeEach` and `@AfterEach` for JUnit5 to maintain expected behavior.
+
+### Why apply it?
+Proper annotations ensure that test setup and teardown methods execute at the right time in the test lifecycle. Failing to annotate these methods can lead to unpredictable test behavior, making it difficult to maintain and trust the test suite.
+
+### How to fix it?
+Annotate `setUp()` with `@Before` or `@BeforeEach` and `tearDown()` with `@After` or `@AfterEach` depending on whether you are using JUnit4 or JUnit5.
+
+## Examples
+
+### Example 1:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example correctly uses `@Before` and `@After` annotations with the respective methods.
+
+<!-- #example_positive_code -->
+```java
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+
+public class ExampleTest {
+
+    @Before
+    public void setUp() {
+        System.out.println("Setting up the test environment.");
+    }
+
+    @After
+    public void tearDown() {
+        System.out.println("Cleaning up after the test.");
+    }
+
+    @Test
+    public void testExample() {
+        System.out.println("Running the actual test.");
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example does not annotate the setup and teardown methods, resulting in potential setup and cleanup issues.
+
+<!-- #example_negative_code -->
+```java
+import org.junit.jupiter.api.Test;
+
+public class AnotherExampleTest {
+
+    void setUp() {  // Noncompliant; should be annotated with @BeforeEach
+        System.out.println("Setting up for each test.");
+    }
+
+    void tearDown() {  // Noncompliant; should be annotated with @AfterEach
+        System.out.println("Tearing down after each test.");
+    }
+
+    @Test
+    void testSomething() {
+        System.out.println("Executing test.");
+    }
+}
+```
+
+### Example 2:
+
+<!-- #example -->
+
+#### Positive
+
+<!-- #example_positive_description -->
+The positive example correctly uses `@BeforeEach` and `@AfterEach` annotations with the respective methods.
+
+<!-- #example_positive_code -->
+```java
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+public class AnotherExampleTest {
+
+    @BeforeEach
+    void setUp() {
+        System.out.println("Setting up for each test.");
+    }
+
+    @AfterEach
+    void tearDown() {
+        System.out.println("Tearing down after each test.");
+    }
+
+    @Test
+    void testSomething() {
+        System.out.println("Executing test.");
+    }
+}
+```
+
+#### Negative
+
+<!-- #example_negative_description -->
+The negative example lacks the necessary annotations, leading to setUp() and tearDown() not executing as intended.
+
+<!-- #example_negative_code -->
+```java
+import org.junit.Test;
+
+public class ExampleTest {
+
+    public void setUp() {  // Noncompliant; should be annotated with @Before
+        System.out.println("Setting up the test environment.");
+    }
+
+    public void tearDown() {  // Noncompliant; should be annotated with @After
+        System.out.println("Cleaning up after the test.");
+    }
+
+    @Test
+    public void testExample() {
+        System.out.println("Running the actual test.");
+    }
+}
+```
