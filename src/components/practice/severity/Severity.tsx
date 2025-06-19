@@ -14,13 +14,13 @@ interface SeverityProps {
 export const Severity = ({severity}: SeverityProps) => {
     switch (severity) {
         case SeverityLevels.CRITICAL:
-            return <span className={'pm-severity-critical'}>Critical</span>;
+            return <span className={'pm-severity pm-severity--critical'}>Critical</span>;
         case SeverityLevels.HIGH:
-            return <span className={'pm-severity-high'}>High</span>;
+            return <span className={'pm-severity pm-severity--high'}>High</span>;
         case SeverityLevels.MEDIUM:
-            return <span className={'pm-severity-critical'}>Medium</span>;
+            return <span className={'pm-severity pm-severity--medium'}>Medium</span>;
         case SeverityLevels.LOW:
-            return <span className={'pm-severity-critical'}>Low</span>;
+            return <span className={'pm-severity pm-severity--low'}>Low</span>;
         default:
             return null;
     }

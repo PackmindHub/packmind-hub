@@ -1,13 +1,21 @@
-.pm-severity-critical {
+.pm-severity {
     padding: 8px;
-    background-color: #f44336;
-    color: #ffffff;
     border-radius: 4px;
+    color: #ffffff;
 }
 
-.pm-severity-high {
-    margin-bottom: 32px;
-    padding: 8px;
-    background-color: #ff9800;
-    color: #ffffff;
+.pm-severity.pm-severity--critical {
+    background-color: #B64343;
+}
+
+.pm-severity.pm-severity--high {
+    background-color: #8E8227;
+}
+
+.pm-severity.pm-severity--medium {
+    background-color: #393B5C;
+}
+
+.pm-severity.pm-severity--low {
+    background-color: #3F3D3C;
 }
