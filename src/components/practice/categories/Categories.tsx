@@ -6,7 +6,7 @@ interface CategoriesProps {
 
 export const Categories = ({categories}: CategoriesProps) => {
     return (
-        <div>
+        <div className='pm-categories'>
             {categories.map((category, index) => {
                 return (
                     <span className={'pm-category'} key={index + category}>{category}</span>
