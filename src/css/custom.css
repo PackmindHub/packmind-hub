@@ -51,3 +51,7 @@
   font-weight: 400;
   font-size: 0.875rem;
 }
+
+.pagination-nav .pagination-nav__link .pagination-nav__label {
+  font-weight: 400;;
+}
