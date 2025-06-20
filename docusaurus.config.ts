@@ -104,13 +104,6 @@ const config: Config = {
         alt: 'Packmind Logo',
         src: 'img/packmind-logo.jpg',
       },
-      items: [
-        {
-          href: 'https://github.com/facebook/docusaurus',
-          label: 'GitHub',
-          position: 'right',
-        },
-      ],
     },
     footer: {
       style: 'dark',
