@@ -120,7 +120,7 @@ const config: Config = {
           items: [
             {
               label: 'Coding Practices',
-              to: '/docs/practices',
+              to: '/docs/welcome',
             },
             {
               label: "Company",
