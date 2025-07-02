@@ -106,6 +106,11 @@ const config: Config = {
       },
       items: [
         {
+          label: 'Contribute',
+          href: 'https://github.com/PackmindHub/packmind-hub',
+          position: 'right',
+        },
+        {
           label: 'Get started',
           href: 'https://www.packmind.com/',
           position: 'right',
